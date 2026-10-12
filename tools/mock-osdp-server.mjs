@@ -81,10 +81,18 @@ const server = http.createServer((req, res) => {
         res.writeHead(o.status || 200, { 'content-type': 'application/json; charset=utf-8' });
         res.end(typeof o.body === 'string' ? o.body : JSON.stringify(o.body ?? {}));
       } else {
-        res.writeHead(hit.status || 200, { 'content-type': hit.contentType });
+        const status = hit.status === 304 ? 200 : hit.status || 200;
+        res.writeHead(status, { 'content-type': hit.contentType });
         res.end(fs.readFileSync(path.join(apiDir, hit.file)));
       }
       log(method, u, hit.override ? 'override' : `aufgezeichnet (${hit.file})`, body);
+      return;
+    }
+    // Unbekannter API-Aufruf per GET: 404 als JSON (kein SPA-Fallback), damit das Frontend sauber reagiert
+    if (/^\/api\//.test(u.pathname) && (method === 'GET' || method === 'HEAD')) {
+      res.writeHead(404, { 'content-type': 'application/json; charset=utf-8' });
+      res.end('{"error":"nicht aufgezeichnet"}');
+      log(method, u, 'unbekannter API-Aufruf → 404');
       return;
     }
     if (method === 'GET' || method === 'HEAD') {

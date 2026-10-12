@@ -1,0 +1,2502 @@
+{
+  "capturedAt": "2026-10-12T09:21:20.125Z",
+  "controls": [
+    {
+      "classes": [
+        "nav-button",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > a.active-link:nth-of-type(2) > button.nav-button.mdc-button",
+      "rect": {
+        "h": 36,
+        "w": 107,
+        "x": 1125,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "add Add Item",
+      "visible": true
+    },
+    {
+      "classes": [
+        "nav-button",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "a#news-link > button.nav-button.mdc-button",
+      "rect": {
+        "h": 36,
+        "w": 67,
+        "x": 1242,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "Search",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-menu-trigger",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > button.mat-mdc-menu-trigger.mdc-button:nth-of-type(1)",
+      "rect": {
+        "h": 36,
+        "w": 136,
+        "x": 1319,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "novakv (member)",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "novakv (member)"
+      ],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > button.mdc-icon-button.mat-mdc-icon-button:nth-of-type(2)",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1455,
+        "y": 1
+      },
+      "tag": "button",
+      "text": "dark_mode",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-accent",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(1)",
+      "rect": {
+        "h": 36,
+        "w": 86,
+        "x": 0,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Save",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "ng-star-inserted",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Save"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(2)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 86,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Extract",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-disabled",
+        "mat-mdc-button-base"
+      ],
+      "disabled": true,
+      "labels": [
+        "Extract",
+        "Save"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(3)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 264,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Summary",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mat-mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "ng-star-inserted",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Summary",
+        "Extract"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mat-mdc-button:nth-of-type(4)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 442,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Translate",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-before",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > div.tw-col-span-2.lg\\:tw-col-span-4 > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-after",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [
+        "NativeEnglish TranslatedGerman TranslatedSummary"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > div.tw-col-span-2.lg\\:tw-col-span-4 > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-54",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-18",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-18",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": "https://www.bbc.com/news/articles/c6pvg4jyz1m0o",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-55",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title",
+      "id": "mat-input-19",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-19",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": "Trump says Ukraine and Russia have agreed 'energy ceasefire'",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-56",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle",
+      "id": "mat-input-20",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-20",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Heading 1, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Heading 1",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "Zelensky backs Trump's 'energy ceasefire' but says Russia continues to hit power plantsDonald Trump has claimed that Russia and Ukraine have agreed to an \"energy ceasefire\", with Kyiv saying it would support such a move but Moscow yet to comment.The US president insisted that it was \"effective immed",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to English",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-57",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-21",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-21",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": "https://www.bbc.com/news/articles/c6pvg4jyz1m0o",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-58",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title_translateden",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title_translateden",
+      "id": "mat-input-22",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-22",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": " Trump says Ukraine and Russia have agreed 'energy ceasefire' ",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-59",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle_translateden",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle_translateden",
+      "id": "mat-input-23",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-23",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Heading 1, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Heading 1",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "Zelensky backs Trump's 'energy ceasefire' but says Russia continues to hit power plantsDonald Trump has claimed that Russia and Ukraine have agreed to an \"energy ceasefire\", with Kyiv saying it would support such a move but Moscow yet to comment.The US president insisted that it was \"effective immed",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised",
+      "rect": {
+        "h": 36,
+        "w": 200,
+        "x": 17,
+        "y": 151
+      },
+      "tag": "button",
+      "text": "Translate to German",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-60",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-24",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-24",
+      "rect": {
+        "h": 24,
+        "w": 1113,
+        "x": 33,
+        "y": 251
+      },
+      "tag": "input",
+      "value": "https://www.bbc.com/news/articles/c6pvg4jyz1m0o",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-61",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title_translatedde",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title_translatedde",
+      "id": "mat-input-25",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-25",
+      "rect": {
+        "h": 24,
+        "w": 1149,
+        "x": 33,
+        "y": 329
+      },
+      "tag": "input",
+      "value": " Trump sagt, Ukraine und Russland haben sich auf einen „Energie-Waffenstillstand\" geeinigt ",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-62",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle_translatedde",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle_translatedde",
+      "id": "mat-input-26",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-26",
+      "rect": {
+        "h": 24,
+        "w": 1149,
+        "x": 33,
+        "y": 407
+      },
+      "tag": "input",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 18,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 52,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "ariaLabel": "Heading 1, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 31,
+        "w": 138,
+        "x": 90,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Heading 1",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 237,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 271,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 310,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 344,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 30,
+        "w": 45,
+        "x": 377,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 426,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 30,
+        "w": 45,
+        "x": 460,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 513,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 547,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 581,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 615,
+        "y": 514
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline",
+        "ck-blurred"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck.ck-content",
+      "rect": {
+        "h": 640,
+        "w": 1181,
+        "x": 17,
+        "y": 548
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "Zelensky unterstützt Trumps 'Energiewaffenstillstand', sagt aber, dass Russland weiterhin Kraftwerke angreiftDonald Trump hat behauptet, dass sich Russland und die Ukraine auf einen Energiewaffenstillstand geeinigt haben, wobei Kyjiw sagte, dass es einen solchen Schritt unterstützen würde, aber Mosk",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-before",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-after",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [
+        "MetadataTags"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "mat-mdc-autocomplete-trigger",
+        "ng-tns-c3736059725-73",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "autocomplete": "off",
+        "ng-reflect-placeholder": "Search Terms"
+      },
+      "id": "mat-input-32",
+      "labels": [],
+      "path": "input#mat-input-32",
+      "placeholder": "Search Terms",
+      "rect": {
+        "h": 24,
+        "w": 180,
+        "x": 1248,
+        "y": 167
+      },
+      "role": "combobox",
+      "tag": "input",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(1) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 245
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-283",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(1) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 95,
+        "x": 1291,
+        "y": 249
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-283-input",
+      "labels": [
+        "Struktur"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(1) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 249
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(2) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 293
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-284",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(2) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 83,
+        "x": 1291,
+        "y": 297
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-284-input",
+      "labels": [
+        "Cyber"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(2) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 297
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(3) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 341
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-285",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(3) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 90,
+        "x": 1291,
+        "y": 345
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-285-input",
+      "labels": [
+        "KriMiSi"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(3) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 345
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(4) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 389
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-286",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(4) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 103,
+        "x": 1291,
+        "y": 393
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-286-input",
+      "labels": [
+        "InnoTech"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(4) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 393
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(5) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 437
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-287",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(5) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 150,
+        "x": 1291,
+        "y": 441
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-287-input",
+      "labels": [
+        "Allgemeine Tags"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(5) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 441
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(6) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 485
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-288",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(6) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 104,
+        "x": 1291,
+        "y": 489
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-288-input",
+      "labels": [
+        "Newsinfo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(6) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 489
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(7) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 533
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-289",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(7) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger",
+      "rect": {
+        "h": 40,
+        "w": 126,
+        "x": 1291,
+        "y": 537
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-289-input",
+      "labels": [
+        "Auftragstags"
+      ],
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(7) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > div.mdc-checkbox > input.mdc-checkbox__native-control",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 537
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    }
+  ],
+  "counts": {
+    "controls": 93,
+    "labels": 28,
+    "visibleControls": 49
+  },
+  "customElements": {
+    "app-editor": 1,
+    "app-nav": 1,
+    "app-news-editor": 1,
+    "app-root": 1,
+    "mat-autocomplete": 1,
+    "mat-card": 4,
+    "mat-card-content": 3,
+    "mat-checkbox": 7,
+    "mat-chip-listbox": 3,
+    "mat-form-field": 10,
+    "mat-icon": 11,
+    "mat-label": 9,
+    "mat-menu": 1,
+    "mat-tab-body": 6,
+    "mat-tab-group": 2,
+    "mat-tab-header": 2,
+    "mat-toolbar": 1,
+    "mat-tree": 1,
+    "mat-tree-node": 7,
+    "ngx-spinner": 2,
+    "router-outlet": 1,
+    "tag-tree": 1
+  },
+  "framework": {
+    "angularLike": true,
+    "angularMaterial": true,
+    "angularVersion": "17.3.11",
+    "ckEditor": true,
+    "primeNg": false,
+    "proseMirror": false,
+    "quill": false,
+    "reactLike": false,
+    "tinyMce": false,
+    "vueLike": false
+  },
+  "labels": [
+    {
+      "for": "mat-input-18",
+      "path": "label#mat-mdc-form-field-label-52",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-52 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-19",
+      "path": "label#mat-mdc-form-field-label-54",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-54 > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-20",
+      "path": "label#mat-mdc-form-field-label-56",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-56 > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-2-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-input-21",
+      "path": "label#mat-mdc-form-field-label-58",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-58 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-22",
+      "path": "label#mat-mdc-form-field-label-60",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-60 > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-23",
+      "path": "label#mat-mdc-form-field-label-62",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-62 > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-2-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-input-24",
+      "path": "label#mat-mdc-form-field-label-64",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-64 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-25",
+      "path": "label#mat-mdc-form-field-label-66",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-66 > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-26",
+      "path": "label#mat-mdc-form-field-label-68",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-68 > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-2-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-mdc-checkbox-283-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(1) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Struktur"
+    },
+    {
+      "for": "mat-mdc-checkbox-284-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(2) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Cyber"
+    },
+    {
+      "for": "mat-mdc-checkbox-285-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(3) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "KriMiSi"
+    },
+    {
+      "for": "mat-mdc-checkbox-286-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(4) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "InnoTech"
+    },
+    {
+      "for": "mat-mdc-checkbox-287-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(5) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Allgemeine Tags"
+    },
+    {
+      "for": "mat-mdc-checkbox-288-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(6) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Newsinfo"
+    },
+    {
+      "for": "mat-mdc-checkbox-289-input",
+      "path": "mat-tab-body#mat-tab-content-3-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(7) > mat-checkbox.mat-mdc-checkbox.mat-mdc-tooltip-trigger > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Auftragstags"
+    }
+  ],
+  "regionPath": "app-root",
+  "scripts": [
+    "https://osdp.zentdok.at/runtime.js",
+    "https://osdp.zentdok.at/polyfills.js",
+    "https://osdp.zentdok.at/scripts.js",
+    "https://osdp.zentdok.at/main.js"
+  ],
+  "stylesheets": [
+    "https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap",
+    "https://fonts.googleapis.com/icon?family=Material+Icons",
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
+    "https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css",
+    "https://osdp.zentdok.at/styles.css",
+    "https://fonts.googleapis.com/icon?family=Material+Icons"
+  ],
+  "title": "OSDP",
+  "url": "https://osdp.zentdok.at/#/newsEditor",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+}

@@ -289,9 +289,9 @@ async function fillOsdp() {
   // Tags nach Handbuch (wenn ein Modell konfiguriert ist)
   let selection = null;
   let tagPaths = null;
+  const catalog = await TagCatalog.load();
   if (settings.autoTags && !llmMissing(settings) && draft.textEn) {
     setStatus('Vergebe Tags nach Handbuch …');
-    const catalog = await TagCatalog.load();
     selection = await suggestTags(
       { title: draft.titleEn, titleDe: draft.titleDe, text: draft.textEn, url: draft.url, siteName: draft.siteName, category: draft.category },
       catalog,
@@ -316,7 +316,8 @@ async function fillOsdp() {
       authorUnknown: draft.authorUnknown || !draft.author.trim(),
       date: parsed,
       category: selection ? (selection.structure === 'KriMiSi' ? 'krimisi' : 'cyber') : draft.category,
-      tagPaths
+      tagPaths,
+      tagUids: tagPaths ? catalog.uidsFor(tagPaths) : []
     },
     { save, translateFn: async (a) => translateArticle(a, settings, (m) => setStatus(m)) }
   );

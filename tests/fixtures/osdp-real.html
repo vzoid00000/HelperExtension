@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>OSDP</title>
+<style>
+  mat-tab-body { display: none; } mat-tab-body.mat-mdc-tab-body-active { display: block; }
+  .ngx-spinner-overlay { display: none; }
+</style>
+</head>
+<body>
+<app-root ng-version="17.3.11">
+<app-nav id="navbar"><mat-toolbar><a href="#/newsEditor"><button class="nav-button mdc-button"> Add Item </button></a></mat-toolbar></app-nav>
+<app-news-editor><div><app-editor>
+<form novalidate>
+  <div class="tw-flex">
+    <button type="button" class="mdc-button mat-mdc-raised-button" id="btnSave"><span class="mdc-button__label"> Save </span></button>
+    <button type="button" class="mdc-button mat-mdc-raised-button" id="btnExtract"><span class="mdc-button__label"> Extract </span></button>
+    <button type="button" class="mdc-button" disabled><span class="mdc-button__label"> Summary </span></button>
+    <button type="button" class="mdc-button"><span class="mdc-button__label"> Translate </span></button>
+  </div>
+  <div class="tw-grid">
+    <div class="tw-col-span-2">
+      <mat-tab-group class="mat-mdc-tab-group" id="g1">
+        <mat-tab-header class="mat-mdc-tab-header">
+          <div class="mat-mdc-tab-labels">
+            <div role="tab" class="mat-mdc-tab mdc-tab mdc-tab--active" aria-selected="true"><span class="mdc-tab__content"><span class="mdc-tab__text-label">Native</span></span></div>
+            <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__content"><span class="mdc-tab__text-label">English Translated</span></span></div>
+            <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__content"><span class="mdc-tab__text-label">German Translated</span></span></div>
+            <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__content"><span class="mdc-tab__text-label">Summary</span></span></div>
+          </div>
+        </mat-tab-header>
+        <div class="mat-mdc-tab-body-wrapper">
+          <mat-tab-body id="mat-tab-content-2-0" class="mat-mdc-tab-body mat-mdc-tab-body-active"><div>
+            <mat-card><mat-card-content>
+              <mat-form-field><label><mat-label>Source</mat-label></label><input matinput formcontrolname="article_source" name="source" id="mat-input-18"></mat-form-field>
+              <mat-form-field><label><mat-label>Title</mat-label></label><input matinput formcontrolname="article_title" name="first" id="mat-input-19"></mat-form-field>
+              <mat-form-field><label><mat-label>Subtitle</mat-label></label><input matinput formcontrolname="article_subtitle" id="mat-input-20"></mat-form-field>
+              <p>Content</p>
+              <ckeditor formcontrolname="article_content"><div class="ck ck-editor"><div class="ck ck-editor__main"><div class="ck ck-content ck-editor__editable" contenteditable="true" role="textbox"><p><br></p></div></div></div></ckeditor>
+            </mat-card-content></mat-card>
+          </div></mat-tab-body>
+          <mat-tab-body id="mat-tab-content-2-1" class="mat-mdc-tab-body"><div>
+            <mat-card><mat-card-content>
+              <button class="mdc-button">Translate to English</button>
+              <mat-form-field><label><mat-label>Source</mat-label></label><input matinput formcontrolname="article_source" id="mat-input-21"></mat-form-field>
+              <mat-form-field><label><mat-label>Title</mat-label></label><input matinput formcontrolname="article_title_translateden" id="mat-input-22"></mat-form-field>
+              <mat-form-field><label><mat-label>Subtitle</mat-label></label><input matinput formcontrolname="article_subtitle_translateden" id="mat-input-23"></mat-form-field>
+              <ckeditor formcontrolname="article_content_translateden"><div class="ck ck-editor"><div class="ck ck-editor__main"><div class="ck ck-content ck-editor__editable" contenteditable="true" role="textbox"><p><br></p></div></div></div></ckeditor>
+            </mat-card-content></mat-card>
+          </div></mat-tab-body>
+          <mat-tab-body id="mat-tab-content-2-2" class="mat-mdc-tab-body"><div class="translation-container">
+            <mat-card><mat-card-content>
+              <button class="mdc-button">Translate to German</button>
+              <mat-form-field><label><mat-label>Source</mat-label></label><input matinput formcontrolname="article_source" id="mat-input-24"></mat-form-field>
+              <mat-form-field><label><mat-label>Title</mat-label></label><input matinput formcontrolname="article_title_translatedde" id="mat-input-25"></mat-form-field>
+              <mat-form-field><label><mat-label>Subtitle</mat-label></label><input matinput formcontrolname="article_subtitle_translatedde" id="mat-input-26"></mat-form-field>
+              <ckeditor formcontrolname="article_content_translatedde"><div class="ck ck-editor"><div class="ck ck-editor__main"><div class="ck ck-content ck-editor__editable" contenteditable="true" role="textbox"><p><br></p></div></div></div></ckeditor>
+            </mat-card-content></mat-card>
+          </div></mat-tab-body>
+          <mat-tab-body id="mat-tab-content-2-3" class="mat-mdc-tab-body"><div></div></mat-tab-body>
+        </div>
+      </mat-tab-group>
+    </div>
+    <mat-tab-group class="mat-mdc-tab-group" id="g2">
+      <mat-tab-header class="mat-mdc-tab-header">
+        <div class="mat-mdc-tab-labels">
+          <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__content"><span class="mdc-tab__text-label">Metadata</span></span></div>
+          <div role="tab" class="mat-mdc-tab mdc-tab mdc-tab--active" aria-selected="true"><span class="mdc-tab__content"><span class="mdc-tab__text-label">Tags</span></span></div>
+        </div>
+      </mat-tab-header>
+      <div class="mat-mdc-tab-body-wrapper">
+        <mat-tab-body id="mat-tab-content-3-0" class="mat-mdc-tab-body"><div></div></mat-tab-body>
+        <mat-tab-body id="mat-tab-content-3-1" class="mat-mdc-tab-body mat-mdc-tab-body-active"><div>
+          <mat-card>
+            <mat-form-field><input matinput placeholder="Search Terms" id="mat-input-32" role="combobox"></mat-form-field>
+            <mat-chip-listbox class="selected-tags-container"><div class="mdc-evolution-chip-set__chips"></div></mat-chip-listbox>
+            <tag-tree><mat-tree role="tree">
+              <mat-tree-node class="mat-tree-node checklist-branch-node"><button class="mdc-icon-button"></button><mat-checkbox id="mat-mdc-checkbox-283"><div class="mdc-form-field"><div class="mdc-checkbox"><input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-283-input"></div><label class="mdc-label" for="mat-mdc-checkbox-283-input">Struktur</label></div></mat-checkbox></mat-tree-node>
+              <mat-tree-node class="mat-tree-node checklist-branch-node"><button class="mdc-icon-button"></button><mat-checkbox id="mat-mdc-checkbox-284"><div class="mdc-form-field"><div class="mdc-checkbox"><input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-284-input"></div><label class="mdc-label" for="mat-mdc-checkbox-284-input">Cyber</label></div></mat-checkbox></mat-tree-node>
+              <mat-tree-node class="mat-tree-node checklist-branch-node"><button class="mdc-icon-button"></button><mat-checkbox id="mat-mdc-checkbox-285"><div class="mdc-form-field"><div class="mdc-checkbox"><input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-285-input"></div><label class="mdc-label" for="mat-mdc-checkbox-285-input">KriMiSi</label></div></mat-checkbox></mat-tree-node>
+            </mat-tree></tag-tree>
+          </mat-card>
+        </div></mat-tab-body>
+      </div>
+    </mat-tab-group>
+  </div>
+</form>
+</app-editor></div></app-news-editor>
+<ngx-spinner><div class="ngx-spinner-overlay"></div></ngx-spinner>
+</app-root>
+<script>
+  // --- Simuliert Angular Material + CKEditor + Formular-Verhalten
+  window.__events = [];
+  window.__formValues = {};
+  document.querySelectorAll('input[formcontrolname]').forEach((el) => {
+    el.addEventListener('input', () => { window.__formValues[el.getAttribute('formcontrolname')] = el.value; });
+  });
+  // CKEditor-5-Instanzen auf den editables
+  document.querySelectorAll('.ck-editor__editable').forEach((editable) => {
+    const name = editable.closest('ckeditor').getAttribute('formcontrolname');
+    editable.ckeditorInstance = {
+      setData(html) { editable.innerHTML = html; window.__formValues[name] = html; window.__events.push(['ck.setData', name, html.length]); },
+      getData() { return editable.innerHTML; }
+    };
+  });
+  // Tabs umschalten (lazy: Metadata-Inhalt wird erst beim ersten Öffnen gerendert)
+  document.querySelectorAll('mat-tab-group').forEach((group) => {
+    const tabs = [...group.querySelectorAll('.mat-mdc-tab')].filter((t) => t.closest('mat-tab-group') === group);
+    const bodies = [...group.querySelectorAll('mat-tab-body')].filter((b) => b.closest('mat-tab-group') === group);
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => {
+      tabs.forEach((t) => { t.classList.remove('mdc-tab--active'); t.setAttribute('aria-selected', 'false'); });
+      bodies.forEach((b) => b.classList.remove('mat-mdc-tab-body-active'));
+      tab.classList.add('mdc-tab--active'); tab.setAttribute('aria-selected', 'true');
+      bodies[i].classList.add('mat-mdc-tab-body-active');
+      if (bodies[i].id === 'mat-tab-content-3-0' && !bodies[i].querySelector('mat-form-field')) {
+        setTimeout(() => {
+          bodies[i].firstElementChild.innerHTML = `
+            <mat-card>
+              <mat-form-field><label><mat-label>Author</mat-label></label><input matinput formcontrolname="article_author" id="mat-input-40"><button type="button" class="mdc-icon-button" aria-label="Autor ungenannt" id="btnUnknown">?</button></mat-form-field>
+              <mat-form-field><label><mat-label>Date</mat-label></label><input matinput formcontrolname="article_date" id="mat-input-41" placeholder="DD.MM.YYYY"></mat-form-field>
+            </mat-card>`;
+          bodies[i].querySelectorAll('input[formcontrolname]').forEach((el) => el.addEventListener('input', () => { window.__formValues[el.getAttribute('formcontrolname')] = el.value; }));
+          document.getElementById('btnUnknown').addEventListener('click', () => { const a = document.getElementById('mat-input-40'); a.value = 'Autor ungenannt'; window.__formValues.article_author = a.value; window.__events.push(['click', 'btnUnknown']); });
+        }, 250);
+      }
+    }));
+  });
+  // Tag-Checkboxen → Chips
+  document.querySelectorAll('mat-tree-node input[type=checkbox]').forEach((cb) => cb.addEventListener('change', () => {
+    const label = cb.closest('mat-tree-node').querySelector('label').textContent;
+    const chips = document.querySelector('.mdc-evolution-chip-set__chips');
+    if (cb.checked) { const c = document.createElement('mat-chip'); c.textContent = label; chips.append(c); }
+    window.__events.push(['tag', label, cb.checked]);
+  }));
+  // Save → Spinner, Snackbar, Formular leeren
+  document.getElementById('btnSave').addEventListener('click', () => {
+    window.__events.push(['save', JSON.stringify(window.__formValues)]);
+    const ov = document.querySelector('.ngx-spinner-overlay'); ov.style.display = 'block';
+    setTimeout(() => {
+      ov.style.display = 'none';
+      // wie OSDP (ngx-toastr): Erfolgs-Toast „Item Added!“
+      let tc = document.getElementById('toast-container');
+      if (!tc) { tc = document.createElement('div'); tc.id = 'toast-container'; document.body.append(tc); }
+      const toast = document.createElement('div'); toast.className = 'ngx-toastr toast-success'; toast.innerHTML = '<div class="toast-title">Success</div><div class="toast-message">Item Added!</div>'; tc.append(toast);
+      document.querySelectorAll('input[formcontrolname]').forEach((el) => (el.value = ''));
+    }, 600);
+  });
+  // Extract → Titel + Inhalt füllen
+  document.getElementById('btnExtract').addEventListener('click', () => {
+    const ov = document.querySelector('.ngx-spinner-overlay'); ov.style.display = 'block';
+    setTimeout(() => {
+      ov.style.display = 'none';
+      const t = document.getElementById('mat-input-19'); t.value = 'Extracted title from OSDP'; window.__formValues.article_title = t.value;
+      document.querySelector('#mat-tab-content-2-0 .ck-editor__editable').ckeditorInstance.setData('<p>' + 'Extracted paragraph one from the OSDP extractor service. '.repeat(6) + '</p><p>Second paragraph.</p>');
+    }, 500);
+  });
+</script>
+</body>
+</html>

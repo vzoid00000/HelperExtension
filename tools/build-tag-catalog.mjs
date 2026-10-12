@@ -37,18 +37,50 @@ for (const line of section) {
   count++;
 }
 
+// Vollständige Tooltips und UIDs aus einem Export der Extension (site-dump/osdp-tags-*.json) übernehmen.
+// Tooltip-Format im Dashboard: "Tags<Pfad mit Leerzeichen> | <Beschreibung> UID: <Zahl>"
+const dumpDir = path.join(root, 'site-dump');
+const exportFile = fs.existsSync(dumpDir)
+  ? fs.readdirSync(dumpDir).filter((f) => /^osdp-tags-.*\.json$/.test(f)).sort().pop()
+  : null;
+const fullByPath = new Map();
+if (exportFile) {
+  const exp = JSON.parse(fs.readFileSync(path.join(dumpDir, exportFile), 'utf8'));
+  for (const t of exp.tags || []) {
+    const m = /\|\s*([\s\S]*?)\s*UID:\s*(\d+)\s*$/.exec(t.tooltip || '');
+    const description = m ? m[1].trim() : '';
+    fullByPath.set(t.path, {
+      uid: m ? Number(m[2]) : null,
+      description: /<<<+\s*ohne Beschreibung/i.test(description) ? '' : description
+    });
+  }
+  console.log(`Tooltips/UIDs aus site-dump/${exportFile}: ${fullByPath.size} Einträge`);
+}
+
 // Pfade ergänzen und flache Liste erzeugen
 const flat = [];
+let matched = 0;
 function walk(node, pathArr) {
   const p = [...pathArr, node.name];
   node.path = p.join(' → ');
+  const full = fullByPath.get(node.path);
+  if (full) {
+    if (full.uid != null) node.uid = full.uid;
+    if (full.description) node.description = full.description;
+    matched++;
+  }
   flat.push({ name: node.name, path: node.path, depth: p.length - 1, leaf: node.children.length === 0 });
   for (const c of node.children) walk(c, p);
 }
 roots.forEach((r) => walk(r, []));
+if (exportFile) {
+  console.log(`Davon dem Handbuch-Katalog zugeordnet: ${matched}/${count}`);
+  const unmatched = [...fullByPath.keys()].filter((p) => !flat.some((f) => f.path === p));
+  if (unmatched.length) console.log(`Im Export, aber nicht im Handbuch (${unmatched.length}): ${unmatched.slice(0, 10).join(' | ')}${unmatched.length > 10 ? ' …' : ''}`);
+}
 
 const out = {
-  source: 'docs/OSDP_Tagging_Handbuch.md (Version 1.0, Stand 2026-10-08)',
+  source: `docs/OSDP_Tagging_Handbuch.md (Version 1.0, Stand 2026-10-08)${exportFile ? ' + site-dump/' + exportFile : ''}`,
   generatedAt: new Date().toISOString().slice(0, 10),
   count,
   tree: roots

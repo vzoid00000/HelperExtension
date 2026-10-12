@@ -142,17 +142,26 @@ stehen nach dem Scan mit Fehlermeldung in der Quellen-Tabelle.
 
 ## OSDP-Integration (Stand)
 
-Struktur aus dem DOM-Dump (`site-dump/`): Angular 17 + Angular Material, CKEditor 5.
+Die Oberfläche ist aus dem HAR-Export vollständig bekannt (Analyse in `docs/OSDP_Analyse.md`) und
+die Extension wurde **End-to-End gegen die echte Angular-App im lokalen Nachbau getestet**
+(`tests/e2e-mock.mjs`): Felder, CKEditor in allen drei Reitern, Datum, Autor, Tags und Speichern
+inklusive geprüftem `POST /api/news`-Payload.
 
-| Bereich im Editor | Umsetzung | Stand |
-|---|---|---|
-| Native / English Translated / German Translated | `formcontrolname`-Felder + CKEditor `setData()` | aus Dump bekannt, gegen Nachbau getestet |
-| Tags (Baum mit Checkboxen) | Pfad aufklappen, Ziel-Checkbox anhaken, Chips prüfen | aus Dump bekannt, gegen Nachbau getestet |
-| Save / Extract | Buttons in der Kopfzeile | aus Dump bekannt |
-| **Metadata: Autor, Datum, „Autor ungenannt“** | Suche über Label-Text | **Reiter war im Dump nicht geöffnet – unbestätigt** |
+| Bereich im Editor | Umsetzung |
+|---|---|
+| Native / English Translated / German Translated | `formcontrolname`-Felder + CKEditor `setData()` |
+| Metadata | `article_created_at` (Datepicker, `DD/MM/YYYY`), `article_author` + Button „Set to Autor ungenannt“ |
+| Tags | direkt über die Angular-Komponente per UID (Eltern vor Kindern); Fallback: Pfad aufklappen und Checkbox anhaken; Kontrolle über die Chips |
+| Save | Toast „Item Added!“ = Erfolg; „Duplicate, URL already in the database!“ → Meldung wird als Duplikat markiert |
+| Öffnen des Editors | App laden, dann per Hash navigieren (ein Deep-Link direkt nach dem Laden landet in OSDP auf „keine Berechtigung“) |
 
-Für den Reiter „Metadata“ bitte einen Dump mit geöffnetem Reiter erzeugen (`site-dump/README.md`).
-Was die Extension dort findet, steht nach dem ersten Durchlauf in der aufgeklappten Zeile („Metadata-Felder“).
+Offen bleibt nur der Test gegen den echten Server (Login, echte Antwortzeiten).
+
+## Tests
+
+Siehe `tests/README.md`. Kurzfassung: `node tests/catalog.test.mjs`, `node tests/har-tools.test.mjs`,
+`node tests/extension-v2.test.mjs`, `node tests/extension-v3.test.mjs` (Playwright nötig) und
+`node tests/e2e-mock.mjs` gegen den laufenden Nachbau.
 
 ## Lokale Entwicklung mit Nachbau der OSDP-Oberfläche
 

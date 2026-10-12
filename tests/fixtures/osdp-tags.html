@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><title>OSDP Tags Fixture</title>
+<style> mat-tab-body { display: none; } mat-tab-body.mat-mdc-tab-body-active { display: block; } .cdk-visually-hidden { position:absolute; left:-9999px; } </style>
+</head>
+<body>
+<app-root><app-news-editor><app-editor><form>
+  <mat-tab-group id="g1">
+    <mat-tab-header><div class="mat-mdc-tab-labels">
+      <div role="tab" class="mat-mdc-tab mdc-tab mdc-tab--active" aria-selected="true"><span class="mdc-tab__text-label">Native</span></div>
+      <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__text-label">English Translated</span></div>
+    </div></mat-tab-header>
+    <div class="mat-mdc-tab-body-wrapper">
+      <mat-tab-body class="mat-mdc-tab-body mat-mdc-tab-body-active"><div><input formcontrolname="article_source"></div></mat-tab-body>
+      <mat-tab-body class="mat-mdc-tab-body"><div><input formcontrolname="article_source"></div></mat-tab-body>
+    </div>
+  </mat-tab-group>
+  <mat-tab-group id="g2">
+    <mat-tab-header><div class="mat-mdc-tab-labels">
+      <div role="tab" class="mat-mdc-tab mdc-tab mdc-tab--active" aria-selected="true"><span class="mdc-tab__text-label">Metadata</span></div>
+      <div role="tab" class="mat-mdc-tab mdc-tab"><span class="mdc-tab__text-label">Tags</span></div>
+    </div></mat-tab-header>
+    <div class="mat-mdc-tab-body-wrapper">
+      <mat-tab-body class="mat-mdc-tab-body mat-mdc-tab-body-active"><div><mat-form-field><label><mat-label>Author</mat-label></label><input formcontrolname="article_author"></mat-form-field></div></mat-tab-body>
+      <mat-tab-body class="mat-mdc-tab-body" id="tagsBody"><div>
+        <mat-chip-listbox><div class="mdc-evolution-chip-set__chips"></div></mat-chip-listbox>
+        <tag-tree><mat-tree role="tree"></mat-tree></tag-tree>
+      </div></mat-tab-body>
+    </div>
+  </mat-tab-group>
+</form></app-editor></app-news-editor></app-root>
+<div id="cdk-describedby-message-container" class="cdk-visually-hidden"></div>
+<script>
+  // Flacher Material-Tree wie in OSDP: Knoten werden beim Aufklappen asynchron eingefügt.
+  const DATA = [
+    { name: 'Struktur', tip: 'Tags\tStruktur | NUR EINEN! UID 1', children: [
+      { name: '[S]1 Cyber', tip: 'Tags\tStruktur\t[S]1 Cyber | NUR EINEN Cyberschwerpunkt' },
+      { name: '[S]2 KriMiSi', tip: 'Tags\tStruktur\t[S]2 KriMiSi | NUR EINEN' } ] },
+    { name: 'Cyber', tip: 'Tags\tCyber | Auf Datenebene verarbeitete Informationen', children: [
+      { name: 'Cyberangriff', tip: 'Tags\tCyber\tCyberangriff | Gezielter Angriff', children: [
+        { name: 'Schadsoftware', tip: 'Schadsoftware-Tooltip', children: [
+          { name: 'Ransomware', tip: 'Erpressungssoftware' } ] },
+        { name: 'APT', tip: 'Advanced Persistent Threat' } ] },
+      { name: 'Cyber Security', tip: 'CS', children: [ { name: 'Resilienz', tip: 'R1' } ] } ] },
+    { name: 'KriMiSi', tip: 'Krisen, Militär', children: [ { name: 'Militär', tip: 'M', children: [ { name: 'Resilienz', tip: 'R2' } ] } ] },
+    { name: 'Newsinfo', tip: 'Metadaten', children: [
+      { name: 'Dokumententyp', tip: 'D', children: [ { name: 'News', tip: 'Nachrichtenmeldung' }, { name: 'Studie', tip: 'S' } ] },
+      { name: 'Quellentyp', tip: 'Q', children: [ { name: 'Nachrichtenseite', tip: 'NS' } ] },
+      { name: 'geographische Lokationen', tip: 'G', children: [
+        { name: 'Global', tip: 'Weltweit' },
+        { name: 'Kontinente und Staaten', tip: 'K', children: [
+          { name: 'Europa', tip: 'E', children: [ { name: 'Deutschland', tip: 'DE' }, { name: 'Ukraine', tip: 'UA' } ] },
+          { name: 'Nordamerika', tip: 'N', children: [ { name: 'USA', tip: 'Vereinigte Staaten' } ] } ] } ] } ] },
+    { name: 'Auftragstags', tip: 'A', children: [
+      { name: 'WB-Cyber', tip: 'Wochenbericht Cyber', children: [ { name: '[WB-C]1 Cyber International', tip: 'x' } ] },
+      { name: 'WB-KriMiSi', tip: 'Wochenbericht KriMiSi' } ] }
+  ];
+  const tree = document.querySelector('mat-tree');
+  // Angular verhindert das native Submit; der Toggle-Button im echten OSDP hat ebenfalls kein type-Attribut.
+  document.querySelector('form').addEventListener('submit', (e) => { e.preventDefault(); window.__submitted = (window.__submitted || 0) + 1; });
+  const msgs = document.getElementById('cdk-describedby-message-container');
+  let idCounter = 300;
+  window.__clicks = [];
+  function render(items, level, after) {
+    const frag = document.createDocumentFragment();
+    for (const item of items) {
+      const node = document.createElement('mat-tree-node');
+      node.className = 'mat-tree-node cdk-tree-node ' + (item.children ? 'checklist-branch-node' : 'checklist-leaf-node');
+      node.setAttribute('role', 'treeitem');
+      node.setAttribute('aria-level', String(level));
+      node.setAttribute('aria-expanded', 'false');
+      node.style.paddingLeft = (level - 1) * 40 + 'px';
+      node.__item = item;
+      const id = ++idCounter;
+      const msgId = 'cdk-describedby-message-ng-1-' + id;
+      const msg = document.createElement('div'); msg.id = msgId; msg.textContent = item.tip; msgs.append(msg);
+      node.innerHTML = (item.children ? '<button mat-icon-button mattreenodetoggle class="mdc-icon-button">chevron_right</button>' : '<button mat-icon-button disabled class="mdc-icon-button"></button>') +
+        `<mat-checkbox class="mat-mdc-checkbox mat-mdc-tooltip-trigger" ng-reflect-message="${item.tip.slice(0, 30)}" id="mat-mdc-checkbox-${id}" aria-describedby="${msgId}"><div class="mdc-form-field"><div class="mdc-checkbox"><input type="checkbox" class="mdc-checkbox__native-control" id="mat-mdc-checkbox-${id}-input"></div><label class="mdc-label" for="mat-mdc-checkbox-${id}-input">${item.name}</label></div></mat-checkbox>`;
+      const toggle = node.querySelector('button[mattreenodetoggle]');
+      if (toggle) toggle.addEventListener('click', () => {
+        const expanded = node.getAttribute('aria-expanded') === 'true';
+        if (expanded) {
+          node.setAttribute('aria-expanded', 'false');
+          let n = node.nextElementSibling;
+          while (n && parseInt(n.getAttribute('aria-level')) > level) { const x = n; n = n.nextElementSibling; x.remove(); }
+        } else {
+          setTimeout(() => { node.setAttribute('aria-expanded', 'true'); render(item.children, level + 1, node); }, 120);
+        }
+      });
+      node.querySelector('input').addEventListener('change', (e) => {
+        window.__clicks.push([item.name, e.target.checked]);
+        const chips = document.querySelector('.mdc-evolution-chip-set__chips');
+        if (e.target.checked) { const c = document.createElement('mat-chip'); c.textContent = item.name; c.dataset.name = item.name; chips.append(c); }
+        else chips.querySelector(`[data-name="${item.name}"]`)?.remove();
+      });
+      frag.append(node);
+    }
+    if (after) after.after(frag); else tree.append(frag);
+  }
+  render(DATA, 1, null);
+  document.querySelectorAll('mat-tab-group').forEach((group) => {
+    const tabs = [...group.querySelectorAll('.mat-mdc-tab')].filter((t) => t.closest('mat-tab-group') === group);
+    const bodies = [...group.querySelectorAll('mat-tab-body')].filter((b) => b.closest('mat-tab-group') === group);
+    tabs.forEach((tab, i) => tab.addEventListener('click', () => {
+      tabs.forEach((t) => { t.classList.remove('mdc-tab--active'); t.setAttribute('aria-selected', 'false'); });
+      bodies.forEach((b) => b.classList.remove('mat-mdc-tab-body-active'));
+      tab.classList.add('mdc-tab--active'); tab.setAttribute('aria-selected', 'true'); bodies[i].classList.add('mat-mdc-tab-body-active');
+    }));
+  });
+</script>
+</body>
+</html>

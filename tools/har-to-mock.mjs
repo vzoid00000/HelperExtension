@@ -82,7 +82,8 @@ for (const e of entries) {
   } catch {
     continue;
   }
-  const status = e.response.status || 0;
+  // 304 (aus dem Browser-Cache beantwortet) wird als 200 gespeichert – der Inhalt ist im HAR enthalten.
+  const status = e.response.status === 304 ? 200 : e.response.status || 0;
   if (isApi(e, u)) {
     apiOrigins.add(u.origin);
     const slug = `${e.request.method}_${u.pathname.replace(/[^A-Za-z0-9._-]+/g, '_').replace(/^_+|_+$/g, '') || 'root'}`;
@@ -135,13 +136,23 @@ for (const file of staticTextFiles) {
   if (changed) fs.writeFileSync(file, text);
 }
 
+// Fehlt die index.html (Aufzeichnung ohne Neuladen), eine Standard-Angular-index.html ergänzen.
+if (!seenStatic.has('index.html')) {
+  const template = path.resolve(path.dirname(new URL(import.meta.url).pathname), 'mock-osdp-index.html');
+  if (fs.existsSync(template)) {
+    fs.copyFileSync(template, path.join(staticDir, 'index.html'));
+    seenStatic.add('index.html');
+    console.log('index.html fehlte im HAR – Standardvorlage (tools/mock-osdp-index.html) eingesetzt.');
+  }
+}
+
 fs.writeFileSync(path.join(outDir, 'api.json'), JSON.stringify({ origin, apiOrigins: [...apiOrigins], mockOrigin, generatedAt: new Date().toISOString(), entries: apiIndex }, null, 1));
 
 console.log(`Frontend-Origin: ${origin}`);
 console.log(`Statische Dateien: ${staticCount} → ${path.relative(process.cwd(), staticDir)}`);
 console.log(`API-Antworten: ${apiIndex.length} → ${path.relative(process.cwd(), apiDir)} (Origins: ${[...apiOrigins].join(', ') || '–'})`);
 console.log(`Umgeschriebene absolute Adressen in Bundles: ${rewrites}`);
-if (!seenStatic.has('index.html')) console.log('⚠ Keine index.html im HAR – bitte die Aufzeichnung mit einem vollständigen Neuladen der Seite (F5) beginnen.');
+if (!seenStatic.has('index.html')) console.log('⚠ Keine index.html – bitte die Aufzeichnung mit einem vollständigen Neuladen der Seite (F5) beginnen.');
 console.log('\nAPI-Aufrufe:');
 for (const a of apiIndex) console.log(`  ${a.method} ${a.path}${a.query ? '?' + a.query : ''} → ${a.status} ${a.contentType}`);
 console.log(`\nStarten: node tools/mock-osdp-server.mjs --dir ${path.relative(process.cwd(), outDir)}`);

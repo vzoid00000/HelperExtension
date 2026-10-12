@@ -372,9 +372,9 @@ async function processItem(it, driver) {
     // 5) Tags nach Handbuch
     let tagPaths = null;
     let selection = null;
+    const cat = await getCatalog();
     if (settings.autoTags && !llmMissing(settings)) {
       log('Vergebe Tags nach Handbuch …');
-      const cat = await getCatalog();
       selection = await suggestTags(
         { title: it.titleEn, titleDe: it.titleDe, text: it.textEn, url: it.url, siteName: it.siteName, sourceName: it.sourceName, category: it.category, score: it.score },
         cat,
@@ -411,7 +411,8 @@ async function processItem(it, driver) {
         authorUnknown: it.authorUnknown,
         date,
         category: selection.structure === 'KriMiSi' ? 'krimisi' : 'cyber',
-        tagPaths
+        tagPaths,
+        tagUids: cat.uidsFor(tagPaths)
       },
       { save: !!settings.autoSave, translateFn }
     );
@@ -422,6 +423,13 @@ async function processItem(it, driver) {
     it.chips = report.steps.tags?.chips || report.steps.tag?.chips || [];
 
     const done = settings.autoSave ? report.saved : true;
+    if (settings.autoSave && report.duplicate) {
+      it.status = 'duplicate';
+      it.selected = false;
+      processed[it.key] = { at: Date.now(), title: it.title, status: 'duplicate' };
+      log('OSDP meldet: URL ist bereits in der Datenbank – übersprungen.', 'warn');
+      return;
+    }
     if (settings.autoSave && !report.saved) {
       throw new Error(`Speichern fehlgeschlagen: ${report.problems.join('; ') || 'keine Rückmeldung'}`);
     }
@@ -531,14 +539,15 @@ const STATUS_LABEL = {
   saved: 'eingetragen',
   filled: 'ausgefüllt (manuell speichern)',
   error: 'Fehler',
-  too_old: 'zu alt'
+  too_old: 'zu alt',
+  duplicate: 'Duplikat in OSDP'
 };
 
 function renderItems() {
   const filter = $('filter').value;
   const all = items();
   const visible = all.filter((it) => {
-    if (filter === 'relevant') return ['relevant', 'processing', 'saved', 'filled', 'error', 'too_old'].includes(it.status);
+    if (filter === 'relevant') return ['relevant', 'processing', 'saved', 'filled', 'error', 'too_old', 'duplicate'].includes(it.status);
     if (filter === 'selected') return it.selected;
     if (filter === 'done') return it.status === 'saved' || it.status === 'filled';
     if (filter === 'error') return it.status === 'error';

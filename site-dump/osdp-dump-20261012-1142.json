@@ -1,0 +1,3888 @@
+{
+  "capturedAt": "2026-10-12T11:42:46.834Z",
+  "controls": [
+    {
+      "classes": [
+        "nav-button",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > a.active-link:nth-of-type(2) > button.nav-button.mdc-button",
+      "rect": {
+        "h": 36,
+        "w": 107,
+        "x": 1125,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "add Add Item",
+      "visible": true
+    },
+    {
+      "classes": [
+        "nav-button",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "a#news-link > button.nav-button.mdc-button",
+      "rect": {
+        "h": 36,
+        "w": 67,
+        "x": 1242,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "Search",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-menu-trigger",
+        "mdc-button",
+        "mat-mdc-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > button.mat-mdc-menu-trigger.mdc-button:nth-of-type(1)",
+      "rect": {
+        "h": 36,
+        "w": 136,
+        "x": 1319,
+        "y": 7
+      },
+      "tag": "button",
+      "text": "novakv (member)",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "novakv (member)"
+      ],
+      "path": "app-nav#navbar > mat-toolbar.mat-toolbar.mat-toolbar-single-row > button.mdc-icon-button.mat-mdc-icon-button:nth-of-type(2)",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1455,
+        "y": 1
+      },
+      "tag": "button",
+      "text": "dark_mode",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-accent",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(1)",
+      "rect": {
+        "h": 36,
+        "w": 86,
+        "x": 0,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Save",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "ng-star-inserted",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Save"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(2)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 86,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Extract",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-disabled",
+        "mat-mdc-button-base"
+      ],
+      "disabled": true,
+      "labels": [
+        "Extract",
+        "Save"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mdc-button--raised:nth-of-type(3)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 264,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Summary",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mat-mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "ng-star-inserted",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Summary",
+        "Extract"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-flex:nth-of-type(1) > button.mdc-button.mat-mdc-button:nth-of-type(4)",
+      "rect": {
+        "h": 36,
+        "w": 178,
+        "x": 442,
+        "y": 50
+      },
+      "tag": "button",
+      "text": "Translate",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-before",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > div.tw-col-span-2.lg\\:tw-col-span-4 > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-after",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [
+        "NativeEnglish TranslatedGerman TranslatedSummary"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > div.tw-col-span-2.lg\\:tw-col-span-4 > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-83",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-33",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-33",
+      "rect": {
+        "h": 24,
+        "w": 1113,
+        "x": 33,
+        "y": 215
+      },
+      "tag": "input",
+      "value": "https://www.voanews.com/a/us-7th-air-force-seeks-combat-verified-anti-drone-capabilities-on-korean-peninsula/8209517.html",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-84",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title",
+      "id": "mat-input-34",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-34",
+      "rect": {
+        "h": 24,
+        "w": 1149,
+        "x": 33,
+        "y": 293
+      },
+      "tag": "input",
+      "value": "US 7th Air Force seeks 'combat-verified' anti-drone capabilities on Korean Peninsula",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-85",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle",
+      "id": "mat-input-35",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-35",
+      "rect": {
+        "h": 24,
+        "w": 1149,
+        "x": 33,
+        "y": 371
+      },
+      "tag": "input",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 18,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 52,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 31,
+        "w": 138,
+        "x": 90,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 237,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 271,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 310,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 344,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 30,
+        "w": 45,
+        "x": 377,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 426,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 30,
+        "w": 45,
+        "x": 460,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 513,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 547,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 581,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 30,
+        "w": 30,
+        "x": 615,
+        "y": 478
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": true
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 640,
+        "w": 1181,
+        "x": 17,
+        "y": 512
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "⁠⁠⁠⁠⁠⁠⁠Editor's note: this story was translated fromthe original VOA Korean article.The U.S. 7th Air Force is seeking combat-proven drone countermeasure capabilities to modernize joint base defense in the Korean Peninsula operational theater.The U.S. 7th Air Force began searching for companies with ",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to English",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-86",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-36",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-36",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": "https://www.voanews.com/a/us-7th-air-force-seeks-combat-verified-anti-drone-capabilities-on-korean-peninsula/8209517.html",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-87",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title_translateden",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title_translateden",
+      "id": "mat-input-37",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-37",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": " US 7th Air Force seeks 'combat-verified' anti-drone capabilities on Korean Peninsula ",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-88",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle_translateden",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle_translateden",
+      "id": "mat-input-38",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-38",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "Editor's note: this story was translated from the original VOA Korean article .The U.S. 7th Air Force is seeking combat-proven drone countermeasure capabilities to modernize joint base defense in the Korean Peninsula operational theater.The U.S. 7th Air Force began searching for companies with drone",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to German",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-89",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored",
+        "ng-dirty",
+        "ng-touched"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_source",
+        "ng-reflect-name": "source"
+      },
+      "formControlName": "article_source",
+      "id": "mat-input-39",
+      "labels": [
+        "Source"
+      ],
+      "name": "source",
+      "path": "input#mat-input-39",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": "https://www.voanews.com/a/us-7th-air-force-seeks-combat-verified-anti-drone-capabilities-on-korean-peninsula/8209517.html",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-90",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_title_translatedde",
+        "ng-reflect-name": "first"
+      },
+      "formControlName": "article_title_translatedde",
+      "id": "mat-input-40",
+      "labels": [
+        "Title"
+      ],
+      "name": "first",
+      "path": "input#mat-input-40",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "value": " US 7th Air Force sucht „kampfbewährte\" Anti-Drohnen-Fähigkeiten auf der Koreanischen Halbinsel ",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "ng-tns-c3736059725-91",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "formcontrolname": "article_subtitle_translatedde",
+        "ng-reflect-name": "subtitle"
+      },
+      "formControlName": "article_subtitle_translatedde",
+      "id": "mat-input-41",
+      "labels": [
+        "Subtitle"
+      ],
+      "name": "subtitle",
+      "path": "input#mat-input-41",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline",
+        "ck-blurred"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck.ck-content",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "Die U.S. 7. Luftflotte sucht kampfbewährte Drohnen-Gegenmaßnahmefähigkeiten zur Modernisierung der gemeinsamen Luftverteidigung auf der koreanischen Halbinsel im Operationstheater.Die U.S. 7. Luftwaffe begann durch eine am 5. auf der Beschaffungswebseite der U.S. Bundesregierung veröffentlichte Info",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "English Summary"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to German",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Translate to German"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to Native",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "German Summary"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to English",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Translate to English"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to Native",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Undo (Ctrl+Z)"
+      },
+      "disabled": true,
+      "labels": [
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Undo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Redo (Ctrl+Y)"
+      },
+      "disabled": true,
+      "labels": [
+        "Redo",
+        "Undo"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Redo",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Paragraph, Heading",
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-button_with-text",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Heading"
+      },
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(1) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Paragraph",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bold (Ctrl+B)"
+      },
+      "labels": [
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(3)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bold",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Italic (Ctrl+I)"
+      },
+      "labels": [
+        "Italic",
+        "Bold"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(4)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Italic",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Link (Ctrl+K)"
+      },
+      "labels": [
+        "Link",
+        "Italic"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(5)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Link",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-file-dialog-button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Upload image from computer"
+      },
+      "labels": [
+        "Upload image from computer",
+        "Link"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Upload image from computer",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck-hidden"
+      ],
+      "labels": [
+        "Upload image from computer"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(6) > input.ck-hidden",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "input",
+      "type": "file",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert table"
+      },
+      "labels": [
+        "Insert table"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(2) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert table",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Block quote"
+      },
+      "labels": [
+        "Block quote"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(7)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Block quote",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off",
+        "ck-dropdown__button"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Insert media"
+      },
+      "labels": [
+        "Insert media"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > div.ck.ck-dropdown:nth-of-type(3) > button.ck.ck-button",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Insert media",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Bulleted List"
+      },
+      "labels": [
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(8)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Bulleted List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Numbered List"
+      },
+      "labels": [
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(9)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Numbered List",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Decrease indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Decrease indent",
+        "Numbered List",
+        "Bulleted List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(10)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Decrease indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "ck",
+        "ck-button",
+        "ck-disabled",
+        "ck-off"
+      ],
+      "dataAttrs": {
+        "data-cke-tooltip-position": "s",
+        "data-cke-tooltip-text": "Increase indent"
+      },
+      "disabled": true,
+      "labels": [
+        "Increase indent",
+        "Decrease indent",
+        "Numbered List"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__top:nth-of-type(1) > div.ck.ck-sticky-panel > div.ck.ck-sticky-panel__content:nth-of-type(2) > div.ck.ck-toolbar > div.ck.ck-toolbar__items > button.ck.ck-button:nth-of-type(11)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Increase indent",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "ariaLabel": "Editor editing area: main. Press Alt+0 for help.",
+      "classes": [
+        "ck-blurred",
+        "ck",
+        "ck-content",
+        "ck-editor__editable",
+        "ck-rounded-corners",
+        "ck-editor__editable_inline"
+      ],
+      "contentEditable": true,
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > div.ck.ck-editor__main:nth-of-type(2) > div.ck-blurred.ck",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "role": "textbox",
+      "tag": "div",
+      "value": "",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Native Summary"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to English",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mdc-button",
+        "mdc-button--raised",
+        "mat-mdc-raised-button",
+        "mat-primary",
+        "mat-mdc-button-base"
+      ],
+      "labels": [
+        "Translate to English"
+      ],
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > button.mdc-button.mdc-button--raised:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "Translate to German",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-before",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(1)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-ripple",
+        "mat-mdc-tab-header-pagination",
+        "mat-mdc-tab-header-pagination-after",
+        "mat-mdc-tab-header-pagination-disabled"
+      ],
+      "disabled": true,
+      "labels": [
+        "MetadataTags"
+      ],
+      "path": "app-root > app-news-editor > div > app-editor > form > div.tw-grid.tw-grid-cols-3:nth-of-type(2) > mat-tab-group.mat-mdc-tab-group.mat-primary > mat-tab-header.mat-mdc-tab-header > button.mat-ripple.mat-mdc-tab-header-pagination:nth-of-type(2)",
+      "rect": {
+        "h": 0,
+        "w": 0,
+        "x": 0,
+        "y": 0
+      },
+      "tag": "button",
+      "text": "",
+      "type": "button",
+      "visible": false
+    },
+    {
+      "classes": [
+        "mat-mdc-input-element",
+        "mat-mdc-autocomplete-trigger",
+        "ng-tns-c3736059725-102",
+        "ng-untouched",
+        "ng-pristine",
+        "ng-valid",
+        "mat-mdc-form-field-input-control",
+        "mdc-text-field__input",
+        "cdk-text-field-autofill-monitored"
+      ],
+      "dataAttrs": {
+        "autocomplete": "off",
+        "ng-reflect-placeholder": "Search Terms"
+      },
+      "id": "mat-input-47",
+      "labels": [],
+      "path": "input#mat-input-47",
+      "placeholder": "Search Terms",
+      "rect": {
+        "h": 24,
+        "w": 180,
+        "x": 1248,
+        "y": 167
+      },
+      "role": "combobox",
+      "tag": "input",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(1) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 245
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-21",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-21",
+      "rect": {
+        "h": 40,
+        "w": 95,
+        "x": 1291,
+        "y": 249
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-21-input",
+      "labels": [
+        "Struktur"
+      ],
+      "path": "input#mat-mdc-checkbox-21-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 249
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(2) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 293
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-22",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-22",
+      "rect": {
+        "h": 40,
+        "w": 83,
+        "x": 1291,
+        "y": 297
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-22-input",
+      "labels": [
+        "Cyber"
+      ],
+      "path": "input#mat-mdc-checkbox-22-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 297
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(3) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 341
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-23",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-23",
+      "rect": {
+        "h": 40,
+        "w": 90,
+        "x": 1291,
+        "y": 345
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-23-input",
+      "labels": [
+        "KriMiSi"
+      ],
+      "path": "input#mat-mdc-checkbox-23-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 345
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(4) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 389
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-24",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-24",
+      "rect": {
+        "h": 40,
+        "w": 103,
+        "x": 1291,
+        "y": 393
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-24-input",
+      "labels": [
+        "InnoTech"
+      ],
+      "path": "input#mat-mdc-checkbox-24-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 393
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(5) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 437
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-25",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-25",
+      "rect": {
+        "h": 40,
+        "w": 150,
+        "x": 1291,
+        "y": 441
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-25-input",
+      "labels": [
+        "Allgemeine Tags"
+      ],
+      "path": "input#mat-mdc-checkbox-25-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 441
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(6) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 485
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-26",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-26",
+      "rect": {
+        "h": 40,
+        "w": 104,
+        "x": 1291,
+        "y": 489
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-26-input",
+      "labels": [
+        "Newsinfo"
+      ],
+      "path": "input#mat-mdc-checkbox-26-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 489
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    },
+    {
+      "ariaLabel": "toggle undefined",
+      "classes": [
+        "mdc-icon-button",
+        "mat-mdc-icon-button",
+        "mat-unthemed",
+        "mat-mdc-button-base"
+      ],
+      "labels": [],
+      "path": "mat-tab-body#mat-tab-content-5-1 > div.mat-mdc-tab-body-content > div > mat-card.mat-mdc-card.mdc-card > div > div > tag-tree > mat-tree.mat-tree > mat-tree-node.mat-tree-node.checklist-branch-node:nth-of-type(7) > button.mdc-icon-button.mat-mdc-icon-button",
+      "rect": {
+        "h": 48,
+        "w": 48,
+        "x": 1243,
+        "y": 533
+      },
+      "tag": "button",
+      "text": "chevron_right",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mat-mdc-checkbox",
+        "mat-mdc-tooltip-trigger",
+        "mat-accent"
+      ],
+      "id": "mat-mdc-checkbox-27",
+      "labels": [
+        "chevron_right"
+      ],
+      "path": "mat-checkbox#mat-mdc-checkbox-27",
+      "rect": {
+        "h": 40,
+        "w": 126,
+        "x": 1291,
+        "y": 537
+      },
+      "tag": "mat-checkbox",
+      "visible": true
+    },
+    {
+      "classes": [
+        "mdc-checkbox__native-control"
+      ],
+      "id": "mat-mdc-checkbox-27-input",
+      "labels": [
+        "Auftragstags"
+      ],
+      "path": "input#mat-mdc-checkbox-27-input",
+      "rect": {
+        "h": 40,
+        "w": 40,
+        "x": 1291,
+        "y": 537
+      },
+      "tag": "input",
+      "type": "checkbox",
+      "value": "on",
+      "visible": true
+    }
+  ],
+  "counts": {
+    "controls": 147,
+    "labels": 31,
+    "visibleControls": 48
+  },
+  "customElements": {
+    "app-editor": 1,
+    "app-nav": 1,
+    "app-news-editor": 1,
+    "app-root": 1,
+    "mat-autocomplete": 1,
+    "mat-card": 7,
+    "mat-card-content": 6,
+    "mat-checkbox": 7,
+    "mat-chip-listbox": 3,
+    "mat-form-field": 10,
+    "mat-icon": 11,
+    "mat-label": 9,
+    "mat-menu": 1,
+    "mat-tab-body": 6,
+    "mat-tab-group": 2,
+    "mat-tab-header": 2,
+    "mat-toolbar": 1,
+    "mat-tree": 1,
+    "mat-tree-node": 7,
+    "ngx-spinner": 2,
+    "router-outlet": 1,
+    "tag-tree": 1
+  },
+  "framework": {
+    "angularLike": true,
+    "angularMaterial": true,
+    "angularVersion": "17.3.11",
+    "ckEditor": true,
+    "primeNg": false,
+    "proseMirror": false,
+    "quill": false,
+    "reactLike": false,
+    "tinyMce": false,
+    "vueLike": false
+  },
+  "labels": [
+    {
+      "for": "mat-input-33",
+      "path": "label#mat-mdc-form-field-label-86",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-86 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-34",
+      "path": "label#mat-mdc-form-field-label-88",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-88 > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-35",
+      "path": "label#mat-mdc-form-field-label-90",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-90 > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-0 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-input-36",
+      "path": "label#mat-mdc-form-field-label-92",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-92 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-37",
+      "path": "label#mat-mdc-form-field-label-94",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-94 > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-38",
+      "path": "label#mat-mdc-form-field-label-96",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-96 > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-1 > div.mat-mdc-tab-body-content > div > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-input-39",
+      "path": "label#mat-mdc-form-field-label-98",
+      "tag": "label",
+      "text": "Source"
+    },
+    {
+      "path": "label#mat-mdc-form-field-label-98 > mat-label",
+      "tag": "mat-label",
+      "text": "Source"
+    },
+    {
+      "for": "mat-input-40",
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(2) > mat-form-field.mat-mdc-form-field.tw-w-full > div.mat-mdc-text-field-wrapper.mdc-text-field:nth-of-type(1) > div.mat-mdc-form-field-flex > div.mdc-notched-outline.mdc-notched-outline--upgraded:nth-of-type(1) > div.mdc-notched-outline__notch:nth-of-type(2) > label.mdc-floating-label.mat-mdc-floating-label",
+      "tag": "label",
+      "text": "Title"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(2) > mat-form-field.mat-mdc-form-field.tw-w-full > div.mat-mdc-text-field-wrapper.mdc-text-field:nth-of-type(1) > div.mat-mdc-form-field-flex > div.mdc-notched-outline.mdc-notched-outline--upgraded:nth-of-type(1) > div.mdc-notched-outline__notch:nth-of-type(2) > label.mdc-floating-label.mat-mdc-floating-label > mat-label",
+      "tag": "mat-label",
+      "text": "Title"
+    },
+    {
+      "for": "mat-input-41",
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(3) > mat-form-field.mat-mdc-form-field.tw-w-full > div.mat-mdc-text-field-wrapper.mdc-text-field:nth-of-type(1) > div.mat-mdc-form-field-flex > div.mdc-notched-outline.mdc-notched-outline--upgraded:nth-of-type(1) > div.mdc-notched-outline__notch:nth-of-type(2) > label.mdc-floating-label.mat-mdc-floating-label",
+      "tag": "label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(3) > mat-form-field.mat-mdc-form-field.tw-w-full > div.mat-mdc-text-field-wrapper.mdc-text-field:nth-of-type(1) > div.mat-mdc-form-field-flex > div.mdc-notched-outline.mdc-notched-outline--upgraded:nth-of-type(1) > div.mdc-notched-outline__notch:nth-of-type(2) > label.mdc-floating-label.mat-mdc-floating-label > mat-label",
+      "tag": "mat-label",
+      "text": "Subtitle"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-2 > div.mat-mdc-tab-body-content > div.translation-container > div > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > div:nth-of-type(4) > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(1) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(1) > div.tw-mt-4:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "path": "mat-tab-body#mat-tab-content-4-3 > div.mat-mdc-tab-body-content > div:nth-of-type(2) > mat-card.mat-mdc-card.mdc-card > mat-card-content.mat-mdc-card-content > ckeditor > div.ck.ck-reset:nth-of-type(2) > label.ck.ck-label",
+      "tag": "label",
+      "text": "Rich Text Editor"
+    },
+    {
+      "for": "mat-mdc-checkbox-21-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-21 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Struktur"
+    },
+    {
+      "for": "mat-mdc-checkbox-22-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-22 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Cyber"
+    },
+    {
+      "for": "mat-mdc-checkbox-23-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-23 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "KriMiSi"
+    },
+    {
+      "for": "mat-mdc-checkbox-24-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-24 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "InnoTech"
+    },
+    {
+      "for": "mat-mdc-checkbox-25-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-25 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Allgemeine Tags"
+    },
+    {
+      "for": "mat-mdc-checkbox-26-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-26 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Newsinfo"
+    },
+    {
+      "for": "mat-mdc-checkbox-27-input",
+      "path": "mat-checkbox#mat-mdc-checkbox-27 > div.mdc-form-field.mat-internal-form-field > label.mdc-label",
+      "tag": "label",
+      "text": "Auftragstags"
+    }
+  ],
+  "regionPath": "app-root",
+  "scripts": [
+    "https://osdp.zentdok.at/runtime.js",
+    "https://osdp.zentdok.at/polyfills.js",
+    "https://osdp.zentdok.at/scripts.js",
+    "https://osdp.zentdok.at/main.js"
+  ],
+  "stylesheets": [
+    "https://fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap",
+    "https://fonts.googleapis.com/icon?family=Material+Icons",
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css",
+    "https://unpkg.com/leaflet-geosearch@3.0.0/dist/geosearch.css",
+    "https://osdp.zentdok.at/styles.css",
+    "https://fonts.googleapis.com/icon?family=Material+Icons"
+  ],
+  "title": "OSDP",
+  "url": "https://osdp.zentdok.at/#/newsEditor",
+  "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/154.0.0.0 Safari/537.36"
+}

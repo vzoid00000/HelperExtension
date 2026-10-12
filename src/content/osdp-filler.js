@@ -59,7 +59,7 @@
   }
 
   // ---------------------------------------------------------- Inputs ----
-  function setNativeValue(el, value) {
+  function setNativeValue(el, value, { blur = true } = {}) {
     const proto = el.localName === 'textarea' ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
     const desc = Object.getOwnPropertyDescriptor(proto, 'value');
     el.focus();
@@ -67,14 +67,28 @@
     else el.value = value;
     el.dispatchEvent(new InputEvent('input', { bubbles: true, data: value, inputType: 'insertText' }));
     el.dispatchEvent(new Event('change', { bubbles: true }));
+    if (blur) blurField(el);
+  }
+
+  function blurField(el) {
     el.dispatchEvent(new Event('blur', { bubbles: true }));
     el.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
   }
 
-  function fillControl(body, controlName, value) {
+  /**
+   * Feld setzen. Das Quellfeld (article_source) löst bei blur die Duplikatprüfung aus, die den
+   * Artikel aus dem Store zurückschreibt – deshalb erst Eingabe, dann warten, bis der Store den
+   * Wert hat, dann blur (sonst wird das Feld wieder geleert).
+   */
+  async function fillControl(body, controlName, value, { settleMs = 0 } = {}) {
     const el = body?.querySelector(`input[formcontrolname="${controlName}"], textarea[formcontrolname="${controlName}"]`);
     if (!el) return false;
-    setNativeValue(el, value);
+    setNativeValue(el, value, { blur: settleMs === 0 });
+    if (settleMs > 0) {
+      await sleep(settleMs);
+      blurField(el);
+      await sleep(150);
+    }
     return true;
   }
 
@@ -132,6 +146,15 @@
   const topBar = () => document.querySelector('app-editor form > div, app-editor form') || document.body;
   const spinnerVisible = () => [...document.querySelectorAll('ngx-spinner .ngx-spinner-overlay, ngx-spinner div')].some(isVisible);
   const snackbarText = () => text(document.querySelector('mat-snack-bar-container, .mat-mdc-snack-bar-container, simple-snack-bar')) || '';
+
+  /** Toasts (ngx-toastr): OSDP meldet Erfolg/Fehler darüber („Item Added!“, „Duplicate, URL already in the database!“ …). */
+  function toasts() {
+    return [...document.querySelectorAll('#toast-container .ngx-toastr, #toast-container .toast, .toast-container .ngx-toastr')].map((t) => ({
+      kind: /toast-error/.test(t.className) ? 'error' : /toast-success/.test(t.className) ? 'success' : /toast-warning/.test(t.className) ? 'warning' : 'info',
+      title: text(t.querySelector('.toast-title')),
+      message: text(t.querySelector('.toast-message')) || text(t)
+    }));
+  }
 
   // -------------------------------------------------------- Tag-Baum ----
   function treeNodes(body) {
@@ -199,7 +222,15 @@
     return full || host?.getAttribute('ng-reflect-message') || '';
   }
 
-  const chips = () => [...document.querySelectorAll('mat-chip-listbox mat-chip, mat-chip-listbox mat-chip-option, mat-chip-listbox .mdc-evolution-chip__text-label')].map(text).filter(Boolean);
+  /** Ausgewählte Tags (Chips unter dem Suchfeld). OSDP rendert je Tag eine Kette aus Pfad-Chips; relevant ist der letzte. */
+  const chips = () => {
+    const out = [];
+    for (const c of document.querySelectorAll('mat-chip-listbox mat-chip, mat-chip-listbox mat-chip-option, mat-chip-listbox mat-chip-row')) {
+      const t = text(c).replace(/\s*cancel$/i, '').trim();
+      if (t && !out.includes(t)) out.push(t);
+    }
+    return out;
+  };
 
   // ----------------------------------------------------------- Steps ----
   const steps = {
@@ -209,13 +240,23 @@
       return {
         url: location.href,
         hasEditor: !!document.querySelector('app-news-editor, app-editor'),
-        loginForm: !!document.querySelector('input[type="password"]'),
+        hasNav: !!document.querySelector('app-nav'),
+        permissionError: /permissionError/i.test(location.hash) || /keine Berechtigung/i.test(text(document.querySelector('router-outlet + *'))),
+        loginForm: !!document.querySelector('input[type="password"]') || /\/login/i.test(location.hash),
         groups: tabGroups().map((g) => groupTabs(g).map(text)),
         sourceValue: body?.querySelector('input[formcontrolname="article_source"]')?.value || '',
         titleValue: body?.querySelector('input[formcontrolname="article_title"]')?.value || '',
+        chips: chips(),
         spinner: spinnerVisible(),
-        topButtons: [...topBar().querySelectorAll('button')].map(text)
+        toasts: toasts(),
+        topButtons: [...topBar().querySelectorAll(':scope > button, :scope > div > button')].map(text).filter(Boolean)
       };
+    },
+
+    /** Hash-Navigation innerhalb der App (ohne Neuladen), z. B. zum Editor. */
+    navigate({ hash }) {
+      location.hash = hash;
+      return { ok: true, url: location.href };
     },
 
     async fillNative({ url, title }) {
@@ -223,8 +264,19 @@
       const body = await selectTab(group, '^\\s*native\\s*$');
       if (!body) return { ok: false, error: 'Tab „Native“ nicht gefunden' };
       const r = { ok: true };
-      if (url !== undefined) r.source = fillControl(body, 'article_source', url);
-      if (title !== undefined) r.title = fillControl(body, 'article_title', title);
+      if (title !== undefined) r.title = await fillControl(body, 'article_title', title);
+      if (url !== undefined) {
+        r.source = await fillControl(body, 'article_source', url, { settleMs: 900 });
+        r.sourceValue = body.querySelector('input[formcontrolname="article_source"]')?.value || '';
+        if (r.sourceValue !== url) {
+          // Falls die Duplikatprüfung das Feld zurückgesetzt hat: noch einmal setzen (ohne blur)
+          await fillControl(body, 'article_source', url);
+          await sleep(300);
+          r.sourceValue = body.querySelector('input[formcontrolname="article_source"]')?.value || '';
+          r.sourceRetried = true;
+        }
+        r.toasts = toasts();
+      }
       return r;
     },
 
@@ -233,7 +285,7 @@
       const pattern = lang === 'de' ? 'german' : 'english';
       const body = await selectTab(group, pattern);
       if (!body) return { ok: false, error: `Tab „${lang === 'de' ? 'German' : 'English'} Translated“ nicht gefunden` };
-      return { ok: true, title: fillControl(body, `article_title_translated${lang}`, title) };
+      return { ok: true, title: await fillControl(body, `article_title_translated${lang}`, title) };
     },
 
     async selectTab({ group, tab }) {
@@ -278,15 +330,20 @@
       return { ok: false, error: 'Extract hat nicht rechtzeitig Daten geliefert' };
     },
 
-    /** Reiter „Metadata“: Autor und Datum. Liefert zusätzlich eine Beschreibung aller Felder. */
-    async fillMetadata({ author, authorUnknown, authorUnknownText, date, dateIso }) {
+    /**
+     * Reiter „Metadata“ (aus dem Bundle bekannt):
+     *   input[formcontrolname=article_created_at]  mat-datepicker, Moment-Adapter, Locale en-GB → "DD/MM/YYYY"
+     *   input[formcontrolname=article_author]      + Button matTooltip "Set to Autor ungenannt"
+     *   mat-select[formcontrolname=article_language] (leer → beim Speichern "en")
+     */
+    async fillMetadata({ author, authorUnknown, authorUnknownText, date, dateIso, dateGb }) {
       const group = findGroup('metadata');
       const body = await selectTab(group, 'metadata');
       if (!body) return { ok: false, error: 'Tab „Metadata“ nicht gefunden' };
       await sleep(300);
       const r = { ok: true, found: {}, structure: describeBody(body) };
 
-      const authorField = findLabelField(body, 'author|autor|verfasser|byline');
+      const authorField = body.querySelector('input[formcontrolname="article_author"]') || findLabelField(body, 'author|autor|verfasser|byline');
       r.found.author = authorField ? `${authorField.localName}[${authorField.getAttribute('formcontrolname') || authorField.id || ''}]` : null;
       if (authorUnknown) {
         const btn = findButton(body, 'ungenannt|unknown|anonym|no author|kein autor');
@@ -306,14 +363,17 @@
         } else r.author = false;
       }
 
-      const dateField = findLabelField(body, 'date|datum|published|veröffentlicht|erschienen');
-      r.found.date = dateField ? `${dateField.localName}[type=${dateField.type || ''} ${dateField.getAttribute('formcontrolname') || dateField.id || ''}]` : null;
-      if (dateField && (date || dateIso)) {
-        const value = dateField.localName === 'input' && dateField.type === 'date' ? dateIso : date;
+      const dateField = body.querySelector('input[formcontrolname="article_created_at"]') || findLabelField(body, 'date|datum|published|veröffentlicht|erschienen');
+      r.found.date = dateField ? `${dateField.localName}[type=${dateField.type || ''} ${dateField.getAttribute('formcontrolname') || dateField.id || ''}${dateField.classList.contains('mat-datepicker-input') ? ' datepicker' : ''}]` : null;
+      if (dateField && (date || dateIso || dateGb)) {
+        let value = date;
+        if (dateField.localName === 'input' && dateField.type === 'date') value = dateIso;
+        else if (dateField.classList.contains('mat-datepicker-input') && dateGb) value = dateGb;
         setNativeValue(dateField, value);
-        await sleep(150);
-        r.date = true;
+        await sleep(200);
+        r.date = !!dateField.value;
         r.dateValue = dateField.value;
+        r.dateInvalid = dateField.classList.contains('ng-invalid') || !!body.querySelector('mat-error');
       } else if (date || dateIso) r.date = false;
 
       return r;
@@ -346,7 +406,9 @@
       await sleep(200);
       const applied = [];
       const failed = [];
-      for (const path of paths || []) {
+      // Eltern vor Kindern: Ist ein Kind gewählt, blockiert OSDP den Klick auf den Elternknoten (blockIfChildIsSelected).
+      const ordered = [...(paths || [])].sort((a, b) => a.split(separator).length - b.split(separator).length);
+      for (const path of ordered) {
         const segments = path.split(separator).map(collapse).filter(Boolean);
         const res = await findTreePath(body, segments);
         if (res.error || !res.node?.checkbox) {
@@ -395,29 +457,47 @@
       return { ok: true, chips: chips() };
     },
 
-    /** „Save“ klicken und auf Rückmeldung warten. */
+    /**
+     * „Save“ klicken und auf Rückmeldung warten. OSDP meldet per Toast:
+     *   Erfolg: „Item Added!“ (und leert das Formular)
+     *   Fehler: „… must not be empty“, „Set tags before saving“, „Article date is not allowed …“,
+     *           „Duplicate, URL already in the database!“, „Not logged in!“
+     */
     async save({ timeoutMs = 25000 } = {}) {
-      const btn = findButton(topBar(), '^\\s*save\\s*$|speichern');
+      const btn = findButton(topBar(), '^\\s*(save|update)\\s*$|speichern');
       if (!btn) return { ok: false, error: 'Button „Save“ nicht gefunden' };
-      if (btn.disabled) return { ok: false, error: 'Button „Save“ ist deaktiviert' };
+      if (btn.disabled) return { ok: false, error: 'Button „Save“ ist deaktiviert (Duplikat oder laufender Vorgang?)' };
       const urlBefore = location.href;
+      // Formular → Store läuft über valueChanges mit 250 ms Debounce: vor dem Klick kurz warten
+      await sleep(600);
+      const before = toasts().length;
       btn.click();
       const start = Date.now();
       let spinnerSeen = false;
-      let snackbar = '';
-      await sleep(400);
+      let seen = [];
+      await sleep(300);
       while (Date.now() - start < timeoutMs) {
         if (spinnerVisible()) spinnerSeen = true;
+        const now = toasts();
+        if (now.length > before || now.some((t) => /Item Added|Item Updated|Duplicate|Error/i.test(`${t.title} ${t.message}`))) seen = now;
         const sb = snackbarText();
-        if (sb) snackbar = sb;
+        if (sb) seen.push({ kind: 'info', title: 'snackbar', message: sb });
         const sourceNow = document.querySelector('input[formcontrolname="article_source"]')?.value || '';
-        const done = (snackbar && !spinnerVisible()) || location.href !== urlBefore || (spinnerSeen && !spinnerVisible() && !sourceNow);
+        const done = seen.length > 0 || location.href !== urlBefore || (spinnerSeen && !spinnerVisible() && !sourceNow);
         if (done) break;
-        await sleep(300);
+        await sleep(250);
       }
+      await sleep(300);
+      const all = seen.length ? seen : toasts();
+      const success = all.some((t) => /Item Added|Item Updated/i.test(`${t.title} ${t.message}`));
+      const duplicate = all.some((t) => /duplicate/i.test(t.message));
+      const errors = all.filter((t) => t.kind === 'error').map((t) => t.message);
       return {
         ok: true,
-        snackbar,
+        success,
+        duplicate,
+        errors,
+        toasts: all,
         spinnerSeen,
         urlAfter: location.href,
         sourceAfter: document.querySelector('input[formcontrolname="article_source"]')?.value || '',

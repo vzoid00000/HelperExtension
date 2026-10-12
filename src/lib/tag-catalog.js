@@ -54,7 +54,16 @@ export class TagCatalog {
     const walk = (node, parents) => {
       const segments = [...parents, node.name];
       const path = segments.join(SEP);
-      const entry = { name: node.name, path, segments, note: node.note || '', tooltip: node.tooltip || '', children: node.children.map((c) => c.name) };
+      const entry = {
+        name: node.name,
+        path,
+        segments,
+        note: node.note || '',
+        tooltip: node.tooltip || '',
+        uid: node.uid ?? null,
+        description: node.description || '',
+        children: node.children.map((c) => c.name)
+      };
       this.byPath.set(path, entry);
       const key = norm(node.name);
       if (!this.byName.has(key)) this.byName.set(key, []);
@@ -71,6 +80,11 @@ export class TagCatalog {
 
   get(path) {
     return this.byPath.get(path) || null;
+  }
+
+  /** UIDs des Dashboards zu Pfaden (null, wenn unbekannt). */
+  uidsFor(paths) {
+    return paths.map((p) => this.byPath.get(p)?.uid ?? null);
   }
 
   /** Darf dieser Tag laut Handbuch angeklickt werden? */
@@ -114,7 +128,7 @@ export class TagCatalog {
   }
 
   /** Eingerückter Text eines Teilbaums (nur erlaubte Tags), für den Prompt. `rootPath` z. B. "Cyber" oder "Newsinfo → geographische Lokationen". */
-  treeText(rootPath, { includeRoot = true } = {}) {
+  treeText(rootPath, { includeRoot = true, withDescriptions = false, maxDescription = 170 } = {}) {
     const segments = rootPath.split(SEP);
     let node = this.tree.find((n) => n.name === segments[0]);
     for (const seg of segments.slice(1)) node = node?.children.find((c) => c.name === seg);
@@ -124,7 +138,11 @@ export class TagCatalog {
       const path = [...parents, n.name].join(SEP);
       const excluded = EXCLUDED_PREFIXES.some((p) => path === p || path.startsWith(p + SEP)) || n.note === 'AUSGESCHLOSSEN' || n.note === 'NICHT VERGEBEN';
       if (excluded) return;
-      if (depth > 0 || includeRoot) lines.push(`${'  '.repeat(depth)}${n.name}`);
+      if (depth > 0 || includeRoot) {
+        let desc = withDescriptions && n.description && !/^NUR EINEN/i.test(n.description) ? n.description.replace(/\s+/g, ' ') : '';
+        if (desc.length > maxDescription) desc = desc.slice(0, maxDescription - 1).replace(/\s\S*$/, '') + '…';
+        lines.push(`${'  '.repeat(depth)}${n.name}${desc ? ' — ' + desc : ''}`);
+      }
       n.children.forEach((c) => walk(c, [...parents, n.name], depth + 1));
     };
     walk(node, segments.slice(0, -1), 0);

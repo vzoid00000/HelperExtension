@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS = {
 
   // OSDP
   osdpUrlPattern: 'https://osdp.zentdok.at/*',
-  osdpDateFormat: 'dd.MM.yyyy', // Platzhalter: dd, MM, yyyy, yy
+  osdpDateFormat: 'dd/MM/yyyy', // OSDP-Datepicker (Moment, Locale en-GB). Platzhalter: dd, MM, yyyy, yy
   authorUnknownText: 'Autor ungenannt',
   tagLabelCyber: 'Cyber',       // Fallback-Tag, falls das Tagging ausfällt
   tagLabelKrimisi: 'KriMiSi',

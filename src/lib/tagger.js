@@ -56,15 +56,20 @@ const SCHEMA = {
 };
 
 function catalogText(catalog) {
+  const opts = { withDescriptions: true };
   return [
-    '=== THEMEN-TAGS (Pfadschreibweise mit " > ") ===',
-    catalog.treeText('Cyber'),
-    catalog.treeText('KriMiSi'),
-    catalog.treeText('InnoTech'),
-    catalog.treeText('Allgemeine Tags'),
+    '=== THEMEN-TAGS (Pfadschreibweise mit " > "; nach "—" steht die offizielle Tag-Definition aus dem Dashboard) ===',
+    catalog.treeText('Cyber', opts),
+    catalog.treeText('KriMiSi', opts),
+    catalog.treeText('InnoTech', opts),
+    catalog.treeText('Allgemeine Tags', opts),
     '',
     '=== GEOGRAFISCHE LOKATIONEN (nur den Ortsnamen angeben) ===',
-    catalog.treeText('Newsinfo → geographische Lokationen')
+    catalog.treeText('Newsinfo → geographische Lokationen'),
+    '',
+    '=== AUFTRAGSTAGS (Definitionen) ===',
+    `WB-Cyber — ${catalog.get('Auftragstags → WB-Cyber')?.description || ''}`,
+    `WB-KriMiSi — ${catalog.get('Auftragstags → WB-KriMiSi')?.description || ''}`
   ].join('\n');
 }
 
