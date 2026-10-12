@@ -1,7 +1,9 @@
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from '../lib/settings.js';
 import { translateArticle } from '../lib/translate.js';
+import { DEFAULT_SOURCES, sourcesToText, parseSourcesText } from '../lib/sources.js';
 
-const FIELDS = ['translator', 'anthropicApiKey', 'anthropicModel', 'deeplApiKey', 'osdpDateFormat', 'authorUnknownText', 'osdpTitleLanguage', 'osdpUrlPattern', 'osdpSelectorOverrides'];
+const TEXT_FIELDS = ['anthropicApiKey', 'anthropicModel', 'translator', 'deeplApiKey', 'sourcesText', 'minScore', 'maxItemsPerRun', 'autoRunTime', 'osdpDateFormat', 'authorUnknownText', 'tagLabelCyber', 'tagLabelKrimisi', 'osdpUrlPattern'];
+const BOOL_FIELDS = ['autoSave', 'fillEnglishTab', 'useSiteExtract'];
 const $ = (id) => document.getElementById(id);
 
 function setStatus(msg, kind = '') {
@@ -13,23 +15,31 @@ function setStatus(msg, kind = '') {
 
 function readForm() {
   const s = {};
-  for (const f of FIELDS) s[f] = $(f).value.trim();
+  for (const f of TEXT_FIELDS) s[f] = $(f).value.trim();
+  for (const f of BOOL_FIELDS) s[f] = $(f).checked;
+  s.minScore = Math.max(0, Math.min(10, Number(s.minScore) || 0));
+  s.maxItemsPerRun = Math.max(1, Number(s.maxItemsPerRun) || 25);
   return s;
 }
 
 async function init() {
   const settings = await loadSettings();
-  for (const f of FIELDS) $(f).value = settings[f] ?? DEFAULT_SETTINGS[f] ?? '';
+  for (const f of TEXT_FIELDS) $(f).value = settings[f] ?? DEFAULT_SETTINGS[f] ?? '';
+  for (const f of BOOL_FIELDS) $(f).checked = !!(settings[f] ?? DEFAULT_SETTINGS[f]);
+
+  $('btnDefaults').addEventListener('click', () => {
+    $('sourcesText').value = sourcesToText(DEFAULT_SOURCES);
+  });
 
   $('btnSave').addEventListener('click', async () => {
     const s = readForm();
-    if (s.osdpSelectorOverrides) {
-      try {
-        JSON.parse(s.osdpSelectorOverrides);
-      } catch (e) {
-        setStatus(`Selektor-Overrides sind kein gültiges JSON: ${e.message}`, 'err');
-        return;
-      }
+    if (s.sourcesText && parseSourcesText(s.sourcesText).length === 0) {
+      setStatus('Quellen-Liste: keine gültige Zeile gefunden (Format: Name | URL | Kategorie | Typ).', 'err');
+      return;
+    }
+    if (s.autoRunTime && !/^\d{1,2}:\d{2}$/.test(s.autoRunTime)) {
+      setStatus('Uhrzeit bitte als HH:MM angeben.', 'err');
+      return;
     }
     await saveSettings({ ...DEFAULT_SETTINGS, ...s });
     setStatus('Gespeichert.', 'ok');

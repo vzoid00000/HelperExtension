@@ -15,10 +15,17 @@
     <button id="btnOptions" class="icon" title="Einstellungen">⚙</button>
   </header>
 
+  <section class="card">
+    <div class="row">
+      <button id="btnAuto" class="primary">▶ Automatik öffnen</button>
+      <span class="muted small">Scannt alle Quellen, prüft Relevanz, übersetzt und trägt ein.</span>
+    </div>
+  </section>
+
   <div id="status" class="status" hidden></div>
 
   <section class="card">
-    <h2>1 · Artikel erfassen</h2>
+    <h2>Einzelner Artikel · 1 · erfassen</h2>
     <div class="row">
       <button id="btnExtract" class="primary">Aktuellen Tab auslesen</button>
       <button id="btnReset" class="ghost" title="Entwurf leeren">Leeren</button>
@@ -78,9 +85,10 @@
     <h2>3 · In OSDP eintragen</h2>
     <div class="row">
       <button id="btnFill" class="primary">Formular ausfüllen</button>
+      <label class="check"><input id="saveAfterFill" type="checkbox"> danach „Save“ klicken</label>
       <span id="osdpTabInfo" class="muted small"></span>
     </div>
-    <p class="muted small">Trägt URL, Titel, Autor, Datum und Texte in den geöffneten OSDP-Tab ein. Speichern musst du dort selbst – bitte vorher kontrollieren.</p>
+    <p class="muted small">Lädt den OSDP News-Editor neu und füllt Native, English/German Translated, Metadata und Tags.</p>
     <pre id="fillReport" class="report" hidden></pre>
   </section>
 
@@ -89,10 +97,9 @@
     <div class="row">
       <button id="btnInspect" class="ghost">OSDP-Formular analysieren (Dump erzeugen)</button>
     </div>
-    <p class="muted small">Erzeugt zwei Dateien im Download-Ordner (<code>osdp-dump-….json</code> und <code>….html</code>) mit der Struktur des News-Editors. Diese Dateien bitte in <code>site-dump/</code> ins Repository legen oder im Chat einfügen.</p>
+    <p class="muted small">Erzeugt zwei Dateien im Download-Ordner (<code>osdp-dump-….json</code> und <code>….html</code>) mit der Struktur des News-Editors. Vorher die Reiter öffnen, die analysiert werden sollen (z. B. „Metadata“).</p>
   </section>
 
-  <script src="../config/osdp-selectors.js"></script>
   <script type="module" src="sidepanel.js"></script>
 </body>
 </html>

@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSDP News Automatik</title>
+  <link rel="stylesheet" href="../sidepanel/sidepanel.css">
+  <link rel="stylesheet" href="auto.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>OSDP News Automatik</h1>
+      <div class="muted">Erlaubt ab: <strong id="earliestDate">–</strong> (letzter Freitag) · <span id="translatorInfo"></span></div>
+    </div>
+    <button id="btnOptions" class="icon" title="Einstellungen">⚙</button>
+  </header>
+
+  <div class="card">
+    <div class="row">
+      <button id="btnAll" class="primary">▶ Alles automatisch</button>
+      <span class="sep"></span>
+      <button id="btnScan">1 · Quellen scannen</button>
+      <button id="btnClassify">2 · Relevanz prüfen</button>
+      <button id="btnProcess">3 · Ausgewählte eintragen</button>
+      <span class="sep"></span>
+      <button id="btnStop" class="ghost" disabled>■ Stopp</button>
+    </div>
+    <div id="status" class="status" hidden></div>
+    <div class="progress"><div id="progressBar"></div></div>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Quellen <span id="sourcesSummary" class="muted small"></span></h2>
+      <table class="tbl" id="sourcesTable">
+        <thead><tr><th>Quelle</th><th>Typ</th><th>Status</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Protokoll</h2>
+      <pre id="log" class="report log"></pre>
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="row toolbar">
+      <h2>Meldungen <span id="itemsSummary" class="muted small"></span></h2>
+      <span class="sep"></span>
+      <label class="check">Anzeige
+        <select id="filter">
+          <option value="all">alle</option>
+          <option value="relevant" selected>relevant</option>
+          <option value="selected">ausgewählt</option>
+          <option value="done">eingetragen</option>
+          <option value="error">Fehler</option>
+        </select>
+      </label>
+      <button id="btnSelectRelevant" class="ghost">Alle relevanten auswählen</button>
+      <button id="btnClearSelection" class="ghost">Auswahl aufheben</button>
+      <button id="btnForget" class="ghost" title="Liste und Verlauf der bereits eingetragenen URLs löschen">Liste leeren</button>
+    </div>
+    <table class="tbl items" id="itemsTable">
+      <thead>
+        <tr><th></th><th>Bereich</th><th>Score</th><th>Datum</th><th>Quelle</th><th>Titel</th><th>Status</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <script src="../content/news-extractor.js"></script>
+  <script type="module" src="auto.js"></script>
+</body>
+</html>

@@ -1,57 +1,58 @@
 # OSDP News Helper (Chrome Extension)
 
 Automatisiert das Eintragen von News in den OSDP News-Editor
-(`https://osdp.zentdok.at/#/newsEditor`):
+(`https://osdp.zentdok.at/#/newsEditor`) in zwei Bereichen:
 
-1. Artikel auf einer englischsprachigen News-Seite auslesen (URL, Titel, Autor, Datum, Text)
-2. Datum gegen die „letzter Freitag“-Regel prüfen
-3. Titel und Text Englisch → Deutsch übersetzen (Claude API, DeepL oder Chrome-intern)
-4. Alles in das OSDP-Formular eintragen (Speichern bleibt manuell, zur Kontrolle)
+- **Cyber**: Cyberangriffe von Relevanz, Aufstockung/Verbesserung von Systemen
+- **KriMiSi**: Krisen, Militär, Sicherheit (Kriege, Anschläge, wichtige diplomatische Treffen)
 
-Bereiche: **Cyber** (Cyberangriffe, Aufrüstung/Verbesserung von Systemen) und
-**KriMiSi** (Krisen, Militär, Sicherheit: Kriege, Anschläge, wichtige diplomatische Treffen).
+## Was die Automatik macht
 
-## Status
+1. **Quellen scannen**: Liest alle konfigurierten Nachrichtenquellen (RSS-Feeds und
+   Übersichtsseiten) und sammelt Meldungen ab dem letzten Freitag.
+2. **Relevanz prüfen**: Claude bewertet jede Schlagzeile (Bereich Cyber/KriMiSi/keiner,
+   Wichtigkeit 0–10). Alles ab der Schwelle (Standard 6) wird ausgewählt.
+3. **Eintragen**: Für jede ausgewählte Meldung
+   - Artikel laden und Text, Autor, Datum auslesen (Datum erneut gegen „letzter Freitag“ geprüft)
+   - Autor nur, wenn es eine natürliche Person ist, sonst „Autor ungenannt“
+   - Titel und Text Englisch → Deutsch übersetzen (Claude, DeepL oder Chrome-intern)
+   - OSDP-Editor neu laden und befüllen: Native (URL, Titel, Inhalt), English Translated,
+     German Translated, Metadata (Autor, Datum), Tags (Cyber oder KriMiSi)
+   - „Save“ klicken (abschaltbar) und die URL als erledigt merken
 
-| Teil | Stand |
-|---|---|
-| Artikel auslesen (Meta-Tags, JSON-LD, Textheuristik) | fertig, muss an echten Seiten getestet werden |
-| Datumsregel „letzter Freitag“ | fertig |
-| Autor: nur natürliche Personen, sonst „Autor ungenannt“ | fertig (Heuristik, manuell korrigierbar) |
-| Übersetzung Claude / DeepL / Chrome | fertig |
-| OSDP-Formular ausfüllen | **vorläufig** – Felder werden über Label-Text gesucht, bis der DOM-Dump vorliegt |
-| OSDP-Analyse (Dump) | fertig |
+Dieselbe Meldung von mehreren Quellen wird jeweils eigenständig eingetragen.
 
-## Installation (Entwicklermodus)
+## Installation
 
-1. Repository klonen oder als ZIP herunterladen und entpacken
-2. Chrome: `chrome://extensions` öffnen → oben rechts **Entwicklermodus** einschalten
-3. **„Entpackte Erweiterung laden“** → den Projektordner (mit `manifest.json`) auswählen
-4. Auf das Extension-Icon klicken → das Side Panel öffnet sich
-5. Zahnrad ⚙ → Übersetzungs-Anbieter wählen und API-Key eintragen → Speichern → „Übersetzung testen“
+1. Repository klonen oder ZIP entpacken
+2. Chrome: `chrome://extensions` → **Entwicklermodus** einschalten → **„Entpackte Erweiterung laden“** → Projektordner wählen
+3. Extension-Icon klicken → Side Panel → ⚙ Einstellungen:
+   - **Claude API-Key** eintragen (console.anthropic.com). Nötig für die Relevanzprüfung und die Standard-Übersetzung.
+   - Optional DeepL-Key, Quellen, Schwelle, Zeitplan
+   - „Speichern“, dann „Übersetzung testen“
+4. In OSDP einloggen (ein Tab mit `osdp.zentdok.at` reicht, die Extension nutzt die Anmeldung des Browsers)
 
-Nach Code-Änderungen: in `chrome://extensions` bei der Extension auf „Aktualisieren“ (↻) klicken.
+Nach Code-Änderungen in `chrome://extensions` auf „Aktualisieren“ (↻) klicken.
 
-## Arbeitsablauf
+## Bedienung
 
-1. News-Artikel im Browser öffnen, Side Panel öffnen
-2. **Bereich** wählen (Cyber / KriMiSi)
-3. **„Aktuellen Tab auslesen“** – Felder werden gefüllt, Datum wird geprüft:
-   - grün „OK“: Datum ist ≥ letzter Freitag
-   - rot „zu alt“: Artikel darf nicht eingetragen werden (Eintragen wird blockiert)
-   - gelb „Datum unbekannt“: Datum von Hand eintragen (TT.MM.JJJJ)
-   - Autor: Wenn der erkannte Autor keine Person ist (Redaktion, Agentur, „Staff“), ist
-     „Autor ungenannt“ automatisch angehakt. Jederzeit manuell änderbar.
-4. **„Übersetzen“** – Titel (DE) und Text (DE) werden erzeugt; bitte gegenlesen und ggf. korrigieren
-5. OSDP-Tab mit dem News-Editor offen haben → **„Formular ausfüllen“**
-   - Die Extension wechselt zum OSDP-Tab und zeigt, welche Felder gefüllt wurden
-   - Im OSDP-Editor kontrollieren und dort speichern
+**Automatik** (Side Panel → „Automatik öffnen“ oder direkt die Seite `src/auto/auto.html` der Extension):
 
-Der Entwurf bleibt im Side Panel erhalten, bis „Leeren“ gedrückt oder ein neuer Artikel ausgelesen wird.
+- **▶ Alles automatisch** führt Scan → Relevanzprüfung → Eintragen in einem Rutsch aus.
+- Oder Schritt für Schritt: **1 · Quellen scannen**, **2 · Relevanz prüfen**, Auswahl in der
+  Tabelle kontrollieren (Haken setzen/entfernen, Zeile anklicken für Begründung), **3 · Ausgewählte eintragen**.
+- **■ Stopp** beendet nach der laufenden Meldung.
+- Das Protokoll zeigt jeden Schritt; Fehler stehen in der Status-Spalte (Maus darüber).
+
+**Einzelner Artikel** (Side Panel): Artikel-Tab öffnen → „Aktuellen Tab auslesen“ → prüfen →
+„Übersetzen“ → „Formular ausfüllen“ (optional mit „Save“).
+
+**Zeitplan**: In den Einstellungen eine Uhrzeit eintragen (z. B. 08:00). Mo–Fr öffnet sich zu
+dieser Zeit die Automatik-Seite und startet „Alles automatisch“. Chrome muss dafür laufen.
 
 ### Datumsregel
 
-„Letzter Freitag“ ist der jüngste Freitag **vor** heute:
+„Letzter Freitag“ ist der jüngste Freitag **vor** heute. Ältere Artikel werden nie eingetragen.
 
 | Heute | Erlaubt ab |
 |---|---|
@@ -60,68 +61,90 @@ Der Entwurf bleibt im Side Panel erhalten, bis „Leeren“ gedrückt oder ein n
 | Freitag | Freitag der Vorwoche (7 Tage) |
 | Samstag / Sonntag | gestern / vorgestern |
 
-Logik in `src/lib/dates.js` (`lastFriday`, `checkArticleDate`).
+## Quellen
 
-## Übersetzung
+Standardliste in `src/lib/sources.js` (BleepingComputer, The Record, The Hacker News, SecurityWeek,
+CyberScoop, Dark Reading, Infosecurity, Krebs, The Register; BBC World, Guardian World, Al Jazeera,
+Defense News, Breaking Defense, The War Zone, Military Times, Politico Europe, DW, Kyiv Independent,
+Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite).
+
+Eigene Liste in den Einstellungen, eine Quelle pro Zeile:
+
+```
+Name | URL | cyber|krimisi|both | rss|html | URL-Muster (nur html, optional)
+BleepingComputer | https://www.bleepingcomputer.com/feed/ | cyber | rss
+AP News – World | https://apnews.com/world-news | krimisi | html | apnews\.com/article/
+# Deaktivierte Quelle | https://… | both | rss
+```
+
+Die Feed-URLs der Standardliste konnten aus der Entwicklungsumgebung heraus nicht geprüft werden.
+Fehlerhafte Quellen stehen nach dem Scan mit Fehlermeldung in der Quellen-Tabelle und
+lassen sich in den Einstellungen korrigieren.
+
+## Übersetzung und Relevanzprüfung
 
 | Anbieter | Qualität | Kosten | Einrichtung |
 |---|---|---|---|
-| Claude API (`claude-opus-5-5`) | sehr gut | pro Zeichen, API-Key | console.anthropic.com → API Key |
+| Claude API (`claude-opus-5-5`) | sehr gut | pro Token, API-Key | console.anthropic.com → API Key |
 | DeepL | gut | Free-Tarif 500.000 Zeichen/Monat | deepl.com/pro-api → Free-Key (`…:fx`) |
-| Chrome integriert | mittel | kostenlos | Chrome 138+, Sprachmodell wird beim ersten Mal geladen |
+| Chrome integriert | mittel | kostenlos | Chrome 138+, Modell wird beim ersten Mal geladen |
 
-Beim Claude-Aufruf ist der serverseitige Fallback aktiviert: Falls der Sicherheitsfilter
-eine Übersetzung ablehnt (kann bei Cyberangriff-Texten vorkommen), wird sie automatisch
+Die Relevanzprüfung läuft immer über Claude (Schlagzeilen in Paketen zu 40, strukturierte
+JSON-Antwort). Beim Claude-Aufruf ist der serverseitige Fallback aktiviert: Lehnt der
+Sicherheitsfilter eine Anfrage ab (bei Texten über Cyberangriffe möglich), wird sie automatisch
 auf einem anderen Claude-Modell wiederholt.
 
-API-Keys werden nur lokal in `chrome.storage.local` gespeichert und nie ins Repository geschrieben.
+API-Keys werden nur lokal in `chrome.storage.local` gespeichert.
 
-## OSDP-Feldzuordnung anpassen
+## OSDP-Integration (Stand)
 
-Die Zuordnung steht in `src/config/osdp-selectors.js`. Solange die echten Selektoren
-fehlen, sucht der Filler Felder über Label-Text, Platzhalter, `aria-label`, `name`,
-`id` und `formControlName`.
+Die Struktur des Editors stammt aus dem DOM-Dump (`site-dump/`): Angular 17 + Angular Material,
+CKEditor 5 für die Inhalte.
 
-So wird die Zuordnung exakt:
+| Bereich im Editor | Umsetzung | Stand |
+|---|---|---|
+| Native: Source, Title, Content | `formcontrolname` + CKEditor `setData()` | aus Dump bekannt, getestet gegen Nachbau |
+| English Translated / German Translated | wie Native, eigene Controls | aus Dump bekannt |
+| Tags: Cyber / KriMiSi | Checkbox im Tag-Baum | aus Dump bekannt |
+| Save / Extract | Buttons in der Kopfzeile | aus Dump bekannt |
+| **Metadata: Autor, Datum, „Autor ungenannt“** | Suche über Label-Text im Reiter | **Reiter war im Dump nicht geöffnet – noch unbestätigt** |
 
-1. OSDP News-Editor öffnen (am besten mit einer ausgefüllten Test-News)
-2. Side Panel → Werkzeuge → **„OSDP-Formular analysieren“**
-3. Die zwei Dateien aus dem Download-Ordner nach `site-dump/` kopieren (siehe `site-dump/README.md`)
-4. Daraus werden die `selector`-Einträge gesetzt. Ohne Neuladen der Extension gehen auch
-   Overrides in den Einstellungen (JSON), z. B.:
-
-```json
-{
-  "title": { "selector": "input[formcontrolname=title]" },
-  "date": { "selector": "input[formcontrolname=newsDate]" },
-  "authorUnknownButton": { "selector": "button.author-unknown" }
-}
-```
+Der Reiter „Metadata“ wird lazy gerendert; die Extension öffnet ihn und sucht Felder mit
+Label „Author/Autor“ und „Date/Datum“ sowie einen Button „Autor ungenannt“. Was sie dort
+findet, steht im Bericht (Zeile in der Meldungstabelle aufklappen → „Metadata-Felder“).
+Für eine exakte Zuordnung bitte einen Dump mit geöffnetem Reiter „Metadata“ erzeugen
+(siehe `site-dump/README.md`).
 
 ## Projektstruktur
 
 ```
 manifest.json                      Manifest V3
-src/background.js                  Service Worker (Side Panel öffnen, Defaults)
-src/sidepanel/                     Oberfläche (HTML/CSS/JS)
+src/background.js                  Service Worker (Side Panel, Zeitplan)
+src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen)
+src/sidepanel/                     Side Panel (Einzelartikel, Werkzeuge)
 src/options/                       Einstellungen
-src/lib/dates.js                   Datumsregel, Parsen, Formatieren
-src/lib/author.js                  Autor-Normalisierung (natürliche Person?)
+src/lib/sources.js                 Standardquellen, Quellen-Format
+src/lib/feeds.js                   RSS/Atom parsen, Links sammeln
+src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
+src/lib/classify.js                Relevanzprüfung (Claude, JSON-Schema)
 src/lib/translate.js               Übersetzung (Claude / DeepL / Chrome)
+src/lib/claude.js                  Claude Messages API (raw HTTP)
+src/lib/osdp-driver.js             Steuerung des OSDP-Editors (Tabs, CKEditor, Save)
+src/lib/dates.js                   Datumsregel, Parsen, Formatieren
+src/lib/author.js                  Autor-Normalisierung
 src/lib/settings.js                Einstellungen und Defaults
-src/content/news-extractor.js      Auslesen von News-Seiten
-src/content/osdp-filler.js         Eintragen in den OSDP-Editor
+src/content/news-extractor.js      Artikel auslesen, Links sammeln
+src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors
-src/config/osdp-selectors.js       Feldzuordnung OSDP
-site-dump/                         Ablage für den OSDP-Dump
+site-dump/                         Ablage für DOM-Dumps
 ```
 
 Kein Build-Schritt, keine Abhängigkeiten.
 
 ## Hinweise
 
-- `host_permissions: <all_urls>` ist nötig, damit „Aktuellen Tab auslesen“ auf jeder News-Seite
-  funktioniert, ohne jede Domain einzeln freizugeben.
-- Bei Paywall-Seiten wird nur der sichtbare Text ausgelesen.
-- Rich-Text-Editoren (Quill, ProseMirror, contenteditable) werden unterstützt; TinyMCE/CKEditor
-  in iframes nur, wenn sie same-origin sind.
+- `host_permissions: <all_urls>` ist nötig, um Feeds und Artikel beliebiger News-Seiten zu laden.
+- Seiten, die einfache Abrufe blockieren (z. B. Reuters), werden in einem unsichtbaren
+  Hintergrund-Tab geladen. Paywall-Inhalte sind nur lesbar, wenn der Browser eingeloggt ist.
+- Bereits eingetragene URLs werden gemerkt und beim nächsten Scan übersprungen
+  („Liste leeren“ setzt das zurück).

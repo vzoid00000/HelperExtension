@@ -2,6 +2,7 @@ import { loadSettings } from '../lib/settings.js';
 import { parseDate, checkArticleDate, formatDate, toIsoDate, formatDisplay, lastFriday } from '../lib/dates.js';
 import { normalizeAuthor } from '../lib/author.js';
 import { translateArticle } from '../lib/translate.js';
+import { OsdpDriver } from '../lib/osdp-driver.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -42,13 +43,13 @@ async function init() {
   updateOsdpTabInfo();
 
   $('btnOptions').addEventListener('click', () => chrome.runtime.openOptionsPage());
+  $('btnAuto').addEventListener('click', () => chrome.tabs.create({ url: chrome.runtime.getURL('src/auto/auto.html') }));
   $('btnExtract').addEventListener('click', () => guard(extractFromActiveTab, $('btnExtract')));
   $('btnReset').addEventListener('click', resetDraft);
   $('btnTranslate').addEventListener('click', () => guard(translate, $('btnTranslate')));
   $('btnFill').addEventListener('click', () => guard(fillOsdp, $('btnFill')));
   $('btnInspect').addEventListener('click', () => guard(inspectOsdp, $('btnInspect')));
 
-  // Manuelle Änderungen in den Entwurf übernehmen.
   bind('url', 'url');
   bind('titleEn', 'titleEn');
   bind('titleDe', 'titleDe');
@@ -167,7 +168,7 @@ async function findOsdpTab() {
 async function updateOsdpTabInfo() {
   if (!settings) return;
   const tab = await findOsdpTab().catch(() => null);
-  $('osdpTabInfo').textContent = tab ? 'OSDP-Tab gefunden' : 'Kein OSDP-Tab offen';
+  $('osdpTabInfo').textContent = tab ? 'OSDP-Tab gefunden' : 'Kein OSDP-Tab offen (wird geöffnet)';
 }
 
 // --------------------------------------------------------------- Extract ----
@@ -200,7 +201,6 @@ async function extractFromActiveTab() {
     ? `${result.text.length} Zeichen, Quelle: ${result.textSource}${result.truncated ? ', gekürzt' : ''}`
     : 'kein Text gefunden – bitte manuell einfügen';
 
-  // Autor
   draft.authorRaw = result.authorRaw || '';
   const a = normalizeAuthor(draft.authorRaw, draft.siteName);
   draft.author = a.display;
@@ -211,7 +211,6 @@ async function extractFromActiveTab() {
       : `„${draft.authorRaw}“ ist keine Person → Autor ungenannt`
     : 'kein Autor gefunden';
 
-  // Datum: ersten parsebaren Kandidaten nehmen
   let parsed = null;
   let source = '';
   for (const c of result.dateCandidates || []) {
@@ -271,72 +270,45 @@ async function translate() {
 // ------------------------------------------------------------------ Fill ----
 
 async function fillOsdp() {
-  const tab = await findOsdpTab();
-  if (!tab) throw new Error('Kein OSDP-Tab gefunden – bitte https://osdp.zentdok.at/#/newsEditor öffnen.');
   if (!draft.url) throw new Error('Der Entwurf ist leer – zuerst einen Artikel auslesen.');
-
   const parsed = draft.dateIso ? parseDate(draft.dateIso) : null;
   const { status, earliest } = checkArticleDate(parsed);
   if (status === 'too_old') {
     throw new Error(`Nicht eingetragen: Artikel ist älter als der letzte Freitag (${formatDate(earliest)}).`);
   }
   if (status === 'unknown') throw new Error('Nicht eingetragen: Datum fehlt.');
-  if (!draft.textDe) setStatus('Hinweis: Es gibt noch keine Übersetzung – es wird nur der Quelltext eingetragen.', 'warn');
+  if (!draft.textDe) setStatus('Hinweis: Es gibt noch keine Übersetzung – der deutsche Reiter bleibt leer.', 'warn');
 
-  const selectors = mergedSelectors();
-  const title = settings.osdpTitleLanguage === 'en' ? draft.titleEn : draft.titleDe || draft.titleEn;
-  const payload = {
-    url: draft.url,
-    title,
-    author: draft.authorUnknown ? '' : draft.author.trim(),
-    authorUnknown: draft.authorUnknown || !draft.author.trim(),
-    authorUnknownText: settings.authorUnknownText || 'Autor ungenannt',
-    date: formatDate(parsed, settings.osdpDateFormat || 'dd.MM.yyyy'),
-    dateIso: toIsoDate(parsed),
-    sourceText: draft.textEn,
-    translatedText: draft.textDe,
-    category: draft.category,
-    categoryLabel: (globalThis.OSDP_CATEGORY_LABELS || {})[draft.category] || draft.category
-  };
+  const save = $('saveAfterFill').checked;
+  const driver = new OsdpDriver(settings, (m) => setStatus(m));
+  setStatus('Lade OSDP-Editor und trage ein …');
+  const report = await driver.fillArticle(
+    {
+      url: draft.url,
+      titleEn: draft.titleEn,
+      textEn: draft.textEn,
+      titleDe: draft.titleDe,
+      textDe: draft.textDe,
+      author: draft.author.trim(),
+      authorUnknown: draft.authorUnknown || !draft.author.trim(),
+      date: parsed,
+      category: draft.category
+    },
+    { save, translateFn: async (a) => translateArticle(a, settings, (m) => setStatus(m)) }
+  );
 
-  setStatus('Trage in OSDP ein …');
-  await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['src/content/osdp-filler.js'] });
-  const [{ result }] = await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: (data, sel) => globalThis.__osdpHelper.fill(data, sel),
-    args: [payload, selectors]
-  });
-
-  const report = $('fillReport');
-  report.hidden = false;
-  report.textContent = [
-    `Ausgefüllt: ${result.filled.join(', ') || '–'}`,
-    `Nicht gefunden: ${result.missing.join(', ') || '–'}`,
-    ...(result.notes || []).map((n) => `Hinweis: ${n}`),
+  const out = $('fillReport');
+  out.hidden = false;
+  out.textContent = [
+    report.ok ? 'Alle Schritte erfolgreich.' : `Probleme:\n  ${report.problems.join('\n  ')}`,
+    save ? `Gespeichert: ${report.saved ? 'ja' : 'nein'}${report.snackbar ? ' – OSDP: „' + report.snackbar + '“' : ''}` : '',
     '',
-    'Gefundene Felder:',
-    ...Object.entries(result.fields || {}).map(([k, v]) => `  ${k}: ${v || '(nicht gefunden)'}`)
-  ].join('\n');
+    'Schritte:',
+    ...Object.entries(report.steps).map(([k, v]) => `  ${k}: ${JSON.stringify(v)}`)
+  ].filter((l, i) => l !== '' || i === 2).join('\n');
 
-  await chrome.tabs.update(tab.id, { active: true });
-  if (result.missing.length) {
-    setStatus(`Teilweise eingetragen – nicht gefunden: ${result.missing.join(', ')}. Bitte Dump erzeugen (Werkzeuge), damit die Selektoren angepasst werden können.`, 'warn');
-  } else {
-    setStatus('Alle Felder eingetragen – bitte im OSDP-Tab kontrollieren und speichern.', 'ok');
-  }
-}
-
-function mergedSelectors() {
-  const base = JSON.parse(JSON.stringify(globalThis.OSDP_SELECTORS || {}));
-  if (settings.osdpSelectorOverrides) {
-    try {
-      const overrides = JSON.parse(settings.osdpSelectorOverrides);
-      for (const [k, v] of Object.entries(overrides)) base[k] = { ...(base[k] || {}), ...v };
-    } catch {
-      setStatus('Selektor-Overrides in den Einstellungen sind kein gültiges JSON – werden ignoriert.', 'warn');
-    }
-  }
-  return base;
+  await driver.focusTab();
+  setStatus(report.ok ? (save ? 'Eingetragen und gespeichert.' : 'Eingetragen – bitte im OSDP-Tab prüfen und speichern.') : `Teilweise eingetragen – siehe Bericht.`, report.ok ? 'ok' : 'warn');
 }
 
 // --------------------------------------------------------------- Inspect ----

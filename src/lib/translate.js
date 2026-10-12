@@ -4,6 +4,8 @@
 //   'chrome' – in Chrome eingebaute Übersetzung (ab Chrome 138, kostenlos, ohne Key,
 //              Qualität nur mittel)
 
+import { claudeText } from './claude.js';
+
 const TRANSLATION_INSTRUCTIONS = `Du bist ein professioneller Fachübersetzer (Englisch → Deutsch) für ein behördliches Nachrichten-Dokumentationssystem in Österreich.
 
 Aufgabe: Übersetze den vom Nutzer gelieferten englischen Nachrichtentext vollständig und inhaltlich exakt ins Deutsche.
@@ -46,71 +48,12 @@ export async function translateArticle(article, settings, onProgress = () => {})
 // ---------------------------------------------------------------- Claude ----
 
 async function translateWithClaude(title, text, settings, onProgress) {
-  const apiKey = (settings.anthropicApiKey || '').trim();
-  if (!apiKey) throw new Error('Kein Claude API-Key hinterlegt (Einstellungen).');
-  const model = settings.anthropicModel || 'claude-opus-5-5';
-
   onProgress('Übersetze mit Claude …');
   const [deTitle, deText] = await Promise.all([
-    title ? claudeMessage(apiKey, model, TITLE_INSTRUCTIONS, title, 1024) : Promise.resolve(''),
-    text ? claudeMessage(apiKey, model, TRANSLATION_INSTRUCTIONS, text, 16000) : Promise.resolve('')
+    title ? claudeText(settings, TITLE_INSTRUCTIONS, title, { maxTokens: 1024 }) : Promise.resolve(''),
+    text ? claudeText(settings, TRANSLATION_INSTRUCTIONS, text, { maxTokens: 16000 }) : Promise.resolve('')
   ]);
   return { title: deTitle.trim(), text: deText.trim() };
-}
-
-/**
- * Ein einzelner Aufruf der Messages API (raw HTTP, da die Extension ohne Bundler läuft).
- * Server-seitiger Fallback ist aktiviert: Lehnt der Sicherheitsklassifikator eine
- * Anfrage ab (kann bei Cyber-Themen passieren), wird sie automatisch auf einem
- * anderen Claude-Modell wiederholt, statt mit "refusal" zu enden.
- */
-async function claudeMessage(apiKey, model, system, userText, maxTokens) {
-  const body = {
-    model,
-    max_tokens: maxTokens,
-    system,
-    messages: [{ role: 'user', content: userText }],
-    output_config: { effort: 'medium' },
-    fallbacks: 'default'
-  };
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'content-type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-beta': 'server-side-fallback-2026-07-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
-    body: JSON.stringify(body)
-  });
-
-  if (!res.ok) {
-    let detail = '';
-    try {
-      const err = await res.json();
-      detail = err?.error?.message || JSON.stringify(err);
-    } catch {
-      detail = await res.text().catch(() => '');
-    }
-    if (res.status === 401) throw new Error('Claude API: API-Key ungültig (401).');
-    if (res.status === 429) throw new Error('Claude API: Rate-Limit erreicht (429). Kurz warten und erneut versuchen.');
-    throw new Error(`Claude API Fehler ${res.status}: ${detail}`);
-  }
-
-  const data = await res.json();
-  if (data.stop_reason === 'refusal') {
-    const why = data.stop_details?.explanation || data.stop_details?.category || 'ohne Angabe';
-    throw new Error(`Claude hat die Übersetzung abgelehnt (${why}). Bitte Text prüfen oder anderen Anbieter wählen.`);
-  }
-  if (data.stop_reason === 'max_tokens') {
-    throw new Error('Claude: Antwort abgeschnitten (max_tokens). Text in kleinere Teile aufteilen.');
-  }
-  return (data.content || [])
-    .filter((b) => b.type === 'text')
-    .map((b) => b.text)
-    .join('');
 }
 
 // ----------------------------------------------------------------- DeepL ----
@@ -180,7 +123,6 @@ async function translateWithChrome(title, text, onProgress) {
 
   onProgress('Übersetze mit Chrome …');
   const deTitle = title ? await translator.translate(title) : '';
-  // Absatzweise übersetzen, damit die Struktur erhalten bleibt.
   const paragraphs = text ? text.split(/\n\s*\n/) : [];
   const deParagraphs = [];
   for (const p of paragraphs) {

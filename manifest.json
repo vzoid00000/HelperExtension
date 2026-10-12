@@ -1,15 +1,15 @@
 {
   "manifest_version": 3,
   "name": "OSDP News Helper",
-  "version": "0.1.0",
-  "description": "Liest News-Artikel aus, prüft das Datum, übersetzt EN→DE und trägt alles in den OSDP News-Editor ein.",
+  "version": "0.2.0",
+  "description": "Scannt News-Quellen, prüft Relevanz und Datum, übersetzt EN→DE und trägt alles automatisch in den OSDP News-Editor ein.",
   "permissions": [
     "sidePanel",
     "scripting",
     "storage",
     "tabs",
     "downloads",
-    "clipboardWrite"
+    "alarms"
   ],
   "host_permissions": [
     "<all_urls>"
