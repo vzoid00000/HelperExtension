@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "OSDP News Helper",
+  "version": "0.1.0",
+  "description": "Liest News-Artikel aus, prüft das Datum, übersetzt EN→DE und trägt alles in den OSDP News-Editor ein.",
+  "permissions": [
+    "sidePanel",
+    "scripting",
+    "storage",
+    "tabs",
+    "downloads",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_title": "OSDP News Helper öffnen"
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel/sidepanel.html"
+  },
+  "options_page": "src/options/options.html",
+  "minimum_chrome_version": "116"
+}

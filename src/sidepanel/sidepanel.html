@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSDP News Helper</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <h1>OSDP News Helper</h1>
+      <div class="muted">Erlaubt ab: <strong id="earliestDate">–</strong> (letzter Freitag)</div>
+    </div>
+    <button id="btnOptions" class="icon" title="Einstellungen">⚙</button>
+  </header>
+
+  <div id="status" class="status" hidden></div>
+
+  <section class="card">
+    <h2>1 · Artikel erfassen</h2>
+    <div class="row">
+      <button id="btnExtract" class="primary">Aktuellen Tab auslesen</button>
+      <button id="btnReset" class="ghost" title="Entwurf leeren">Leeren</button>
+    </div>
+
+    <label>Bereich
+      <div class="segmented">
+        <label><input type="radio" name="category" value="cyber" checked> Cyber</label>
+        <label><input type="radio" name="category" value="krimisi"> KriMiSi</label>
+      </div>
+    </label>
+
+    <label>URL
+      <input id="url" type="url" placeholder="https://…">
+    </label>
+
+    <label>Titel (EN)
+      <input id="titleEn" type="text">
+    </label>
+
+    <label>Autor
+      <input id="author" type="text" placeholder="Vor- und Nachname">
+      <div class="inline">
+        <label class="check"><input id="authorUnknown" type="checkbox"> Autor ungenannt</label>
+        <span id="authorHint" class="muted small"></span>
+      </div>
+    </label>
+
+    <label>Datum (TT.MM.JJJJ)
+      <div class="inline">
+        <input id="date" type="text" placeholder="10.10.2026">
+        <span id="dateBadge" class="badge"></span>
+      </div>
+      <span id="dateHint" class="muted small"></span>
+    </label>
+
+    <label>Text (EN) <span id="textEnInfo" class="muted small"></span>
+      <textarea id="textEn" rows="8" placeholder="Artikeltext in Englisch"></textarea>
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>2 · Übersetzen</h2>
+    <div class="row">
+      <button id="btnTranslate" class="primary">Übersetzen (EN → DE)</button>
+      <span id="translatorInfo" class="muted small"></span>
+    </div>
+    <label>Titel (DE)
+      <input id="titleDe" type="text">
+    </label>
+    <label>Text (DE)
+      <textarea id="textDe" rows="8" placeholder="Deutsche Übersetzung"></textarea>
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>3 · In OSDP eintragen</h2>
+    <div class="row">
+      <button id="btnFill" class="primary">Formular ausfüllen</button>
+      <span id="osdpTabInfo" class="muted small"></span>
+    </div>
+    <p class="muted small">Trägt URL, Titel, Autor, Datum und Texte in den geöffneten OSDP-Tab ein. Speichern musst du dort selbst – bitte vorher kontrollieren.</p>
+    <pre id="fillReport" class="report" hidden></pre>
+  </section>
+
+  <section class="card tools">
+    <h2>Werkzeuge</h2>
+    <div class="row">
+      <button id="btnInspect" class="ghost">OSDP-Formular analysieren (Dump erzeugen)</button>
+    </div>
+    <p class="muted small">Erzeugt zwei Dateien im Download-Ordner (<code>osdp-dump-….json</code> und <code>….html</code>) mit der Struktur des News-Editors. Diese Dateien bitte in <code>site-dump/</code> ins Repository legen oder im Chat einfügen.</p>
+  </section>
+
+  <script src="../config/osdp-selectors.js"></script>
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>

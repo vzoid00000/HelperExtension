@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <title>OSDP News Helper – Einstellungen</title>
+  <link rel="stylesheet" href="../sidepanel/sidepanel.css">
+  <style>
+    body { max-width: 720px; margin: 0 auto; padding: 20px; }
+    select { font: inherit; padding: 6px 8px; margin-top: 3px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+    .card > label { margin-top: 12px; }
+    .hint { font-weight: 400; display: block; }
+  </style>
+</head>
+<body>
+  <h1>OSDP News Helper – Einstellungen</h1>
+  <div id="status" class="status" hidden></div>
+
+  <section class="card">
+    <h2>Übersetzung</h2>
+    <label>Anbieter
+      <select id="translator">
+        <option value="claude">Claude API (beste Qualität, API-Key nötig)</option>
+        <option value="deepl">DeepL API (Free-Key reicht)</option>
+        <option value="chrome">Chrome integriert (kostenlos, mittlere Qualität, Chrome 138+)</option>
+      </select>
+    </label>
+    <label>Claude API-Key
+      <input id="anthropicApiKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys. Wird nur lokal in dieser Extension gespeichert.</span>
+    </label>
+    <label>Claude Modell
+      <input id="anthropicModel" type="text" placeholder="claude-opus-5-5">
+    </label>
+    <label>DeepL API-Key
+      <input id="deeplApiKey" type="password" placeholder="xxxxxxxx-…:fx" autocomplete="off">
+      <span class="hint muted small">Free-Keys enden auf „:fx“ und nutzen automatisch den Free-Endpunkt.</span>
+    </label>
+  </section>
+
+  <section class="card">
+    <h2>OSDP</h2>
+    <label>Datumsformat im OSDP-Datumsfeld
+      <input id="osdpDateFormat" type="text" placeholder="dd.MM.yyyy">
+      <span class="hint muted small">Platzhalter: dd, MM, yyyy, yy. Bei einem echten <code>&lt;input type="date"&gt;</code> wird automatisch ISO verwendet.</span>
+    </label>
+    <label>Text für „Autor ungenannt“
+      <input id="authorUnknownText" type="text" placeholder="Autor ungenannt">
+    </label>
+    <label>Titel in OSDP eintragen als
+      <select id="osdpTitleLanguage">
+        <option value="de">Deutsch (Übersetzung)</option>
+        <option value="en">Englisch (Original)</option>
+      </select>
+    </label>
+    <label>URL-Muster des OSDP-Tabs
+      <input id="osdpUrlPattern" type="text" placeholder="https://osdp.zentdok.at/*">
+    </label>
+    <label>Selektor-Overrides (JSON, optional)
+      <textarea id="osdpSelectorOverrides" rows="8" placeholder='{"title": {"selector": "#newsTitle"}, "date": {"selector": "input[formcontrolname=date]"}}'></textarea>
+      <span class="hint muted small">Überschreibt Einträge aus <code>src/config/osdp-selectors.js</code>, ohne die Extension neu zu laden.</span>
+    </label>
+  </section>
+
+  <div class="row">
+    <button id="btnSave" class="primary">Speichern</button>
+    <button id="btnTest" class="ghost">Übersetzung testen</button>
+  </div>
+
+  <script type="module" src="options.js"></script>
+</body>
+</html>
