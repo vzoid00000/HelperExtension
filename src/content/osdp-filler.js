@@ -6,7 +6,9 @@
 //             ckeditor[formcontrolname=article_content…]  (CKEditor 5 → wird in der
 //             MAIN-Welt über editor.setData() befüllt, siehe lib/osdp-driver.js)
 //   Tab-Gruppe 2: Metadata | Tags
-//     Tags: mat-tree mit Checkboxen (Struktur, Cyber, KriMiSi, …)
+//     Tags: mat-tree (flach gerendert) mit mat-tree-node[aria-level][aria-expanded],
+//           Toggle-Button [mattreenodetoggle], mat-checkbox mit label.mdc-label;
+//           vollständiger Tooltip im Element, auf das aria-describedby zeigt
 //   Oben: Buttons Save | Extract | Summary | Translate
 //
 // Aufruf: globalThis.__osdpHelper.run('<schritt>', daten)
@@ -17,6 +19,7 @@
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const collapse = (s) => (s || '').replace(/\s+/g, ' ').trim();
   const text = (el) => collapse(el ? el.textContent : '');
+  const norm = (s) => collapse(s).toLowerCase();
 
   function isVisible(el) {
     if (!el || !el.getClientRects || el.getClientRects().length === 0) return false;
@@ -130,6 +133,74 @@
   const spinnerVisible = () => [...document.querySelectorAll('ngx-spinner .ngx-spinner-overlay, ngx-spinner div')].some(isVisible);
   const snackbarText = () => text(document.querySelector('mat-snack-bar-container, .mat-mdc-snack-bar-container, simple-snack-bar')) || '';
 
+  // -------------------------------------------------------- Tag-Baum ----
+  function treeNodes(body) {
+    return [...body.querySelectorAll('mat-tree-node')].map((el) => ({
+      el,
+      label: text(el.querySelector('label.mdc-label, label')),
+      level: parseInt(el.getAttribute('aria-level') || '1', 10),
+      expanded: el.getAttribute('aria-expanded') === 'true',
+      toggle: el.querySelector('button[mattreenodetoggle]:not([disabled])'),
+      checkbox: el.querySelector('input[type="checkbox"]'),
+      host: el.querySelector('mat-checkbox')
+    }));
+  }
+
+  async function expandNode(node) {
+    if (node.expanded || !node.toggle) return node.expanded;
+    // Ohne type-Attribut wäre der Button innerhalb des <form> ein Submit-Button.
+    if (!node.toggle.getAttribute('type')) node.toggle.setAttribute('type', 'button');
+    node.toggle.click();
+    for (let i = 0; i < 20; i++) {
+      await sleep(100);
+      if (node.el.getAttribute('aria-expanded') === 'true') break;
+    }
+    await sleep(150);
+    return node.el.getAttribute('aria-expanded') === 'true';
+  }
+
+  /** Knoten über den vollständigen Pfad (Segmente) finden; klappt Eltern bei Bedarf auf. */
+  async function findTreePath(body, segments) {
+    let nodes = treeNodes(body);
+    let startIdx = 0;
+    let current = null;
+    for (let d = 0; d < segments.length; d++) {
+      const want = norm(segments[d]);
+      const level = d + 1;
+      let found = null;
+      for (let i = startIdx; i < nodes.length; i++) {
+        const n = nodes[i];
+        if (d > 0 && n.level <= d) break; // Teilbaum des Elternknotens verlassen
+        if (n.level === level && norm(n.label) === want) {
+          found = { n, i };
+          break;
+        }
+      }
+      if (!found) {
+        return { error: `„${segments[d]}“ nicht gefunden unter ${segments.slice(0, d).join(' → ') || 'Wurzel'}` };
+      }
+      current = found.n;
+      if (d < segments.length - 1) {
+        const ok = await expandNode(current);
+        if (!ok && !current.expanded) return { error: `„${segments[d]}“ lässt sich nicht aufklappen` };
+        nodes = treeNodes(body);
+        let idx = nodes.findIndex((x) => x.el === current.el);
+        if (idx < 0) idx = nodes.findIndex((x) => x.level === level && norm(x.label) === want);
+        startIdx = idx + 1;
+      }
+    }
+    return { node: current };
+  }
+
+  function tooltipOf(node) {
+    const host = node.host || node.el.querySelector('[aria-describedby]');
+    const ids = host?.getAttribute('aria-describedby') || '';
+    const full = ids.split(/\s+/).map((id) => text(document.getElementById(id))).filter(Boolean).join(' ');
+    return full || host?.getAttribute('ng-reflect-message') || '';
+  }
+
+  const chips = () => [...document.querySelectorAll('mat-chip-listbox mat-chip, mat-chip-listbox mat-chip-option, mat-chip-listbox .mdc-evolution-chip__text-label')].map(text).filter(Boolean);
+
   // ----------------------------------------------------------- Steps ----
   const steps = {
     probe() {
@@ -215,7 +286,6 @@
       await sleep(300);
       const r = { ok: true, found: {}, structure: describeBody(body) };
 
-      // Autor
       const authorField = findLabelField(body, 'author|autor|verfasser|byline');
       r.found.author = authorField ? `${authorField.localName}[${authorField.getAttribute('formcontrolname') || authorField.id || ''}]` : null;
       if (authorUnknown) {
@@ -236,7 +306,6 @@
         } else r.author = false;
       }
 
-      // Datum
       const dateField = findLabelField(body, 'date|datum|published|veröffentlicht|erschienen');
       r.found.date = dateField ? `${dateField.localName}[type=${dateField.type || ''} ${dateField.getAttribute('formcontrolname') || dateField.id || ''}]` : null;
       if (dateField && (date || dateIso)) {
@@ -250,28 +319,80 @@
       return r;
     },
 
-    /** Reiter „Tags“: Checkbox mit passendem Label (z. B. „Cyber“) anhaken. */
+    /** Reiter „Tags“: eine Checkbox auf oberster Ebene (z. B. „Cyber“) anhaken – Minimal-Fallback. */
     async checkTag({ label }) {
       const group = findGroup('tags');
       const body = await selectTab(group, '^\\s*tags\\s*$');
       if (!body) return { ok: false, error: 'Tab „Tags“ nicht gefunden' };
       await sleep(200);
-      const want = collapse(label).toLowerCase();
-      const nodes = [...body.querySelectorAll('mat-tree-node, mat-checkbox')];
-      const node = nodes.find((n) => text(n.querySelector('label.mdc-label, label')).toLowerCase() === want)
-        || nodes.find((n) => text(n.querySelector('label.mdc-label, label')).toLowerCase().includes(want));
-      if (!node) return { ok: false, error: `Tag „${label}“ nicht gefunden`, available: nodes.map((n) => text(n.querySelector('label'))).filter(Boolean) };
-      const input = node.querySelector('input[type="checkbox"]');
-      if (!input) return { ok: false, error: 'Checkbox nicht gefunden' };
-      if (!input.checked) {
-        input.click();
+      const nodes = treeNodes(body);
+      const node = nodes.find((n) => norm(n.label) === norm(label)) || nodes.find((n) => norm(n.label).includes(norm(label)));
+      if (!node?.checkbox) return { ok: false, error: `Tag „${label}“ nicht gefunden`, available: nodes.map((n) => n.label) };
+      if (!node.checkbox.checked) {
+        node.checkbox.click();
         await sleep(250);
       }
-      return {
-        ok: input.checked,
-        checked: input.checked,
-        chips: [...document.querySelectorAll('mat-chip-listbox mat-chip, mat-chip-listbox .mdc-evolution-chip__text-label, mat-chip-option')].map(text).filter(Boolean)
-      };
+      return { ok: node.checkbox.checked, checked: node.checkbox.checked, chips: chips() };
+    },
+
+    /**
+     * Reiter „Tags“: Liste vollständiger Pfade anklicken, z. B.
+     * ["Struktur → [S]1 Cyber", "Newsinfo → Dokumententyp → News", …]
+     */
+    async applyTags({ paths, separator = ' → ' }) {
+      const group = findGroup('tags');
+      const body = await selectTab(group, '^\\s*tags\\s*$');
+      if (!body) return { ok: false, error: 'Tab „Tags“ nicht gefunden', applied: [], failed: paths || [] };
+      await sleep(200);
+      const applied = [];
+      const failed = [];
+      for (const path of paths || []) {
+        const segments = path.split(separator).map(collapse).filter(Boolean);
+        const res = await findTreePath(body, segments);
+        if (res.error || !res.node?.checkbox) {
+          failed.push({ path, error: res.error || 'Checkbox fehlt' });
+          continue;
+        }
+        const cb = res.node.checkbox;
+        if (!cb.checked) {
+          cb.click();
+          for (let i = 0; i < 10 && !cb.checked; i++) await sleep(80);
+        }
+        if (cb.checked) applied.push(path);
+        else failed.push({ path, error: 'Checkbox ließ sich nicht aktivieren' });
+      }
+      await sleep(200);
+      return { ok: failed.length === 0, applied, failed, chips: chips() };
+    },
+
+    /** Alle Tags des Baums mit vollständigem Tooltip exportieren (klappt alles auf). */
+    async exportTagTree({ maxExpansions = 1200 } = {}) {
+      const group = findGroup('tags');
+      const body = await selectTab(group, '^\\s*tags\\s*$');
+      if (!body) return { ok: false, error: 'Tab „Tags“ nicht gefunden' };
+      let expansions = 0;
+      for (let round = 0; round < maxExpansions; round++) {
+        const next = treeNodes(body).find((n) => !n.expanded && n.toggle && !n.el.classList.contains('checklist-leaf-node'));
+        if (!next) break;
+        const ok = await expandNode(next);
+        expansions++;
+        if (!ok) {
+          // Blattknoten mit Toggle-Platzhalter: als aufgeklappt markieren, damit die Schleife endet
+          next.el.setAttribute('aria-expanded', 'true');
+        }
+      }
+      const nodes = treeNodes(body);
+      const stack = [];
+      const out = nodes.map((n) => {
+        while (stack.length >= n.level) stack.pop();
+        stack.push(n.label);
+        return { path: stack.join(' → '), level: n.level, label: n.label, tooltip: tooltipOf(n), checked: !!n.checkbox?.checked };
+      });
+      return { ok: true, expansions, count: out.length, tags: out };
+    },
+
+    readChips() {
+      return { ok: true, chips: chips() };
     },
 
     /** „Save“ klicken und auf Rückmeldung warten. */

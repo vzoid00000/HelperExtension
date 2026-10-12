@@ -1,54 +1,86 @@
 # OSDP News Helper (Chrome Extension)
 
 Automatisiert das Eintragen von News in den OSDP News-Editor
-(`https://osdp.zentdok.at/#/newsEditor`) in zwei Bereichen:
-
-- **Cyber**: Cyberangriffe von Relevanz, Aufstockung/Verbesserung von Systemen
-- **KriMiSi**: Krisen, Militär, Sicherheit (Kriege, Anschläge, wichtige diplomatische Treffen)
+(`https://osdp.zentdok.at/#/newsEditor`) in den Bereichen **Cyber** und **KriMiSi**.
 
 ## Was die Automatik macht
 
 1. **Quellen scannen**: Liest alle konfigurierten Nachrichtenquellen (RSS-Feeds und
    Übersichtsseiten) und sammelt Meldungen ab dem letzten Freitag.
-2. **Relevanz prüfen**: Claude bewertet jede Schlagzeile (Bereich Cyber/KriMiSi/keiner,
+2. **Relevanz prüfen**: Das Modell bewertet jede Schlagzeile (Bereich Cyber/KriMiSi/keiner,
    Wichtigkeit 0–10). Alles ab der Schwelle (Standard 6) wird ausgewählt.
 3. **Eintragen**: Für jede ausgewählte Meldung
-   - Artikel laden und Text, Autor, Datum auslesen (Datum erneut gegen „letzter Freitag“ geprüft)
+   - Artikel laden; Text, Autor und Datum auslesen (Datum erneut gegen „letzter Freitag“ geprüft)
    - Autor nur, wenn es eine natürliche Person ist, sonst „Autor ungenannt“
-   - Titel und Text Englisch → Deutsch übersetzen (Claude, DeepL oder Chrome-intern)
-   - OSDP-Editor neu laden und befüllen: Native (URL, Titel, Inhalt), English Translated,
-     German Translated, Metadata (Autor, Datum), Tags (Cyber oder KriMiSi)
-   - „Save“ klicken (abschaltbar) und die URL als erledigt merken
+   - Titel und Text Englisch → Deutsch übersetzen
+   - **Tags nach dem Tagging-Handbuch vergeben** (siehe unten)
+   - OSDP-Editor neu laden und befüllen: Native (URL, Titel, englischer Text), English Translated
+     (dasselbe Englisch), German Translated (deutscher Titel und Text), Metadata (Autor, Datum), Tags
+   - „Save“ klicken (abschaltbar), URL als erledigt merken, Eintrag in den **Verlauf** schreiben
 
 Dieselbe Meldung von mehreren Quellen wird jeweils eigenständig eingetragen.
+
+## Tagging nach Handbuch
+
+Grundlage ist `docs/OSDP_Tagging_Handbuch.md`; der Katalog mit allen 673 Tags liegt als
+`src/config/osdp-tags.json` vor (`node tools/build-tag-catalog.mjs` erzeugt ihn neu aus dem Handbuch).
+
+Für jeden Artikel liest das Modell den vollständigen Text und den Katalog und liefert einen
+Vorschlag. `src/lib/tag-catalog.js` prüft ihn gegen die festen Regeln:
+
+| Regel | Umsetzung |
+|---|---|
+| Genau ein Struktur-Tag (`[S]1 Cyber` / `[S]2 KriMiSi` / `[S]3 InnoTech`) | immer gesetzt, Fallback aus der Relevanzprüfung |
+| `Newsinfo → Dokumententyp → News` | immer gesetzt |
+| `Newsinfo → Quellentyp → …` | nach tatsächlicher Quelle, Fallback „Nachrichtenseite“ |
+| Mindestens ein Ort unter `geographische Lokationen` | nur Katalog-Namen; ohne gültigen Ort „kein Standort“ plus Warnung |
+| Themen-Tags aus Cyber, KriMiSi, InnoTech, Allgemeine Tags (unabhängig von der Struktur) | Untertag vor Übertag, nur Katalog-Tags, Oberkategorien allein verworfen |
+| KI-Sonderregel | `Auftragstags → HSC → HSC-KI → [KI_]Tools und Usecases`, wenn KI Thema ist |
+| WB-Tag nur bei besonders wichtigen Meldungen | `WB-Cyber` bzw. `WB-KriMiSi` als Knoten, nie Untertags; Spalte „WB“ erzwingt ja/nein |
+| Nie: zeitlicher Aspekt, Informationsverschmutzung, Social Media Post, andere Auftragstags | gesperrt, auch wenn das Modell sie nennt |
+
+Im OSDP-Tab klappt die Extension den Tag-Baum entlang des Pfads auf und hakt genau die
+Ziel-Checkbox an (`src/content/osdp-filler.js`, Schritt `applyTags`). Fehlt ein Modell, werden nur
+die Pflichttags gesetzt (Struktur, News, Nachrichtenseite, „kein Standort“) und im Protokoll
+darauf hingewiesen.
+
+Die Tooltips im Handbuch sind auf 30 Zeichen gekürzt. Side Panel → Werkzeuge →
+**„Tag-Baum mit Tooltips exportieren“** liest im OSDP-Tab alle vollständigen Tooltips aus und
+speichert `osdp-tags-….json`. Damit lassen sich die Tag-Definitionen in den Prompt übernehmen.
+
+## Verlauf und Wochenbericht
+
+Jede gespeicherte News landet im Verlauf (Automatik-Seite, unten): Zeit, Struktur, WB-Kennzeichnung,
+Titel, Quelle, Zusammenfassung, Autor, Tags. Die Kopfzeile zeigt die Zählung für heute und die
+laufende Woche inklusive WB-Cyber / WB-KriMiSi. Export als Markdown (Zwischenablage) oder CSV.
+Die WB-Kennzeichnung lässt sich im Verlauf umschalten, falls sie in OSDP nachträglich geändert wurde.
 
 ## Installation
 
 1. Repository klonen oder ZIP entpacken
-2. Chrome: `chrome://extensions` → **Entwicklermodus** einschalten → **„Entpackte Erweiterung laden“** → Projektordner wählen
-3. Extension-Icon klicken → Side Panel → ⚙ Einstellungen:
-   - **Claude API-Key** eintragen (console.anthropic.com). Nötig für die Relevanzprüfung und die Standard-Übersetzung.
-   - Optional DeepL-Key, Quellen, Schwelle, Zeitplan
-   - „Speichern“, dann „Übersetzung testen“
-4. In OSDP einloggen (ein Tab mit `osdp.zentdok.at` reicht, die Extension nutzt die Anmeldung des Browsers)
+2. Chrome: `chrome://extensions` → **Entwicklermodus** → **„Entpackte Erweiterung laden“** → Projektordner
+3. Extension-Icon → Side Panel → ⚙ Einstellungen:
+   - Sprachmodell wählen: **Claude API** (API-Key von console.anthropic.com) oder **lokales Modell**
+   - Übersetzer wählen (Claude, lokal, DeepL, Chrome)
+   - „Speichern“, dann „Übersetzung testen“ bzw. „Verbindung testen“
+4. In OSDP einloggen (ein Tab mit `osdp.zentdok.at` genügt)
 
 Nach Code-Änderungen in `chrome://extensions` auf „Aktualisieren“ (↻) klicken.
 
 ## Bedienung
 
-**Automatik** (Side Panel → „Automatik öffnen“ oder direkt die Seite `src/auto/auto.html` der Extension):
+**Automatik** (Side Panel → „Automatik öffnen“):
 
-- **▶ Alles automatisch** führt Scan → Relevanzprüfung → Eintragen in einem Rutsch aus.
-- Oder Schritt für Schritt: **1 · Quellen scannen**, **2 · Relevanz prüfen**, Auswahl in der
-  Tabelle kontrollieren (Haken setzen/entfernen, Zeile anklicken für Begründung), **3 · Ausgewählte eintragen**.
+- **▶ Alles automatisch**: Scan → Relevanzprüfung → Eintragen in einem Rutsch.
+- Oder Schritt für Schritt: **1 · Quellen scannen**, **2 · Relevanz prüfen**, Auswahl kontrollieren
+  (Haken, Spalte „WB“ auf auto/ja/nein, Zeile anklicken für Begründung und Tags), **3 · Ausgewählte eintragen**.
 - **■ Stopp** beendet nach der laufenden Meldung.
-- Das Protokoll zeigt jeden Schritt; Fehler stehen in der Status-Spalte (Maus darüber).
 
 **Einzelner Artikel** (Side Panel): Artikel-Tab öffnen → „Aktuellen Tab auslesen“ → prüfen →
-„Übersetzen“ → „Formular ausfüllen“ (optional mit „Save“).
+„Übersetzen“ → „Formular ausfüllen“ (Tags werden dabei ebenfalls vergeben; optional „Save“).
 
-**Zeitplan**: In den Einstellungen eine Uhrzeit eintragen (z. B. 08:00). Mo–Fr öffnet sich zu
-dieser Zeit die Automatik-Seite und startet „Alles automatisch“. Chrome muss dafür laufen.
+**Zeitplan**: Uhrzeit in den Einstellungen (z. B. 08:00). Mo–Fr öffnet sich die Automatik-Seite
+und startet „Alles automatisch“. Chrome muss laufen.
 
 ### Datumsregel
 
@@ -61,90 +93,93 @@ dieser Zeit die Automatik-Seite und startet „Alles automatisch“. Chrome muss
 | Freitag | Freitag der Vorwoche (7 Tage) |
 | Samstag / Sonntag | gestern / vorgestern |
 
+## Sprachmodell: Claude oder eigener PC
+
+| | Claude API | Lokales Modell |
+|---|---|---|
+| Einrichtung | API-Key | Server-URL + Modellname |
+| Kosten | pro Token (Katalog wird gecacht) | keine |
+| Qualität Tagging/Übersetzung | sehr gut | abhängig vom Modell (ab ca. 27–32B Parametern brauchbar) |
+
+### Lokales Modell einrichten (vorbereitet, noch nicht live)
+
+Die Extension spricht jede **OpenAI-kompatible** Chat-Schnittstelle an (`/v1/chat/completions`).
+
+**Ollama** (empfohlen, einfach):
+
+```
+# auf dem Heim-PC
+OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS="chrome-extension://*" ollama serve
+ollama pull qwen2.5:32b        # oder gemma3:27b, llama3.3:70b, mistral-large …
+```
+
+Einstellungen: URL `http://<IP-des-PCs>:11434/v1`, Modell `qwen2.5:32b`, Anbieter „Lokales Modell“,
+Übersetzung „Lokales Modell“. `OLLAMA_ORIGINS` ist nötig, weil Ollama Anfragen aus Chrome-Extensions
+sonst ablehnt. `OLLAMA_HOST=0.0.0.0` macht den Server im Netzwerk erreichbar; von außerhalb des
+Heimnetzes braucht es ein VPN (z. B. Tailscale/WireGuard), kein offener Port ins Internet.
+
+**LM Studio**: Server starten, „Serve on Local Network“ und CORS aktivieren, URL `http://<IP>:1234/v1`.
+**vLLM / llama.cpp server**: `--host 0.0.0.0`, URL `http://<IP>:8000/v1` bzw. `:8080/v1`.
+
+Strukturierte JSON-Antworten werden zuerst per `json_schema` angefordert; unterstützt der Server das
+nicht, fällt die Extension automatisch auf `json_object` und zuletzt auf Text mit JSON-Extraktion zurück.
+„Verbindung testen“ in den Einstellungen prüft Erreichbarkeit, Modellliste und eine Mini-Antwort.
+
 ## Quellen
 
 Standardliste in `src/lib/sources.js` (BleepingComputer, The Record, The Hacker News, SecurityWeek,
 CyberScoop, Dark Reading, Infosecurity, Krebs, The Register; BBC World, Guardian World, Al Jazeera,
 Defense News, Breaking Defense, The War Zone, Military Times, Politico Europe, DW, Kyiv Independent,
-Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite).
-
-Eigene Liste in den Einstellungen, eine Quelle pro Zeile:
+Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite). Eigene Liste in den
+Einstellungen, eine Quelle pro Zeile:
 
 ```
 Name | URL | cyber|krimisi|both | rss|html | URL-Muster (nur html, optional)
-BleepingComputer | https://www.bleepingcomputer.com/feed/ | cyber | rss
-AP News – World | https://apnews.com/world-news | krimisi | html | apnews\.com/article/
-# Deaktivierte Quelle | https://… | both | rss
 ```
 
-Die Feed-URLs der Standardliste konnten aus der Entwicklungsumgebung heraus nicht geprüft werden.
-Fehlerhafte Quellen stehen nach dem Scan mit Fehlermeldung in der Quellen-Tabelle und
-lassen sich in den Einstellungen korrigieren.
-
-## Übersetzung und Relevanzprüfung
-
-| Anbieter | Qualität | Kosten | Einrichtung |
-|---|---|---|---|
-| Claude API (`claude-opus-5-5`) | sehr gut | pro Token, API-Key | console.anthropic.com → API Key |
-| DeepL | gut | Free-Tarif 500.000 Zeichen/Monat | deepl.com/pro-api → Free-Key (`…:fx`) |
-| Chrome integriert | mittel | kostenlos | Chrome 138+, Modell wird beim ersten Mal geladen |
-
-Die Relevanzprüfung läuft immer über Claude (Schlagzeilen in Paketen zu 40, strukturierte
-JSON-Antwort). Beim Claude-Aufruf ist der serverseitige Fallback aktiviert: Lehnt der
-Sicherheitsfilter eine Anfrage ab (bei Texten über Cyberangriffe möglich), wird sie automatisch
-auf einem anderen Claude-Modell wiederholt.
-
-API-Keys werden nur lokal in `chrome.storage.local` gespeichert.
+Die Feed-URLs konnten aus der Entwicklungsumgebung heraus nicht geprüft werden; fehlerhafte Quellen
+stehen nach dem Scan mit Fehlermeldung in der Quellen-Tabelle.
 
 ## OSDP-Integration (Stand)
 
-Die Struktur des Editors stammt aus dem DOM-Dump (`site-dump/`): Angular 17 + Angular Material,
-CKEditor 5 für die Inhalte.
+Struktur aus dem DOM-Dump (`site-dump/`): Angular 17 + Angular Material, CKEditor 5.
 
 | Bereich im Editor | Umsetzung | Stand |
 |---|---|---|
-| Native: Source, Title, Content | `formcontrolname` + CKEditor `setData()` | aus Dump bekannt, getestet gegen Nachbau |
-| English Translated / German Translated | wie Native, eigene Controls | aus Dump bekannt |
-| Tags: Cyber / KriMiSi | Checkbox im Tag-Baum | aus Dump bekannt |
+| Native / English Translated / German Translated | `formcontrolname`-Felder + CKEditor `setData()` | aus Dump bekannt, gegen Nachbau getestet |
+| Tags (Baum mit Checkboxen) | Pfad aufklappen, Ziel-Checkbox anhaken, Chips prüfen | aus Dump bekannt, gegen Nachbau getestet |
 | Save / Extract | Buttons in der Kopfzeile | aus Dump bekannt |
-| **Metadata: Autor, Datum, „Autor ungenannt“** | Suche über Label-Text im Reiter | **Reiter war im Dump nicht geöffnet – noch unbestätigt** |
+| **Metadata: Autor, Datum, „Autor ungenannt“** | Suche über Label-Text | **Reiter war im Dump nicht geöffnet – unbestätigt** |
 
-Der Reiter „Metadata“ wird lazy gerendert; die Extension öffnet ihn und sucht Felder mit
-Label „Author/Autor“ und „Date/Datum“ sowie einen Button „Autor ungenannt“. Was sie dort
-findet, steht im Bericht (Zeile in der Meldungstabelle aufklappen → „Metadata-Felder“).
-Für eine exakte Zuordnung bitte einen Dump mit geöffnetem Reiter „Metadata“ erzeugen
-(siehe `site-dump/README.md`).
+Für den Reiter „Metadata“ bitte einen Dump mit geöffnetem Reiter erzeugen (`site-dump/README.md`).
+Was die Extension dort findet, steht nach dem ersten Durchlauf in der aufgeklappten Zeile („Metadata-Felder“).
 
 ## Projektstruktur
 
 ```
 manifest.json                      Manifest V3
+docs/OSDP_Tagging_Handbuch.md      Tagging-Regeln und Tag-Katalog (Quelle)
+tools/build-tag-catalog.mjs        Handbuch → src/config/osdp-tags.json
+src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
 src/background.js                  Service Worker (Side Panel, Zeitplan)
-src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen)
+src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen, Verlauf)
 src/sidepanel/                     Side Panel (Einzelartikel, Werkzeuge)
 src/options/                       Einstellungen
-src/lib/sources.js                 Standardquellen, Quellen-Format
-src/lib/feeds.js                   RSS/Atom parsen, Links sammeln
-src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
-src/lib/classify.js                Relevanzprüfung (Claude, JSON-Schema)
-src/lib/translate.js               Übersetzung (Claude / DeepL / Chrome)
+src/lib/llm.js                     Modell-Anbindung (Claude / lokal)
 src/lib/claude.js                  Claude Messages API (raw HTTP)
-src/lib/osdp-driver.js             Steuerung des OSDP-Editors (Tabs, CKEditor, Save)
-src/lib/dates.js                   Datumsregel, Parsen, Formatieren
-src/lib/author.js                  Autor-Normalisierung
-src/lib/settings.js                Einstellungen und Defaults
-src/content/news-extractor.js      Artikel auslesen, Links sammeln
-src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor
+src/lib/classify.js                Relevanzprüfung
+src/lib/tagger.js                  Tag-Vorschlag nach Handbuch
+src/lib/tag-catalog.js             Katalog, Regeln, Validierung
+src/lib/translate.js               Übersetzung (Claude / lokal / DeepL / Chrome)
+src/lib/history.js                 Verlauf, Statistik, Export
+src/lib/osdp-driver.js             Steuerung des OSDP-Editors
+src/lib/sources.js, feeds.js       Quellen, RSS/Atom, Link-Sammlung
+src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
+src/lib/dates.js, author.js        Datumsregel, Autor-Normalisierung
+src/content/news-extractor.js      Artikel auslesen
+src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Save, Export)
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors
 site-dump/                         Ablage für DOM-Dumps
 ```
 
 Kein Build-Schritt, keine Abhängigkeiten.
-
-## Hinweise
-
-- `host_permissions: <all_urls>` ist nötig, um Feeds und Artikel beliebiger News-Seiten zu laden.
-- Seiten, die einfache Abrufe blockieren (z. B. Reuters), werden in einem unsichtbaren
-  Hintergrund-Tab geladen. Paywall-Inhalte sind nur lesbar, wenn der Browser eingeloggt ist.
-- Bereits eingetragene URLs werden gemerkt und beim nächsten Scan übersprungen
-  („Liste leeren“ setzt das zurück).

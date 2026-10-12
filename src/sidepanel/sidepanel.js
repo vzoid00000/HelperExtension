@@ -1,8 +1,11 @@
-import { loadSettings } from '../lib/settings.js';
+import { loadSettings, llmMissing } from '../lib/settings.js';
 import { parseDate, checkArticleDate, formatDate, toIsoDate, formatDisplay, lastFriday } from '../lib/dates.js';
 import { normalizeAuthor } from '../lib/author.js';
 import { translateArticle } from '../lib/translate.js';
 import { OsdpDriver } from '../lib/osdp-driver.js';
+import { TagCatalog, selectionToText } from '../lib/tag-catalog.js';
+import { suggestTags } from '../lib/tagger.js';
+import { addHistoryEntry } from '../lib/history.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -49,6 +52,7 @@ async function init() {
   $('btnTranslate').addEventListener('click', () => guard(translate, $('btnTranslate')));
   $('btnFill').addEventListener('click', () => guard(fillOsdp, $('btnFill')));
   $('btnInspect').addEventListener('click', () => guard(inspectOsdp, $('btnInspect')));
+  $('btnExportTags').addEventListener('click', () => guard(exportTags, $('btnExportTags')));
 
   bind('url', 'url');
   bind('titleEn', 'titleEn');
@@ -280,6 +284,25 @@ async function fillOsdp() {
   if (!draft.textDe) setStatus('Hinweis: Es gibt noch keine Übersetzung – der deutsche Reiter bleibt leer.', 'warn');
 
   const save = $('saveAfterFill').checked;
+  const wbChoice = $('wbChoice').value;
+
+  // Tags nach Handbuch (wenn ein Modell konfiguriert ist)
+  let selection = null;
+  let tagPaths = null;
+  if (settings.autoTags && !llmMissing(settings) && draft.textEn) {
+    setStatus('Vergebe Tags nach Handbuch …');
+    const catalog = await TagCatalog.load();
+    selection = await suggestTags(
+      { title: draft.titleEn, titleDe: draft.titleDe, text: draft.textEn, url: draft.url, siteName: draft.siteName, category: draft.category },
+      catalog,
+      settings,
+      { forceWb: wbChoice }
+    );
+    tagPaths = selection.paths;
+  } else if (settings.autoTags && llmMissing(settings)) {
+    setStatus(`Tags nur minimal: ${llmMissing(settings)}`, 'warn');
+  }
+
   const driver = new OsdpDriver(settings, (m) => setStatus(m));
   setStatus('Lade OSDP-Editor und trage ein …');
   const report = await driver.fillArticle(
@@ -292,7 +315,8 @@ async function fillOsdp() {
       author: draft.author.trim(),
       authorUnknown: draft.authorUnknown || !draft.author.trim(),
       date: parsed,
-      category: draft.category
+      category: selection ? (selection.structure === 'KriMiSi' ? 'krimisi' : 'cyber') : draft.category,
+      tagPaths
     },
     { save, translateFn: async (a) => translateArticle(a, settings, (m) => setStatus(m)) }
   );
@@ -302,10 +326,31 @@ async function fillOsdp() {
   out.textContent = [
     report.ok ? 'Alle Schritte erfolgreich.' : `Probleme:\n  ${report.problems.join('\n  ')}`,
     save ? `Gespeichert: ${report.saved ? 'ja' : 'nein'}${report.snackbar ? ' – OSDP: „' + report.snackbar + '“' : ''}` : '',
+    selection ? `\nTags:\n${selectionToText(selection)}${selection.warnings.length ? '\nHinweise: ' + selection.warnings.join('; ') : ''}` : '',
     '',
     'Schritte:',
     ...Object.entries(report.steps).map(([k, v]) => `  ${k}: ${JSON.stringify(v)}`)
-  ].filter((l, i) => l !== '' || i === 2).join('\n');
+  ].filter((l, i) => l !== '' || i === 3).join('\n');
+
+  if (save && report.saved) {
+    await addHistoryEntry({
+      url: draft.url,
+      title: draft.titleEn,
+      titleDe: draft.titleDe,
+      sourceName: draft.siteName,
+      siteName: draft.siteName,
+      dateIso: draft.dateIso,
+      structure: selection?.structure || (draft.category === 'krimisi' ? 'KriMiSi' : 'Cyber'),
+      wb: selection?.wb || (wbChoice === 'yes' ? (draft.category === 'krimisi' ? 'WB-KriMiSi' : 'WB-Cyber') : ''),
+      ki: !!selection?.ki,
+      tags: tagPaths || [],
+      summary: selection?.summary || '',
+      author: draft.author,
+      authorUnknown: draft.authorUnknown,
+      saved: true,
+      problems: report.problems
+    });
+  }
 
   await driver.focusTab();
   setStatus(report.ok ? (save ? 'Eingetragen und gespeichert.' : 'Eingetragen – bitte im OSDP-Tab prüfen und speichern.') : `Teilweise eingetragen – siehe Bericht.`, report.ok ? 'ok' : 'warn');
@@ -331,6 +376,22 @@ async function inspectOsdp() {
   await download(`osdp-dump-${stamp}.html`, html, 'text/html');
 
   setStatus(`Dump erzeugt: ${meta.counts.controls} Steuerelemente, ${meta.counts.labels} Labels. Zwei Dateien im Download-Ordner.`, 'ok');
+}
+
+async function exportTags() {
+  const tab = await findOsdpTab();
+  if (!tab) throw new Error('Kein OSDP-Tab gefunden – bitte den News-Editor öffnen.');
+  setStatus('Klappe Tag-Baum auf und lese Tooltips … (kann eine Minute dauern)');
+  await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: ['src/content/osdp-filler.js'] });
+  const [{ result }] = await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: () => globalThis.__osdpHelper.run('exportTagTree', {})
+  });
+  if (!result?.ok) throw new Error(result?.error || 'Export fehlgeschlagen.');
+  const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '').replace(/(\d{8})(\d{4})/, '$1-$2');
+  await download(`osdp-tags-${stamp}.json`, JSON.stringify({ exportedAt: new Date().toISOString(), count: result.count, tags: result.tags }, null, 2), 'application/json');
+  const withTooltip = result.tags.filter((t) => t.tooltip).length;
+  setStatus(`${result.count} Tags exportiert (${withTooltip} mit Tooltip, ${result.expansions} Knoten aufgeklappt). Datei im Download-Ordner.`, 'ok');
 }
 
 async function download(filename, content, type) {

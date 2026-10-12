@@ -1,9 +1,10 @@
 import { loadSettings, saveSettings, DEFAULT_SETTINGS } from '../lib/settings.js';
 import { translateArticle } from '../lib/translate.js';
+import { testLocalLlm } from '../lib/llm.js';
 import { DEFAULT_SOURCES, sourcesToText, parseSourcesText } from '../lib/sources.js';
 
-const TEXT_FIELDS = ['anthropicApiKey', 'anthropicModel', 'translator', 'deeplApiKey', 'sourcesText', 'minScore', 'maxItemsPerRun', 'autoRunTime', 'osdpDateFormat', 'authorUnknownText', 'tagLabelCyber', 'tagLabelKrimisi', 'osdpUrlPattern'];
-const BOOL_FIELDS = ['autoSave', 'fillEnglishTab', 'useSiteExtract'];
+const TEXT_FIELDS = ['llmProvider', 'anthropicApiKey', 'anthropicModel', 'localLlmUrl', 'localLlmModel', 'localLlmApiKey', 'localLlmTimeoutSec', 'translator', 'deeplApiKey', 'sourcesText', 'minScore', 'maxItemsPerRun', 'autoRunTime', 'osdpDateFormat', 'authorUnknownText', 'osdpUrlPattern'];
+const BOOL_FIELDS = ['autoTags', 'autoSave', 'fillEnglishTab', 'useSiteExtract'];
 const $ = (id) => document.getElementById(id);
 
 function setStatus(msg, kind = '') {
@@ -19,6 +20,7 @@ function readForm() {
   for (const f of BOOL_FIELDS) s[f] = $(f).checked;
   s.minScore = Math.max(0, Math.min(10, Number(s.minScore) || 0));
   s.maxItemsPerRun = Math.max(1, Number(s.maxItemsPerRun) || 25);
+  s.localLlmTimeoutSec = Math.max(30, Number(s.localLlmTimeoutSec) || 600);
   return s;
 }
 
@@ -43,6 +45,20 @@ async function init() {
     }
     await saveSettings({ ...DEFAULT_SETTINGS, ...s });
     setStatus('Gespeichert.', 'ok');
+  });
+
+  $('btnTestLocal').addEventListener('click', async () => {
+    const s = { ...DEFAULT_SETTINGS, ...readForm() };
+    setStatus('Teste lokales Modell …');
+    $('btnTestLocal').disabled = true;
+    try {
+      const r = await testLocalLlm(s);
+      setStatus(`Verbunden. Modelle: ${r.models.join(', ') || '(keine gemeldet)'} · Antwort: „${r.answer}“`, 'ok');
+    } catch (e) {
+      setStatus(e.message, 'err');
+    } finally {
+      $('btnTestLocal').disabled = false;
+    }
   });
 
   $('btnTest').addEventListener('click', async () => {

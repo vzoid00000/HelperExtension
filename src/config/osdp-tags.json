@@ -1,0 +1,4166 @@
+{
+ "source": "docs/OSDP_Tagging_Handbuch.md (Version 1.0, Stand 2026-10-08)",
+ "generatedAt": "2026-10-12",
+ "count": 673,
+ "tree": [
+  {
+   "name": "Struktur",
+   "tooltip": "Tags\\tStruktur | NUR EINEN! UID",
+   "children": [
+    {
+     "name": "[S]1 Cyber",
+     "tooltip": "Tags\\tStruktur\\t[S]1 Cyber | NUR",
+     "children": [],
+     "note": "SIEHE PFLICHT-/SONDERREGEL",
+     "path": "Struktur → [S]1 Cyber"
+    },
+    {
+     "name": "[S]2 KriMiSi",
+     "tooltip": "Tags\\tStruktur\\t[S]2 KriMiSi | N",
+     "children": [],
+     "note": "SIEHE PFLICHT-/SONDERREGEL",
+     "path": "Struktur → [S]2 KriMiSi"
+    },
+    {
+     "name": "[S]3 InnoTech",
+     "tooltip": "Tags\\tStruktur\\t[S]3 InnoTech | ",
+     "children": [],
+     "note": "SIEHE PFLICHT-/SONDERREGEL",
+     "path": "Struktur → [S]3 InnoTech"
+    }
+   ],
+   "path": "Struktur"
+  },
+  {
+   "name": "Cyber",
+   "tooltip": "Tags\\tCyber | Auf Datenebene ve",
+   "children": [
+    {
+     "name": "Big Data",
+     "tooltip": "Tags\\tCyber\\tBig Data | Datenmen",
+     "children": [],
+     "path": "Cyber → Big Data"
+    },
+    {
+     "name": "Cloud",
+     "tooltip": "Tags\\tCyber\\tCloud | Rechnerverb",
+     "children": [],
+     "path": "Cyber → Cloud"
+    },
+    {
+     "name": "Datenschutz",
+     "tooltip": "Tags\\tCyber\\tDatenschutz | Je na",
+     "children": [],
+     "path": "Cyber → Datenschutz"
+    },
+    {
+     "name": "IoT",
+     "tooltip": "Tags\\tCyber\\tIoT | Internet of T",
+     "children": [],
+     "path": "Cyber → IoT"
+    },
+    {
+     "name": "Künstliche Intelligenz",
+     "tooltip": "Tags\\tCyber\\tKünstliche Intellig",
+     "children": [],
+     "path": "Cyber → Künstliche Intelligenz"
+    },
+    {
+     "name": "Metaverse",
+     "tooltip": "Tags\\tCyber\\tMetaverse | Ein kon",
+     "children": [],
+     "path": "Cyber → Metaverse"
+    },
+    {
+     "name": "Cyber Security",
+     "tooltip": "Tags\\tCyber\\tCyber Security | Cy",
+     "children": [
+      {
+       "name": "Antivirenprogramm",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tAnti",
+       "children": [],
+       "path": "Cyber → Cyber Security → Antivirenprogramm"
+      },
+      {
+       "name": "Authentifizierung",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tAuth",
+       "children": [],
+       "path": "Cyber → Cyber Security → Authentifizierung"
+      },
+      {
+       "name": "Backups",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tBack",
+       "children": [],
+       "path": "Cyber → Cyber Security → Backups"
+      },
+      {
+       "name": "Cyberverteidigung",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tCybe",
+       "children": [],
+       "path": "Cyber → Cyber Security → Cyberverteidigung"
+      },
+      {
+       "name": "Datenleck",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tDate",
+       "children": [],
+       "path": "Cyber → Cyber Security → Datenleck"
+      },
+      {
+       "name": "Firewall",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tFire",
+       "children": [],
+       "path": "Cyber → Cyber Security → Firewall"
+      },
+      {
+       "name": "Sicherheitslücke",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tSich",
+       "children": [],
+       "path": "Cyber → Cyber Security → Sicherheitslücke"
+      },
+      {
+       "name": "VPN",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tVPN ",
+       "children": [],
+       "path": "Cyber → Cyber Security → VPN"
+      },
+      {
+       "name": "Resilienz",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tResi",
+       "children": [],
+       "path": "Cyber → Cyber Security → Resilienz"
+      },
+      {
+       "name": "Pen-Testing",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tPen-",
+       "children": [],
+       "path": "Cyber → Cyber Security → Pen-Testing"
+      },
+      {
+       "name": "Fuzzing",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tFuzz",
+       "children": [],
+       "path": "Cyber → Cyber Security → Fuzzing"
+      },
+      {
+       "name": "Virtualisierung",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tVirt",
+       "children": [],
+       "path": "Cyber → Cyber Security → Virtualisierung"
+      },
+      {
+       "name": "Netzwerksegmentierung",
+       "tooltip": "Tags\\tCyber\\tCyber Security\\tNetz",
+       "children": [],
+       "path": "Cyber → Cyber Security → Netzwerksegmentierung"
+      }
+     ],
+     "path": "Cyber → Cyber Security"
+    },
+    {
+     "name": "Cyber Infrastruktur",
+     "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+     "children": [
+      {
+       "name": "Botnet",
+       "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+       "children": [],
+       "path": "Cyber → Cyber Infrastruktur → Botnet"
+      },
+      {
+       "name": "Server",
+       "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+       "children": [],
+       "path": "Cyber → Cyber Infrastruktur → Server"
+      },
+      {
+       "name": "Hardware",
+       "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+       "children": [
+        {
+         "name": "Bauteil",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Hardware → Bauteil"
+        },
+        {
+         "name": "Mobilgerät",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Hardware → Mobilgerät"
+        },
+        {
+         "name": "Personal Computer",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Hardware → Personal Computer"
+        },
+        {
+         "name": "Supercomputer",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Hardware → Supercomputer"
+        }
+       ],
+       "path": "Cyber → Cyber Infrastruktur → Hardware"
+      },
+      {
+       "name": "Netzwerk",
+       "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+       "children": [
+        {
+         "name": "Darknet",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Netzwerk → Darknet"
+        },
+        {
+         "name": "TOR-Netzwerk",
+         "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+         "children": [],
+         "path": "Cyber → Cyber Infrastruktur → Netzwerk → TOR-Netzwerk"
+        }
+       ],
+       "path": "Cyber → Cyber Infrastruktur → Netzwerk"
+      },
+      {
+       "name": "Rechenzentrum",
+       "tooltip": "Tags\\tCyber\\tCyber Infrastruktur",
+       "children": [],
+       "path": "Cyber → Cyber Infrastruktur → Rechenzentrum"
+      }
+     ],
+     "path": "Cyber → Cyber Infrastruktur"
+    },
+    {
+     "name": "Cyberangriff",
+     "tooltip": "Tags\\tCyber\\tCyberangriff | Gezi",
+     "children": [
+      {
+       "name": "Brute-Force-Angriff",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tBrute-",
+       "children": [],
+       "path": "Cyber → Cyberangriff → Brute-Force-Angriff"
+      },
+      {
+       "name": "DoS bzw. DDoS",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tDoS bz",
+       "children": [],
+       "path": "Cyber → Cyberangriff → DoS bzw. DDoS"
+      },
+      {
+       "name": "Social Engineering",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tSocial",
+       "children": [],
+       "path": "Cyber → Cyberangriff → Social Engineering"
+      },
+      {
+       "name": "Schadsoftware",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tSchads",
+       "children": [
+        {
+         "name": "Computervirus",
+         "tooltip": "Tags\\tCyber\\tCyberangriff\\tSchads",
+         "children": [],
+         "path": "Cyber → Cyberangriff → Schadsoftware → Computervirus"
+        },
+        {
+         "name": "Ransomware",
+         "tooltip": "Tags\\tCyber\\tCyberangriff\\tSchads",
+         "children": [],
+         "path": "Cyber → Cyberangriff → Schadsoftware → Ransomware"
+        },
+        {
+         "name": "Spyware",
+         "tooltip": "Tags\\tCyber\\tCyberangriff\\tSchads",
+         "children": [],
+         "path": "Cyber → Cyberangriff → Schadsoftware → Spyware"
+        }
+       ],
+       "path": "Cyber → Cyberangriff → Schadsoftware"
+      },
+      {
+       "name": "APT",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tAPT | ",
+       "children": [],
+       "path": "Cyber → Cyberangriff → APT"
+      },
+      {
+       "name": "Phishing",
+       "tooltip": "Tags\\tCyber\\tCyberangriff\\tPhishi",
+       "children": [],
+       "path": "Cyber → Cyberangriff → Phishing"
+      }
+     ],
+     "path": "Cyber → Cyberangriff"
+    },
+    {
+     "name": "Kryptographie",
+     "tooltip": "Tags\\tCyber\\tKryptographie | Wis",
+     "children": [
+      {
+       "name": "Verschlüsselung",
+       "tooltip": "Tags\\tCyber\\tKryptographie\\tVersc",
+       "children": [],
+       "path": "Cyber → Kryptographie → Verschlüsselung"
+      },
+      {
+       "name": "Blockchain",
+       "tooltip": "Tags\\tCyber\\tKryptographie\\tBlock",
+       "children": [
+        {
+         "name": "Kryptowährung",
+         "tooltip": "Tags\\tCyber\\tKryptographie\\tBlock",
+         "children": [],
+         "path": "Cyber → Kryptographie → Blockchain → Kryptowährung"
+        },
+        {
+         "name": "NFT",
+         "tooltip": "Tags\\tCyber\\tKryptographie\\tBlock",
+         "children": [],
+         "path": "Cyber → Kryptographie → Blockchain → NFT"
+        }
+       ],
+       "path": "Cyber → Kryptographie → Blockchain"
+      }
+     ],
+     "path": "Cyber → Kryptographie"
+    },
+    {
+     "name": "Software",
+     "tooltip": "Tags\\tCyber\\tSoftware | Einzelne",
+     "children": [
+      {
+       "name": "Open Source Software",
+       "tooltip": "Tags\\tCyber\\tSoftware\\tOpen Sourc",
+       "children": [],
+       "path": "Cyber → Software → Open Source Software"
+      },
+      {
+       "name": "Betriebssystem",
+       "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+       "children": [
+        {
+         "name": "Android",
+         "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+         "children": [],
+         "path": "Cyber → Software → Betriebssystem → Android"
+        },
+        {
+         "name": "Linux",
+         "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+         "children": [],
+         "path": "Cyber → Software → Betriebssystem → Linux"
+        },
+        {
+         "name": "Mac OS",
+         "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+         "children": [],
+         "path": "Cyber → Software → Betriebssystem → Mac OS"
+        },
+        {
+         "name": "Microsoft Windows",
+         "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+         "children": [],
+         "path": "Cyber → Software → Betriebssystem → Microsoft Windows"
+        },
+        {
+         "name": "iOS",
+         "tooltip": "Tags\\tCyber\\tSoftware\\tBetriebssy",
+         "children": [],
+         "path": "Cyber → Software → Betriebssystem → iOS"
+        }
+       ],
+       "path": "Cyber → Software → Betriebssystem"
+      },
+      {
+       "name": "Update",
+       "tooltip": "Tags\\tCyber\\tSoftware\\tUpdate | E",
+       "children": [],
+       "path": "Cyber → Software → Update"
+      },
+      {
+       "name": "Upgrade",
+       "tooltip": "Tags\\tCyber\\tSoftware\\tUpgrade | ",
+       "children": [],
+       "path": "Cyber → Software → Upgrade"
+      }
+     ],
+     "path": "Cyber → Software"
+    }
+   ],
+   "path": "Cyber"
+  },
+  {
+   "name": "KriMiSi",
+   "tooltip": "Tags\\tKriMiSi | Krisen, Militär",
+   "children": [
+    {
+     "name": "Konfliktgebiet",
+     "tooltip": "Tags\\tKriMiSi\\tKonfliktgebiet | ",
+     "children": [],
+     "path": "KriMiSi → Konfliktgebiet"
+    },
+    {
+     "name": "Krisen & Konflikte",
+     "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+     "children": [
+      {
+       "name": "Atomarer Konflikt",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Atomarer Konflikt"
+      },
+      {
+       "name": "Blackout",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Blackout"
+      },
+      {
+       "name": "Bürgerkrieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Bürgerkrieg"
+      },
+      {
+       "name": "Cyberkrieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Cyberkrieg"
+      },
+      {
+       "name": "Epidemie & Pandemie",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Epidemie & Pandemie"
+      },
+      {
+       "name": "Grenzkonflikt",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Grenzkonflikt"
+      },
+      {
+       "name": "Hybrider Krieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Hybrider Krieg"
+      },
+      {
+       "name": "Informationskrieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Informationskrieg"
+      },
+      {
+       "name": "innerstaatlicher Konflikt",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → innerstaatlicher Konflikt"
+      },
+      {
+       "name": "Klimawandel",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Klimawandel"
+      },
+      {
+       "name": "Krieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Krieg"
+      },
+      {
+       "name": "Naturkatastrophe",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Naturkatastrophe"
+      },
+      {
+       "name": "Religionskrieg",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Religionskrieg"
+      },
+      {
+       "name": "Terrorismus",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Terrorismus"
+      },
+      {
+       "name": "Wirtschaftskonflikt",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [
+        {
+         "name": "Wirtschaftssanktion",
+         "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+         "children": [],
+         "path": "KriMiSi → Krisen & Konflikte → Wirtschaftskonflikt → Wirtschaftssanktion"
+        }
+       ],
+       "path": "KriMiSi → Krisen & Konflikte → Wirtschaftskonflikt"
+      },
+      {
+       "name": "Wirtschaftskrise",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Wirtschaftskrise"
+      },
+      {
+       "name": "zwischenstaatlicher Konflikt",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → zwischenstaatlicher Konflikt"
+      },
+      {
+       "name": "Zivilschutz",
+       "tooltip": "Tags\\tKriMiSi\\tKrisen & Konflikt",
+       "children": [],
+       "path": "KriMiSi → Krisen & Konflikte → Zivilschutz"
+      }
+     ],
+     "path": "KriMiSi → Krisen & Konflikte"
+    },
+    {
+     "name": "Militär",
+     "tooltip": "Tags\\tKriMiSi\\tMilitär | Ein vie",
+     "children": [
+      {
+       "name": "ABC-Abwehr",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tABC-Abweh",
+       "children": [],
+       "path": "KriMiSi → Militär → ABC-Abwehr"
+      },
+      {
+       "name": "Artillerie",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tArtilleri",
+       "children": [],
+       "path": "KriMiSi → Militär → Artillerie"
+      },
+      {
+       "name": "Aufklärung",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tAufklärun",
+       "children": [],
+       "path": "KriMiSi → Militär → Aufklärung"
+      },
+      {
+       "name": "CBRN",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tCBRN | Si",
+       "children": [],
+       "path": "KriMiSi → Militär → CBRN"
+      },
+      {
+       "name": "CiMil",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tCiMil | D",
+       "children": [],
+       "path": "KriMiSi → Militär → CiMil"
+      },
+      {
+       "name": "Cyberstreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tCyberstre",
+       "children": [],
+       "path": "KriMiSi → Militär → Cyberstreitkräfte"
+      },
+      {
+       "name": "Landstreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tLandstrei",
+       "children": [],
+       "path": "KriMiSi → Militär → Landstreitkräfte"
+      },
+      {
+       "name": "Luftstreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tLuftstrei",
+       "children": [],
+       "path": "KriMiSi → Militär → Luftstreitkräfte"
+      },
+      {
+       "name": "mil. Ausbildung",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tmil. Ausb",
+       "children": [],
+       "path": "KriMiSi → Militär → mil. Ausbildung"
+      },
+      {
+       "name": "mil. Budget und Kosten",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tmil. Budg",
+       "children": [],
+       "path": "KriMiSi → Militär → mil. Budget und Kosten"
+      },
+      {
+       "name": "mil. Fähigkeiten",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tmil. Fähi",
+       "children": [],
+       "path": "KriMiSi → Militär → mil. Fähigkeiten"
+      },
+      {
+       "name": "mil. Logistik",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tmil. Logi",
+       "children": [],
+       "path": "KriMiSi → Militär → mil. Logistik"
+      },
+      {
+       "name": "Raketenstreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tRaketenst",
+       "children": [],
+       "path": "KriMiSi → Militär → Raketenstreitkräfte"
+      },
+      {
+       "name": "Seestreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tSeestreit",
+       "children": [],
+       "path": "KriMiSi → Militär → Seestreitkräfte"
+      },
+      {
+       "name": "Spezialkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tSpezialkr",
+       "children": [],
+       "path": "KriMiSi → Militär → Spezialkräfte"
+      },
+      {
+       "name": "Weltraumstreitkräfte",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tWeltraums",
+       "children": [],
+       "path": "KriMiSi → Militär → Weltraumstreitkräfte"
+      },
+      {
+       "name": "Flugabwehr",
+       "tooltip": "Tags\\tKriMiSi\\tMilitär\\tFlugabweh",
+       "children": [],
+       "path": "KriMiSi → Militär → Flugabwehr"
+      }
+     ],
+     "path": "KriMiSi → Militär"
+    },
+    {
+     "name": "militärische Infrastruktur",
+     "tooltip": "Tags\\tKriMiSi\\tmilitärische Infr",
+     "children": [
+      {
+       "name": "Hafenanlage",
+       "tooltip": "Tags\\tKriMiSi\\tmilitärische Infr",
+       "children": [],
+       "path": "KriMiSi → militärische Infrastruktur → Hafenanlage"
+      },
+      {
+       "name": "Militärbasis",
+       "tooltip": "Tags\\tKriMiSi\\tmilitärische Infr",
+       "children": [],
+       "path": "KriMiSi → militärische Infrastruktur → Militärbasis"
+      },
+      {
+       "name": "Militärflugplatz",
+       "tooltip": "Tags\\tKriMiSi\\tmilitärische Infr",
+       "children": [],
+       "path": "KriMiSi → militärische Infrastruktur → Militärflugplatz"
+      },
+      {
+       "name": "Radarstation",
+       "tooltip": "Tags\\tKriMiSi\\tmilitärische Infr",
+       "children": [],
+       "path": "KriMiSi → militärische Infrastruktur → Radarstation"
+      }
+     ],
+     "path": "KriMiSi → militärische Infrastruktur"
+    },
+    {
+     "name": "Militärische Handlung",
+     "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+     "children": [
+      {
+       "name": "Angriff",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [
+        {
+         "name": "Artillerieangriff",
+         "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+         "children": [],
+         "path": "KriMiSi → Militärische Handlung → Angriff → Artillerieangriff"
+        },
+        {
+         "name": "Bodenangriff",
+         "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+         "children": [],
+         "path": "KriMiSi → Militärische Handlung → Angriff → Bodenangriff"
+        },
+        {
+         "name": "Luftangriff",
+         "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+         "children": [],
+         "path": "KriMiSi → Militärische Handlung → Angriff → Luftangriff"
+        },
+        {
+         "name": "Raketenangriff",
+         "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+         "children": [],
+         "path": "KriMiSi → Militärische Handlung → Angriff → Raketenangriff"
+        },
+        {
+         "name": "Weltraumangriff",
+         "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+         "children": [],
+         "path": "KriMiSi → Militärische Handlung → Angriff → Weltraumangriff"
+        }
+       ],
+       "path": "KriMiSi → Militärische Handlung → Angriff"
+      },
+      {
+       "name": "Gefecht",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Gefecht"
+      },
+      {
+       "name": "Manöver",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Manöver"
+      },
+      {
+       "name": "Mobilmachung",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Mobilmachung"
+      },
+      {
+       "name": "Truppenbewegung",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Truppenbewegung"
+      },
+      {
+       "name": "Verteidigung",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Verteidigung"
+      },
+      {
+       "name": "Waffenstillstand",
+       "tooltip": "Tags\\tKriMiSi\\tMilitärische Hand",
+       "children": [],
+       "path": "KriMiSi → Militärische Handlung → Waffenstillstand"
+      }
+     ],
+     "path": "KriMiSi → Militärische Handlung"
+    },
+    {
+     "name": "Rüstungsmaterial",
+     "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial ",
+     "children": [
+      {
+       "name": "Waffe",
+       "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial\\t",
+       "children": [
+        {
+         "name": "Atomwaffe",
+         "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial\\t",
+         "children": [],
+         "path": "KriMiSi → Rüstungsmaterial → Waffe → Atomwaffe"
+        },
+        {
+         "name": "IED",
+         "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial\\t",
+         "children": [],
+         "path": "KriMiSi → Rüstungsmaterial → Waffe → IED"
+        },
+        {
+         "name": "Raketenwaffe",
+         "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial\\t",
+         "children": [],
+         "path": "KriMiSi → Rüstungsmaterial → Waffe → Raketenwaffe"
+        },
+        {
+         "name": "unkonventionelle Waffe",
+         "tooltip": "Tags\\tKriMiSi\\tRüstungsmaterial\\t",
+         "children": [],
+         "path": "KriMiSi → Rüstungsmaterial → Waffe → unkonventionelle Waffe"
+        }
+       ],
+       "path": "KriMiSi → Rüstungsmaterial → Waffe"
+      }
+     ],
+     "path": "KriMiSi → Rüstungsmaterial"
+    }
+   ],
+   "path": "KriMiSi"
+  },
+  {
+   "name": "InnoTech",
+   "tooltip": "Tags\\tInnoTech | Innovation und",
+   "children": [
+    {
+     "name": "Innovationen",
+     "tooltip": "Tags\\tInnoTech\\tInnovationen | n",
+     "children": [
+      {
+       "name": "mil. Innovation",
+       "tooltip": "Tags\\tInnoTech\\tInnovationen\\tmil",
+       "children": [],
+       "path": "InnoTech → Innovationen → mil. Innovation"
+      }
+     ],
+     "path": "InnoTech → Innovationen"
+    },
+    {
+     "name": "Gesellschaftlicher Wandel",
+     "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+     "children": [
+      {
+       "name": "Dekarbonisierung",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Dekarbonisierung"
+      },
+      {
+       "name": "Demografischer Wandel",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Demografischer Wandel"
+      },
+      {
+       "name": "Digitalisierung und digitale Kultur",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Digitalisierung und digitale Kultur"
+      },
+      {
+       "name": "Food",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Food"
+      },
+      {
+       "name": "New Economic Patterns",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → New Economic Patterns"
+      },
+      {
+       "name": "Öffentliche Fürsorge und Wohlfahrt",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Öffentliche Fürsorge und Wohlfahrt"
+      },
+      {
+       "name": "Urbaner Wandel",
+       "tooltip": "Tags\\tInnoTech\\tGesellschaftlich",
+       "children": [],
+       "path": "InnoTech → Gesellschaftlicher Wandel → Urbaner Wandel"
+      }
+     ],
+     "path": "InnoTech → Gesellschaftlicher Wandel"
+    },
+    {
+     "name": "Technologie",
+     "tooltip": "Tags\\tInnoTech\\tTechnologie | Wi",
+     "children": [
+      {
+       "name": "3D-Druck",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\t3D-D",
+       "children": [],
+       "path": "InnoTech → Technologie → 3D-Druck"
+      },
+      {
+       "name": "Autonomes System",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tAuto",
+       "children": [],
+       "path": "InnoTech → Technologie → Autonomes System"
+      },
+      {
+       "name": "Biotechnologie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tBiot",
+       "children": [],
+       "path": "InnoTech → Technologie → Biotechnologie"
+      },
+      {
+       "name": "Biowerkstoff",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tBiow",
+       "children": [],
+       "path": "InnoTech → Technologie → Biowerkstoff"
+      },
+      {
+       "name": "Erweiterte Realität (AR)",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tErwe",
+       "children": [],
+       "path": "InnoTech → Technologie → Erweiterte Realität (AR)"
+      },
+      {
+       "name": "Human Enhancement",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tHuma",
+       "children": [],
+       "path": "InnoTech → Technologie → Human Enhancement"
+      },
+      {
+       "name": "Luft- und Raumfahrttechnik",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tLuft",
+       "children": [],
+       "path": "InnoTech → Technologie → Luft- und Raumfahrttechnik"
+      },
+      {
+       "name": "Materialforschung",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tMate",
+       "children": [],
+       "path": "InnoTech → Technologie → Materialforschung"
+      },
+      {
+       "name": "Mobilität",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tMobi",
+       "children": [],
+       "path": "InnoTech → Technologie → Mobilität"
+      },
+      {
+       "name": "Nachhaltige Technologie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tNach",
+       "children": [],
+       "path": "InnoTech → Technologie → Nachhaltige Technologie"
+      },
+      {
+       "name": "Nanotechnologie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tNano",
+       "children": [],
+       "path": "InnoTech → Technologie → Nanotechnologie"
+      },
+      {
+       "name": "Quantentechnologie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tQuan",
+       "children": [],
+       "path": "InnoTech → Technologie → Quantentechnologie"
+      },
+      {
+       "name": "Robotik",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tRobo",
+       "children": [],
+       "path": "InnoTech → Technologie → Robotik"
+      },
+      {
+       "name": "Simulation",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tSimu",
+       "children": [],
+       "path": "InnoTech → Technologie → Simulation"
+      },
+      {
+       "name": "Virtuelle Realität (VR)",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tVirt",
+       "children": [],
+       "path": "InnoTech → Technologie → Virtuelle Realität (VR)"
+      },
+      {
+       "name": "Weltraumtechnologie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tWelt",
+       "children": [],
+       "path": "InnoTech → Technologie → Weltraumtechnologie"
+      },
+      {
+       "name": "Biometrie",
+       "tooltip": "Tags\\tInnoTech\\tTechnologie\\tBiom",
+       "children": [],
+       "path": "InnoTech → Technologie → Biometrie"
+      }
+     ],
+     "path": "InnoTech → Technologie"
+    },
+    {
+     "name": "Forschung & Entwicklung",
+     "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+     "children": [
+      {
+       "name": "Forschungsprogramm",
+       "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+       "children": [],
+       "path": "InnoTech → Forschung & Entwicklung → Forschungsprogramm"
+      },
+      {
+       "name": "Öffentliche Forschung",
+       "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+       "children": [],
+       "path": "InnoTech → Forschung & Entwicklung → Öffentliche Forschung"
+      },
+      {
+       "name": "Private Forschung",
+       "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+       "children": [],
+       "path": "InnoTech → Forschung & Entwicklung → Private Forschung"
+      },
+      {
+       "name": "Stressforschung",
+       "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+       "children": [],
+       "path": "InnoTech → Forschung & Entwicklung → Stressforschung"
+      },
+      {
+       "name": "mil. Forschung",
+       "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+       "children": [
+        {
+         "name": "Operations Research",
+         "tooltip": "Tags\\tInnoTech\\tForschung & Entw",
+         "children": [],
+         "path": "InnoTech → Forschung & Entwicklung → mil. Forschung → Operations Research"
+        }
+       ],
+       "path": "InnoTech → Forschung & Entwicklung → mil. Forschung"
+      }
+     ],
+     "path": "InnoTech → Forschung & Entwicklung"
+    }
+   ],
+   "path": "InnoTech"
+  },
+  {
+   "name": "Allgemeine Tags",
+   "tooltip": "Tags\\tAllgemeine Tags | Tags zu",
+   "children": [
+    {
+     "name": "Ausbildung",
+     "tooltip": "Tags\\tAllgemeine Tags\\tAusbildun",
+     "children": [],
+     "path": "Allgemeine Tags → Ausbildung"
+    },
+    {
+     "name": "Int. Zusammenarbeit",
+     "tooltip": "Tags\\tAllgemeine Tags\\tInt. Zusa",
+     "children": [
+      {
+       "name": "Humanitäre Hilfe",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInt. Zusa",
+       "children": [],
+       "path": "Allgemeine Tags → Int. Zusammenarbeit → Humanitäre Hilfe"
+      }
+     ],
+     "path": "Allgemeine Tags → Int. Zusammenarbeit"
+    },
+    {
+     "name": "Navigation",
+     "tooltip": "Tags\\tAllgemeine Tags\\tNavigatio",
+     "children": [],
+     "path": "Allgemeine Tags → Navigation"
+    },
+    {
+     "name": "Recht",
+     "tooltip": "Tags\\tAllgemeine Tags\\tRecht | G",
+     "children": [
+      {
+       "name": "Menschenrechte",
+       "tooltip": "Tags\\tAllgemeine Tags\\tRecht\\tMen",
+       "children": [],
+       "path": "Allgemeine Tags → Recht → Menschenrechte"
+      }
+     ],
+     "path": "Allgemeine Tags → Recht"
+    },
+    {
+     "name": "Soziale Medien",
+     "tooltip": "Tags\\tAllgemeine Tags\\tSoziale M",
+     "children": [],
+     "path": "Allgemeine Tags → Soziale Medien"
+    },
+    {
+     "name": "Spionage",
+     "tooltip": "Tags\\tAllgemeine Tags\\tSpionage ",
+     "children": [],
+     "path": "Allgemeine Tags → Spionage"
+    },
+    {
+     "name": "Strategie",
+     "tooltip": "Tags\\tAllgemeine Tags\\tStrategie",
+     "children": [],
+     "path": "Allgemeine Tags → Strategie"
+    },
+    {
+     "name": "Ereignis",
+     "tooltip": "Tags\\tAllgemeine Tags\\tEreignis ",
+     "children": [
+      {
+       "name": "Anschlag",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Anschlag"
+      },
+      {
+       "name": "Demonstration",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Demonstration"
+      },
+      {
+       "name": "Staatsstreich",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Staatsstreich"
+      },
+      {
+       "name": "Todesfall",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Todesfall"
+      },
+      {
+       "name": "Unfall",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Unfall"
+      },
+      {
+       "name": "Wahl",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Wahl"
+      },
+      {
+       "name": "Souveränitätsverletzung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tEreignis\\t",
+       "children": [],
+       "path": "Allgemeine Tags → Ereignis → Souveränitätsverletzung"
+      }
+     ],
+     "path": "Allgemeine Tags → Ereignis"
+    },
+    {
+     "name": "Gesellschaft",
+     "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+     "children": [
+      {
+       "name": "Extremismus und Radikalismus",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Extremismus und Radikalismus"
+      },
+      {
+       "name": "Gesellschaftliche Spaltung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Gesellschaftliche Spaltung"
+      },
+      {
+       "name": "Gesundheit",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Gesundheit"
+      },
+      {
+       "name": "Migration",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Migration"
+      },
+      {
+       "name": "Privatsphäre",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Privatsphäre"
+      },
+      {
+       "name": "Sport",
+       "tooltip": "Tags\\tAllgemeine Tags\\tGesellsch",
+       "children": [],
+       "path": "Allgemeine Tags → Gesellschaft → Sport"
+      }
+     ],
+     "path": "Allgemeine Tags → Gesellschaft"
+    },
+    {
+     "name": "Kriminalität",
+     "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+     "children": [
+      {
+       "name": "Erpressung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Erpressung"
+      },
+      {
+       "name": "Korruption",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Korruption"
+      },
+      {
+       "name": "Piraterie",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Piraterie"
+      },
+      {
+       "name": "Schusswaffengebrauch",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Schusswaffengebrauch"
+      },
+      {
+       "name": "Hochverrat",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Hochverrat"
+      },
+      {
+       "name": "Gewalt",
+       "tooltip": "Tags\\tAllgemeine Tags\\tKriminali",
+       "children": [],
+       "path": "Allgemeine Tags → Kriminalität → Gewalt"
+      }
+     ],
+     "path": "Allgemeine Tags → Kriminalität"
+    },
+    {
+     "name": "Umwelt",
+     "tooltip": "Tags\\tAllgemeine Tags\\tUmwelt | ",
+     "children": [
+      {
+       "name": "Rohstoffe",
+       "tooltip": "Tags\\tAllgemeine Tags\\tUmwelt\\tRo",
+       "children": [],
+       "path": "Allgemeine Tags → Umwelt → Rohstoffe"
+      }
+     ],
+     "path": "Allgemeine Tags → Umwelt"
+    },
+    {
+     "name": "Wirtschaft",
+     "tooltip": "Tags\\tAllgemeine Tags\\tWirtschaf",
+     "children": [
+      {
+       "name": "Rüstungswirtschaft",
+       "tooltip": "Tags\\tAllgemeine Tags\\tWirtschaf",
+       "children": [],
+       "path": "Allgemeine Tags → Wirtschaft → Rüstungswirtschaft"
+      },
+      {
+       "name": "Handel",
+       "tooltip": "Tags\\tAllgemeine Tags\\tWirtschaf",
+       "children": [],
+       "path": "Allgemeine Tags → Wirtschaft → Handel"
+      }
+     ],
+     "path": "Allgemeine Tags → Wirtschaft"
+    },
+    {
+     "name": "Akteur",
+     "tooltip": "Tags\\tAllgemeine Tags\\tAkteur | ",
+     "children": [
+      {
+       "name": "Forschungsorganisation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tFo",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → Forschungsorganisation"
+      },
+      {
+       "name": "Hacker",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tHa",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → Hacker"
+      },
+      {
+       "name": "paramilitärische Organisation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tpa",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → paramilitärische Organisation"
+      },
+      {
+       "name": "Privatperson",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tPr",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → Privatperson"
+      },
+      {
+       "name": "Unternehmen",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tUn",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → Unternehmen"
+      },
+      {
+       "name": "Internationale Organisation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+       "children": [
+        {
+         "name": "Afrikanische Union",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → Afrikanische Union"
+        },
+        {
+         "name": "Arabische Liga",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → Arabische Liga"
+        },
+        {
+         "name": "ASEAN",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → ASEAN"
+        },
+        {
+         "name": "ECOWAS",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → ECOWAS"
+        },
+        {
+         "name": "EU",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [
+          {
+           "name": "EUROPOL",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → EU → EUROPOL"
+          },
+          {
+           "name": "FRONTEX",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → EU → FRONTEX"
+          },
+          {
+           "name": "GSVP",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → EU → GSVP"
+          },
+          {
+           "name": "PESCO",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → EU → PESCO"
+          }
+         ],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → EU"
+        },
+        {
+         "name": "G7",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → G7"
+        },
+        {
+         "name": "Golf-Kooperationsrat",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → Golf-Kooperationsrat"
+        },
+        {
+         "name": "GUS",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → GUS"
+        },
+        {
+         "name": "IAEO",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → IAEO"
+        },
+        {
+         "name": "MERCOSUR",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → MERCOSUR"
+        },
+        {
+         "name": "NAFTA",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → NAFTA"
+        },
+        {
+         "name": "NATO",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → NATO"
+        },
+        {
+         "name": "OIC",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → OIC"
+        },
+        {
+         "name": "OPEC",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → OPEC"
+        },
+        {
+         "name": "OSZE",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → OSZE"
+        },
+        {
+         "name": "OVKS",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → OVKS"
+        },
+        {
+         "name": "SCO",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → SCO"
+        },
+        {
+         "name": "UNICEF",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → UNICEF"
+        },
+        {
+         "name": "UNO",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [
+          {
+           "name": "UNHCR",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → UNO → UNHCR"
+          },
+          {
+           "name": "UNSC",
+           "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+           "children": [],
+           "path": "Allgemeine Tags → Akteur → Internationale Organisation → UNO → UNSC"
+          }
+         ],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → UNO"
+        },
+        {
+         "name": "WHO",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → WHO"
+        },
+        {
+         "name": "INTERPOL",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → INTERPOL"
+        },
+        {
+         "name": "OPCW",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → OPCW"
+        },
+        {
+         "name": "IStGH",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIn",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Internationale Organisation → IStGH"
+        }
+       ],
+       "path": "Allgemeine Tags → Akteur → Internationale Organisation"
+      },
+      {
+       "name": "Irreguläre Kräfte",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIr",
+       "children": [
+        {
+         "name": "Terrorgruppe",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tIr",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Irreguläre Kräfte → Terrorgruppe"
+        }
+       ],
+       "path": "Allgemeine Tags → Akteur → Irreguläre Kräfte"
+      },
+      {
+       "name": "Kriminelle Organisation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tKr",
+       "children": [
+        {
+         "name": "Hackergruppe",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tKr",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Kriminelle Organisation → Hackergruppe"
+        },
+        {
+         "name": "Organisierte Kriminalität",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tKr",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → Kriminelle Organisation → Organisierte Kriminalität"
+        }
+       ],
+       "path": "Allgemeine Tags → Akteur → Kriminelle Organisation"
+      },
+      {
+       "name": "staatliche Organisation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+       "children": [
+        {
+         "name": "Feuerwehr",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Feuerwehr"
+        },
+        {
+         "name": "Geheim- und Nachrichtendienst",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Geheim- und Nachrichtendienst"
+        },
+        {
+         "name": "Justiz",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Justiz"
+        },
+        {
+         "name": "Polizei",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Polizei"
+        },
+        {
+         "name": "Rettungsdienst",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Rettungsdienst"
+        },
+        {
+         "name": "Verwaltung",
+         "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\tst",
+         "children": [],
+         "path": "Allgemeine Tags → Akteur → staatliche Organisation → Verwaltung"
+        }
+       ],
+       "path": "Allgemeine Tags → Akteur → staatliche Organisation"
+      },
+      {
+       "name": "öffentliche Person",
+       "tooltip": "Tags\\tAllgemeine Tags\\tAkteur\\töf",
+       "children": [],
+       "path": "Allgemeine Tags → Akteur → öffentliche Person"
+      }
+     ],
+     "path": "Allgemeine Tags → Akteur"
+    },
+    {
+     "name": "Fahrzeug",
+     "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug ",
+     "children": [
+      {
+       "name": "Bodenfahrzeug",
+       "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+       "children": [
+        {
+         "name": "Eisenbahn",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Bodenfahrzeug → Eisenbahn"
+        },
+        {
+         "name": "gepanzertes Fahrzeug",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Bodenfahrzeug → gepanzertes Fahrzeug"
+        }
+       ],
+       "path": "Allgemeine Tags → Fahrzeug → Bodenfahrzeug"
+      },
+      {
+       "name": "Luftfahrzeug",
+       "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+       "children": [
+        {
+         "name": "Flugzeug",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Luftfahrzeug → Flugzeug"
+        },
+        {
+         "name": "Hubschrauber",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Luftfahrzeug → Hubschrauber"
+        }
+       ],
+       "path": "Allgemeine Tags → Fahrzeug → Luftfahrzeug"
+      },
+      {
+       "name": "Raumfahrzeug",
+       "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+       "children": [
+        {
+         "name": "Raumstation",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Raumfahrzeug → Raumstation"
+        },
+        {
+         "name": "Satellit",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Raumfahrzeug → Satellit"
+        }
+       ],
+       "path": "Allgemeine Tags → Fahrzeug → Raumfahrzeug"
+      },
+      {
+       "name": "Unbemanntes Fahrzeug",
+       "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+       "children": [
+        {
+         "name": "UAV",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Unbemanntes Fahrzeug → UAV"
+        },
+        {
+         "name": "UGV",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Unbemanntes Fahrzeug → UGV"
+        },
+        {
+         "name": "USV",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Unbemanntes Fahrzeug → USV"
+        },
+        {
+         "name": "UUV",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Unbemanntes Fahrzeug → UUV"
+        }
+       ],
+       "path": "Allgemeine Tags → Fahrzeug → Unbemanntes Fahrzeug"
+      },
+      {
+       "name": "Wasserfahrzeug",
+       "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+       "children": [
+        {
+         "name": "Schiff",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Wasserfahrzeug → Schiff"
+        },
+        {
+         "name": "Uboot",
+         "tooltip": "Tags\\tAllgemeine Tags\\tFahrzeug\\t",
+         "children": [],
+         "path": "Allgemeine Tags → Fahrzeug → Wasserfahrzeug → Uboot"
+        }
+       ],
+       "path": "Allgemeine Tags → Fahrzeug → Wasserfahrzeug"
+      }
+     ],
+     "path": "Allgemeine Tags → Fahrzeug"
+    },
+    {
+     "name": "Infrastruktur",
+     "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+     "children": [
+      {
+       "name": "Energieversorgung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Energieversorgung"
+      },
+      {
+       "name": "Finanzsystem",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Finanzsystem"
+      },
+      {
+       "name": "Gesundheitsversorgung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Gesundheitsversorgung"
+      },
+      {
+       "name": "Kommunikation",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Kommunikation"
+      },
+      {
+       "name": "Konnektivität",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Konnektivität"
+      },
+      {
+       "name": "Kritische Infrastruktur",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Kritische Infrastruktur"
+      },
+      {
+       "name": "Kulturgüter",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Kulturgüter"
+      },
+      {
+       "name": "Lebensmittelversorgung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Lebensmittelversorgung"
+      },
+      {
+       "name": "Medien",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Medien"
+      },
+      {
+       "name": "Wasserversorgung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Wasserversorgung"
+      },
+      {
+       "name": "Industrie",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [
+        {
+         "name": "Chemie",
+         "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+         "children": [],
+         "path": "Allgemeine Tags → Infrastruktur → Industrie → Chemie"
+        },
+        {
+         "name": "Erdölwesen",
+         "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+         "children": [],
+         "path": "Allgemeine Tags → Infrastruktur → Industrie → Erdölwesen"
+        }
+       ],
+       "path": "Allgemeine Tags → Infrastruktur → Industrie"
+      },
+      {
+       "name": "Transport",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [
+        {
+         "name": "Luftfahrt",
+         "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+         "children": [],
+         "path": "Allgemeine Tags → Infrastruktur → Transport → Luftfahrt"
+        }
+       ],
+       "path": "Allgemeine Tags → Infrastruktur → Transport"
+      },
+      {
+       "name": "Bildungseinrichtung",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Bildungseinrichtung"
+      },
+      {
+       "name": "Lieferketten",
+       "tooltip": "Tags\\tAllgemeine Tags\\tInfrastru",
+       "children": [],
+       "path": "Allgemeine Tags → Infrastruktur → Lieferketten"
+      }
+     ],
+     "path": "Allgemeine Tags → Infrastruktur"
+    },
+    {
+     "name": "Politik",
+     "tooltip": "Tags\\tAllgemeine Tags\\tPolitik |",
+     "children": [
+      {
+       "name": "Außenpolitik",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tA",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → Außenpolitik"
+      },
+      {
+       "name": "Diplomatie",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tD",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → Diplomatie"
+      },
+      {
+       "name": "Innenpolitik",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tI",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → Innenpolitik"
+      },
+      {
+       "name": "Militärpolitik",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tM",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → Militärpolitik"
+      },
+      {
+       "name": "Rüstungspolitik",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tR",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → Rüstungspolitik"
+      },
+      {
+       "name": "Sicherheitspolitik",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tS",
+       "children": [
+        {
+         "name": "Friedensbemühungen",
+         "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tS",
+         "children": [],
+         "path": "Allgemeine Tags → Politik → Sicherheitspolitik → Friedensbemühungen"
+        },
+        {
+         "name": "Proliferation",
+         "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tS",
+         "children": [],
+         "path": "Allgemeine Tags → Politik → Sicherheitspolitik → Proliferation"
+        },
+        {
+         "name": "Resilienz",
+         "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tS",
+         "children": [],
+         "path": "Allgemeine Tags → Politik → Sicherheitspolitik → Resilienz"
+        },
+        {
+         "name": "Verteidigungsmaßnahmen",
+         "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tS",
+         "children": [],
+         "path": "Allgemeine Tags → Politik → Sicherheitspolitik → Verteidigungsmaßnahmen"
+        }
+       ],
+       "path": "Allgemeine Tags → Politik → Sicherheitspolitik"
+      },
+      {
+       "name": "AI Act",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tA",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → AI Act"
+      },
+      {
+       "name": "NIS",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tN",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → NIS"
+      },
+      {
+       "name": "DSGVO",
+       "tooltip": "Tags\\tAllgemeine Tags\\tPolitik\\tD",
+       "children": [],
+       "path": "Allgemeine Tags → Politik → DSGVO"
+      }
+     ],
+     "path": "Allgemeine Tags → Politik"
+    }
+   ],
+   "path": "Allgemeine Tags"
+  },
+  {
+   "name": "Newsinfo",
+   "tooltip": "Tags\\tNewsinfo | Metadaten bezü",
+   "children": [
+    {
+     "name": "Audio",
+     "tooltip": "Tags\\tNewsinfo\\tAudio | Die Nach",
+     "children": [],
+     "path": "Newsinfo → Audio"
+    },
+    {
+     "name": "Video",
+     "tooltip": "Tags\\tNewsinfo\\tVideo | Die Nach",
+     "children": [],
+     "path": "Newsinfo → Video"
+    },
+    {
+     "name": "Werbung",
+     "tooltip": "Tags\\tNewsinfo\\tWerbung | Wird a",
+     "children": [],
+     "path": "Newsinfo → Werbung"
+    },
+    {
+     "name": "Dokumententyp",
+     "tooltip": "Tags\\tNewsinfo\\tDokumententyp | ",
+     "children": [
+      {
+       "name": "Abstract",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tAb",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Abstract"
+      },
+      {
+       "name": "Ausbildungsmittel",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tAu",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Ausbildungsmittel"
+      },
+      {
+       "name": "Ausschreibung",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tAu",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Ausschreibung"
+      },
+      {
+       "name": "Dissertation",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tDi",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Dissertation"
+      },
+      {
+       "name": "Konferenzpublikation",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tKo",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Konferenzpublikation"
+      },
+      {
+       "name": "Meinungsäußerung",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tMe",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Meinungsäußerung"
+      },
+      {
+       "name": "News",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tNe",
+       "children": [],
+       "note": "SIEHE PFLICHT-/SONDERREGEL",
+       "path": "Newsinfo → Dokumententyp → News"
+      },
+      {
+       "name": "Patent",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tPa",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Patent"
+      },
+      {
+       "name": "Strategische Info",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tSt",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Strategische Info"
+      },
+      {
+       "name": "Studie",
+       "tooltip": "Tags\\tNewsinfo\\tDokumententyp\\tSt",
+       "children": [],
+       "path": "Newsinfo → Dokumententyp → Studie"
+      }
+     ],
+     "path": "Newsinfo → Dokumententyp"
+    },
+    {
+     "name": "Informationsverschmutzung",
+     "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+     "children": [
+      {
+       "name": "Deepfake",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Deepfake"
+      },
+      {
+       "name": "Desinformation",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Desinformation"
+      },
+      {
+       "name": "Faktencheck",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Faktencheck"
+      },
+      {
+       "name": "Verschwörungstheorie",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Verschwörungstheorie"
+      },
+      {
+       "name": "Propaganda",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Propaganda"
+      },
+      {
+       "name": "Zensur",
+       "tooltip": "Tags\\tNewsinfo\\tInformationsvers",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Informationsverschmutzung → Zensur"
+      }
+     ],
+     "note": "AUSGESCHLOSSEN",
+     "path": "Newsinfo → Informationsverschmutzung"
+    },
+    {
+     "name": "zeitlicher Aspekt",
+     "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+     "children": [
+      {
+       "name": "2021-2025",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → 2021-2025"
+      },
+      {
+       "name": "2026-2030",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → 2026-2030"
+      },
+      {
+       "name": "2031-2040",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → 2031-2040"
+      },
+      {
+       "name": "2041-2050",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → 2041-2050"
+      },
+      {
+       "name": "2051-später",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → 2051-später"
+      },
+      {
+       "name": "State of the Art",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → State of the Art"
+      },
+      {
+       "name": "Trendbrüche",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → Trendbrüche"
+      },
+      {
+       "name": "Weak Signals",
+       "tooltip": "Tags\\tNewsinfo\\tzeitlicher Aspek",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → zeitlicher Aspekt → Weak Signals"
+      }
+     ],
+     "note": "AUSGESCHLOSSEN",
+     "path": "Newsinfo → zeitlicher Aspekt"
+    },
+    {
+     "name": "geographische Lokationen",
+     "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+     "children": [
+      {
+       "name": "Antarktis",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Antarktis"
+      },
+      {
+       "name": "Arktis",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Arktis"
+      },
+      {
+       "name": "Global",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Global"
+      },
+      {
+       "name": "kein Standort",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → kein Standort"
+      },
+      {
+       "name": "Weltraum",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Weltraum"
+      },
+      {
+       "name": "Nicht/Eingeschränkt anerkannt",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [
+        {
+         "name": "Abchasien",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Abchasien"
+        },
+        {
+         "name": "Bergkarabach",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Bergkarabach"
+        },
+        {
+         "name": "Cookinseln",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Cookinseln"
+        },
+        {
+         "name": "Donezk und Lugansk (Donbass)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Donezk und Lugansk (Donbass)"
+        },
+        {
+         "name": "Kosovo",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Kosovo"
+        },
+        {
+         "name": "Niue",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Niue"
+        },
+        {
+         "name": "Nordzypern",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Nordzypern"
+        },
+        {
+         "name": "Palästina",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Palästina"
+        },
+        {
+         "name": "Somaliland",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Somaliland"
+        },
+        {
+         "name": "Südossetien",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Südossetien"
+        },
+        {
+         "name": "Taiwan",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Taiwan"
+        },
+        {
+         "name": "Transnistrien",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Transnistrien"
+        },
+        {
+         "name": "Westsahara",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt → Westsahara"
+        }
+       ],
+       "path": "Newsinfo → geographische Lokationen → Nicht/Eingeschränkt anerkannt"
+      },
+      {
+       "name": "Kontinente und Staaten",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [
+        {
+         "name": "Afrika",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Ägypten",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Ägypten"
+          },
+          {
+           "name": "Algerien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Algerien"
+          },
+          {
+           "name": "Angola",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Angola"
+          },
+          {
+           "name": "Äquatorialguinea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Äquatorialguinea"
+          },
+          {
+           "name": "Äthiopien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Äthiopien"
+          },
+          {
+           "name": "Benin",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Benin"
+          },
+          {
+           "name": "Botsuana",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Botsuana"
+          },
+          {
+           "name": "Burkina Faso",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Burkina Faso"
+          },
+          {
+           "name": "Burundi",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Burundi"
+          },
+          {
+           "name": "Cabo Verde",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Cabo Verde"
+          },
+          {
+           "name": "Cote d'Ivoire (Elfenbeinküste)",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Cote d'Ivoire (Elfenbeinküste)"
+          },
+          {
+           "name": "Dschibuti",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Dschibuti"
+          },
+          {
+           "name": "Eritrea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Eritrea"
+          },
+          {
+           "name": "Eswatini",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Eswatini"
+          },
+          {
+           "name": "Gabun",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Gabun"
+          },
+          {
+           "name": "Gambia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Gambia"
+          },
+          {
+           "name": "Ghana",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Ghana"
+          },
+          {
+           "name": "Guinea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Guinea"
+          },
+          {
+           "name": "Guinea-Bissau",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Guinea-Bissau"
+          },
+          {
+           "name": "Kamerun",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Kamerun"
+          },
+          {
+           "name": "Kenia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Kenia"
+          },
+          {
+           "name": "Komoren",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Komoren"
+          },
+          {
+           "name": "Kongo, Demokratische Republik",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Kongo, Demokratische Republik"
+          },
+          {
+           "name": "Kongo, Republik der",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Kongo, Republik der"
+          },
+          {
+           "name": "Lesotho",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Lesotho"
+          },
+          {
+           "name": "Liberia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Liberia"
+          },
+          {
+           "name": "Libyen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Libyen"
+          },
+          {
+           "name": "Madagaskar",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Madagaskar"
+          },
+          {
+           "name": "Malawi",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Malawi"
+          },
+          {
+           "name": "Mali",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Mali"
+          },
+          {
+           "name": "Marokko",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Marokko"
+          },
+          {
+           "name": "Mauretanien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Mauretanien"
+          },
+          {
+           "name": "Mauritius",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Mauritius"
+          },
+          {
+           "name": "Mosambik",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Mosambik"
+          },
+          {
+           "name": "Namibia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Namibia"
+          },
+          {
+           "name": "Niger",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Niger"
+          },
+          {
+           "name": "Nigeria",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Nigeria"
+          },
+          {
+           "name": "Ruanda",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Ruanda"
+          },
+          {
+           "name": "Sambia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Sambia"
+          },
+          {
+           "name": "Sao Tome und Principe",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Sao Tome und Principe"
+          },
+          {
+           "name": "Senegal",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Senegal"
+          },
+          {
+           "name": "Seychellen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Seychellen"
+          },
+          {
+           "name": "Sierra Leone",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Sierra Leone"
+          },
+          {
+           "name": "Simbabwe",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Simbabwe"
+          },
+          {
+           "name": "Somalia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Somalia"
+          },
+          {
+           "name": "Südafrika",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Südafrika"
+          },
+          {
+           "name": "Sudan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Sudan"
+          },
+          {
+           "name": "Südsudan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Südsudan"
+          },
+          {
+           "name": "Tansania",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Tansania"
+          },
+          {
+           "name": "Togo",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Togo"
+          },
+          {
+           "name": "Tschad",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Tschad"
+          },
+          {
+           "name": "Tunesien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Tunesien"
+          },
+          {
+           "name": "Uganda",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Uganda"
+          },
+          {
+           "name": "Zentralafrikanische Republik",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika → Zentralafrikanische Republik"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Afrika"
+        },
+        {
+         "name": "Asien",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Afghanistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Afghanistan"
+          },
+          {
+           "name": "Armenien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Armenien"
+          },
+          {
+           "name": "Aserbaidschan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Aserbaidschan"
+          },
+          {
+           "name": "Bahrain",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Bahrain"
+          },
+          {
+           "name": "Bangladesch",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Bangladesch"
+          },
+          {
+           "name": "Bhutan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Bhutan"
+          },
+          {
+           "name": "Brunei",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Brunei"
+          },
+          {
+           "name": "China",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → China"
+          },
+          {
+           "name": "Georgien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Georgien"
+          },
+          {
+           "name": "Indien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Indien"
+          },
+          {
+           "name": "Indonesien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Indonesien"
+          },
+          {
+           "name": "Irak",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Irak"
+          },
+          {
+           "name": "Iran",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Iran"
+          },
+          {
+           "name": "Israel",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Israel"
+          },
+          {
+           "name": "Japan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Japan"
+          },
+          {
+           "name": "Jemen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Jemen"
+          },
+          {
+           "name": "Jordanien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Jordanien"
+          },
+          {
+           "name": "Kambodscha",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Kambodscha"
+          },
+          {
+           "name": "Kasachstan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Kasachstan"
+          },
+          {
+           "name": "Katar",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Katar"
+          },
+          {
+           "name": "Kirgisistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Kirgisistan"
+          },
+          {
+           "name": "Südkorea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Südkorea"
+          },
+          {
+           "name": "Kuwait",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Kuwait"
+          },
+          {
+           "name": "Laos",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Laos"
+          },
+          {
+           "name": "Libanon",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Libanon"
+          },
+          {
+           "name": "Malaysia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Malaysia"
+          },
+          {
+           "name": "Malediven",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Malediven"
+          },
+          {
+           "name": "Mongolei",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Mongolei"
+          },
+          {
+           "name": "Myanmar (Burma)",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Myanmar (Burma)"
+          },
+          {
+           "name": "Nepal",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Nepal"
+          },
+          {
+           "name": "Nordkorea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Nordkorea"
+          },
+          {
+           "name": "Oman",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Oman"
+          },
+          {
+           "name": "Pakistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Pakistan"
+          },
+          {
+           "name": "Philippinen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Philippinen"
+          },
+          {
+           "name": "Russland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Russland"
+          },
+          {
+           "name": "Saudi Arabien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Saudi Arabien"
+          },
+          {
+           "name": "Singapur",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Singapur"
+          },
+          {
+           "name": "Sri Lanka",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Sri Lanka"
+          },
+          {
+           "name": "Syrien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Syrien"
+          },
+          {
+           "name": "Tadschikistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Tadschikistan"
+          },
+          {
+           "name": "Thailand",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Thailand"
+          },
+          {
+           "name": "Timor-Leste",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Timor-Leste"
+          },
+          {
+           "name": "Türkei",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Türkei"
+          },
+          {
+           "name": "Turkmenistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Turkmenistan"
+          },
+          {
+           "name": "Usbekistan",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Usbekistan"
+          },
+          {
+           "name": "Vereinigte Arabische Emirate",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Vereinigte Arabische Emirate"
+          },
+          {
+           "name": "Vietnam",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Vietnam"
+          },
+          {
+           "name": "Zypern",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien → Zypern"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Asien"
+        },
+        {
+         "name": "Australien und Ozeanien",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Australien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Australien"
+          },
+          {
+           "name": "Fidschi",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Fidschi"
+          },
+          {
+           "name": "Kiribati",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Kiribati"
+          },
+          {
+           "name": "Marshallinseln",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Marshallinseln"
+          },
+          {
+           "name": "Mikronesien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Mikronesien"
+          },
+          {
+           "name": "Nauru",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Nauru"
+          },
+          {
+           "name": "Neuseeland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Neuseeland"
+          },
+          {
+           "name": "Palau",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Palau"
+          },
+          {
+           "name": "Papua Neuguinea",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Papua Neuguinea"
+          },
+          {
+           "name": "Salomonen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Salomonen"
+          },
+          {
+           "name": "Samoa",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Samoa"
+          },
+          {
+           "name": "Tonga",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Tonga"
+          },
+          {
+           "name": "Tuvalu",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Tuvalu"
+          },
+          {
+           "name": "Vanuatu",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien → Vanuatu"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Australien und Ozeanien"
+        },
+        {
+         "name": "Europa",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Albanien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Albanien"
+          },
+          {
+           "name": "Andorra",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Andorra"
+          },
+          {
+           "name": "Belarus (Weißrussland)",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Belarus (Weißrussland)"
+          },
+          {
+           "name": "Belgien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Belgien"
+          },
+          {
+           "name": "Bosnien und Herzegowina",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Bosnien und Herzegowina"
+          },
+          {
+           "name": "Bulgarien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Bulgarien"
+          },
+          {
+           "name": "Dänemark",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Dänemark"
+          },
+          {
+           "name": "Deutschland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Deutschland"
+          },
+          {
+           "name": "Estland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Estland"
+          },
+          {
+           "name": "Finnland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Finnland"
+          },
+          {
+           "name": "Frankreich",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Frankreich"
+          },
+          {
+           "name": "Griechenland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Griechenland"
+          },
+          {
+           "name": "Irland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Irland"
+          },
+          {
+           "name": "Island",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Island"
+          },
+          {
+           "name": "Italien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Italien"
+          },
+          {
+           "name": "Kroatien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Kroatien"
+          },
+          {
+           "name": "Lettland",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Lettland"
+          },
+          {
+           "name": "Liechtenstein",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Liechtenstein"
+          },
+          {
+           "name": "Litauen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Litauen"
+          },
+          {
+           "name": "Luxemburg",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Luxemburg"
+          },
+          {
+           "name": "Malta",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Malta"
+          },
+          {
+           "name": "Moldau",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Moldau"
+          },
+          {
+           "name": "Monaco",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Monaco"
+          },
+          {
+           "name": "Montenegro",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Montenegro"
+          },
+          {
+           "name": "Niederlande",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Niederlande"
+          },
+          {
+           "name": "Nordmazedonien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Nordmazedonien"
+          },
+          {
+           "name": "Norwegen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Norwegen"
+          },
+          {
+           "name": "Österreich",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Österreich"
+          },
+          {
+           "name": "Polen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Polen"
+          },
+          {
+           "name": "Portugal",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Portugal"
+          },
+          {
+           "name": "Rumänien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Rumänien"
+          },
+          {
+           "name": "San Marino",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → San Marino"
+          },
+          {
+           "name": "Schweden",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Schweden"
+          },
+          {
+           "name": "Schweiz",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Schweiz"
+          },
+          {
+           "name": "Serbien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Serbien"
+          },
+          {
+           "name": "Slowakei",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Slowakei"
+          },
+          {
+           "name": "Slowenien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Slowenien"
+          },
+          {
+           "name": "Spanien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Spanien"
+          },
+          {
+           "name": "Tschechien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Tschechien"
+          },
+          {
+           "name": "Ukraine",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Ukraine"
+          },
+          {
+           "name": "Ungarn",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Ungarn"
+          },
+          {
+           "name": "Vereinigtes Königreich",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Vereinigtes Königreich"
+          },
+          {
+           "name": "Vatikanstadt (Heiliger Stuhl)",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Vatikanstadt (Heiliger Stuhl)"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa"
+        },
+        {
+         "name": "Nordamerika",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Antigua und Barbuda",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Antigua und Barbuda"
+          },
+          {
+           "name": "Bahamas",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Bahamas"
+          },
+          {
+           "name": "Barbados",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Barbados"
+          },
+          {
+           "name": "Belize",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Belize"
+          },
+          {
+           "name": "Costa Rica",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Costa Rica"
+          },
+          {
+           "name": "Dominica",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Dominica"
+          },
+          {
+           "name": "Dominikanische Republik",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Dominikanische Republik"
+          },
+          {
+           "name": "El Salvador",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → El Salvador"
+          },
+          {
+           "name": "Grenada",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Grenada"
+          },
+          {
+           "name": "Guatemala",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Guatemala"
+          },
+          {
+           "name": "Haiti",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Haiti"
+          },
+          {
+           "name": "Honduras",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Honduras"
+          },
+          {
+           "name": "Jamaika",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Jamaika"
+          },
+          {
+           "name": "Kanada",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Kanada"
+          },
+          {
+           "name": "Kuba",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Kuba"
+          },
+          {
+           "name": "Mexiko",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Mexiko"
+          },
+          {
+           "name": "Nicaragua",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Nicaragua"
+          },
+          {
+           "name": "Panama",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → Panama"
+          },
+          {
+           "name": "St. Kitts und Nevis",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → St. Kitts und Nevis"
+          },
+          {
+           "name": "St. Lucia",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → St. Lucia"
+          },
+          {
+           "name": "St. Vincent und die Grenadinen",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → St. Vincent und die Grenadinen"
+          },
+          {
+           "name": "USA",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika → USA"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Nordamerika"
+        },
+        {
+         "name": "Südamerika",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [
+          {
+           "name": "Argentinien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Argentinien"
+          },
+          {
+           "name": "Bolivien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Bolivien"
+          },
+          {
+           "name": "Brasilien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Brasilien"
+          },
+          {
+           "name": "Chile",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Chile"
+          },
+          {
+           "name": "Ecuador",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Ecuador"
+          },
+          {
+           "name": "Guyana",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Guyana"
+          },
+          {
+           "name": "Kolumbien",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Kolumbien"
+          },
+          {
+           "name": "Paraguay",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Paraguay"
+          },
+          {
+           "name": "Peru",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Peru"
+          },
+          {
+           "name": "Suriname",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Suriname"
+          },
+          {
+           "name": "Trinidad und Tobago",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Trinidad und Tobago"
+          },
+          {
+           "name": "Uruguay",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Uruguay"
+          },
+          {
+           "name": "Venezuela",
+           "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+           "children": [],
+           "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika → Venezuela"
+          }
+         ],
+         "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten → Südamerika"
+        }
+       ],
+       "path": "Newsinfo → geographische Lokationen → Kontinente und Staaten"
+      },
+      {
+       "name": "Übersee- & Extraterritoriale Gebiete",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [
+        {
+         "name": "Amerikanisch-Samoa (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Amerikanisch-Samoa (USA)"
+        },
+        {
+         "name": "Anguilla (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Anguilla (GBR)"
+        },
+        {
+         "name": "Aruba (NLD)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Aruba (NLD)"
+        },
+        {
+         "name": "Ashmore- und Cartier-Inseln (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Ashmore- und Cartier-Inseln (AUS)"
+        },
+        {
+         "name": "Baker- und Howlandinseln (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Baker- und Howlandinseln (USA)"
+        },
+        {
+         "name": "Bermudas (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Bermudas (GBR)"
+        },
+        {
+         "name": "Bouvetinsel (NOR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Bouvetinsel (NOR)"
+        },
+        {
+         "name": "Britische Jungferninseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Britische Jungferninseln (GBR)"
+        },
+        {
+         "name": "Britisches Territorium im Indischen Ozean (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Britisches Territorium im Indischen Ozean (GBR)"
+        },
+        {
+         "name": "Falklandinseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Falklandinseln (GBR)"
+        },
+        {
+         "name": "Färöer (DNK)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Färöer (DNK)"
+        },
+        {
+         "name": "Französisch-Guayana (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Französisch-Guayana (FRA)"
+        },
+        {
+         "name": "Französisch-Polynesien (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Französisch-Polynesien (FRA)"
+        },
+        {
+         "name": "Gibraltar (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Gibraltar (GBR)"
+        },
+        {
+         "name": "Grönland (DNK)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Grönland (DNK)"
+        },
+        {
+         "name": "Guadeloupe (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Guadeloupe (FRA)"
+        },
+        {
+         "name": "Guam (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Guam (USA)"
+        },
+        {
+         "name": "Guernsey (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Guernsey (GBR)"
+        },
+        {
+         "name": "Heard & McDonaldinseln (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Heard & McDonaldinseln (AUS)"
+        },
+        {
+         "name": "Hongkong (CHN)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Hongkong (CHN)"
+        },
+        {
+         "name": "Isle of Man (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Isle of Man (GBR)"
+        },
+        {
+         "name": "Jan Mayen (NOR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Jan Mayen (NOR)"
+        },
+        {
+         "name": "Jarvis-Insel (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Jarvis-Insel (USA)"
+        },
+        {
+         "name": "Jersey (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Jersey (GBR)"
+        },
+        {
+         "name": "Johnston-Atoll (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Johnston-Atoll (USA)"
+        },
+        {
+         "name": "Jungferninseln (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Jungferninseln (USA)"
+        },
+        {
+         "name": "Kaimaninseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Kaimaninseln (GBR)"
+        },
+        {
+         "name": "Kaliningrad (RUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Kaliningrad (RUS)"
+        },
+        {
+         "name": "Kingman-Riff (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Kingman-Riff (USA)"
+        },
+        {
+         "name": "Kokosinseln (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Kokosinseln (AUS)"
+        },
+        {
+         "name": "Korallenmeerinseln (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Korallenmeerinseln (AUS)"
+        },
+        {
+         "name": "Macau (CHN)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Macau (CHN)"
+        },
+        {
+         "name": "Martinique (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Martinique (FRA)"
+        },
+        {
+         "name": "Mayotte (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Mayotte (FRA)"
+        },
+        {
+         "name": "Midway-Inseln (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Midway-Inseln (USA)"
+        },
+        {
+         "name": "Monteserrat (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Monteserrat (GBR)"
+        },
+        {
+         "name": "Navassa-Insel (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Navassa-Insel (USA)"
+        },
+        {
+         "name": "Neukaledonien (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Neukaledonien (FRA)"
+        },
+        {
+         "name": "Niederländische Antillen (NLD)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Niederländische Antillen (NLD)"
+        },
+        {
+         "name": "Nördliche Marianen (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Nördliche Marianen (USA)"
+        },
+        {
+         "name": "Norfolkinsel (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Norfolkinsel (AUS)"
+        },
+        {
+         "name": "Palmyra-Atoll (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Palmyra-Atoll (USA)"
+        },
+        {
+         "name": "Pitcairninseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Pitcairninseln (GBR)"
+        },
+        {
+         "name": "Puerto Rico (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Puerto Rico (USA)"
+        },
+        {
+         "name": "Réunion (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Réunion (FRA)"
+        },
+        {
+         "name": "Spitzbergen (NOR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Spitzbergen (NOR)"
+        },
+        {
+         "name": "St. Helena, Ascension und Tristan da Cunha (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → St. Helena, Ascension und Tristan da Cunha (GBR)"
+        },
+        {
+         "name": "St. Pierre & Miquelon (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → St. Pierre & Miquelon (FRA)"
+        },
+        {
+         "name": "Südgeorgien & Südliche Sandwichinseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Südgeorgien & Südliche Sandwichinseln (GBR)"
+        },
+        {
+         "name": "Tokelau (NZL)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Tokelau (NZL)"
+        },
+        {
+         "name": "Turks- und Caicosinseln (GBR)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Turks- und Caicosinseln (GBR)"
+        },
+        {
+         "name": "Wake Island (USA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Wake Island (USA)"
+        },
+        {
+         "name": "Wallis & Futuna (FRA)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Wallis & Futuna (FRA)"
+        },
+        {
+         "name": "Weihnachtsinsel (AUS)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete → Weihnachtsinsel (AUS)"
+        }
+       ],
+       "path": "Newsinfo → geographische Lokationen → Übersee- & Extraterritoriale Gebiete"
+      },
+      {
+       "name": "Welt- und Randmeere",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [
+        {
+         "name": "Baltisches Meer (Ostsee)",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Baltisches Meer (Ostsee)"
+        },
+        {
+         "name": "Indischer Ozean",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Indischer Ozean"
+        },
+        {
+         "name": "Karibisches Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Karibisches Meer"
+        },
+        {
+         "name": "Kaspisches Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Kaspisches Meer"
+        },
+        {
+         "name": "Mittelmeer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Mittelmeer"
+        },
+        {
+         "name": "Nordatlantik",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Nordatlantik"
+        },
+        {
+         "name": "Ostchinesisches Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Ostchinesisches Meer"
+        },
+        {
+         "name": "Ostpazifik",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Ostpazifik"
+        },
+        {
+         "name": "Persischer Golf",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Persischer Golf"
+        },
+        {
+         "name": "Rotes Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Rotes Meer"
+        },
+        {
+         "name": "Schwarzes Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Schwarzes Meer"
+        },
+        {
+         "name": "Südatlantik",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Südatlantik"
+        },
+        {
+         "name": "Südchinesisches Meer",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Südchinesisches Meer"
+        },
+        {
+         "name": "Westpazifik",
+         "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+         "children": [],
+         "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere → Westpazifik"
+        }
+       ],
+       "path": "Newsinfo → geographische Lokationen → Welt- und Randmeere"
+      },
+      {
+       "name": "Luftraum",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Luftraum"
+      },
+      {
+       "name": "Hoheitsgewässer",
+       "tooltip": "Tags\\tNewsinfo\\tgeographische Lo",
+       "children": [],
+       "path": "Newsinfo → geographische Lokationen → Hoheitsgewässer"
+      }
+     ],
+     "path": "Newsinfo → geographische Lokationen"
+    },
+    {
+     "name": "Quellentyp",
+     "tooltip": "Tags\\tNewsinfo\\tQuellentyp | Art",
+     "children": [
+      {
+       "name": "Behördenseite",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tBehör",
+       "children": [],
+       "path": "Newsinfo → Quellentyp → Behördenseite"
+      },
+      {
+       "name": "Blog",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tBlog ",
+       "children": [],
+       "path": "Newsinfo → Quellentyp → Blog"
+      },
+      {
+       "name": "Nachrichtenseite",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tNachr",
+       "children": [],
+       "path": "Newsinfo → Quellentyp → Nachrichtenseite"
+      },
+      {
+       "name": "Unternehmens- oder Vereinsseite",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tUnter",
+       "children": [],
+       "path": "Newsinfo → Quellentyp → Unternehmens- oder Vereinsseite"
+      },
+      {
+       "name": "wissenschaftliche Fachzeitschrift",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\twisse",
+       "children": [],
+       "path": "Newsinfo → Quellentyp → wissenschaftliche Fachzeitschrift"
+      },
+      {
+       "name": "Konferenz",
+       "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+       "children": [
+        {
+         "name": "34C3 Konferenz",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → 34C3 Konferenz"
+        },
+        {
+         "name": "Blackhat Europa",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Blackhat Europa"
+        },
+        {
+         "name": "Blackhat USA",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Blackhat USA"
+        },
+        {
+         "name": "Chaos Computer Club",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Chaos Computer Club"
+        },
+        {
+         "name": "CyCon (International Conference on Cyber Conflict)",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → CyCon (International Conference on Cyber Conflict)"
+        },
+        {
+         "name": "DLD",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → DLD"
+        },
+        {
+         "name": "Infrachain",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Infrachain"
+        },
+        {
+         "name": "International Conference on Cyber Conflict",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → International Conference on Cyber Conflict"
+        },
+        {
+         "name": "International Conference on Knowledge Technologies and Data-Driven Business",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → International Conference on Knowledge Technologies and Data-Driven Business"
+        },
+        {
+         "name": "Kommune 5.0: Wenn Algorithmen reagieren und verwalten",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Kommune 5.0: Wenn Algorithmen reagieren und verwalten"
+        },
+        {
+         "name": "Msc",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Msc"
+        },
+        {
+         "name": "MSI",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → MSI"
+        },
+        {
+         "name": "No-Spy Konferenz",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → No-Spy Konferenz"
+        },
+        {
+         "name": "Re:publica",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Re:publica"
+        },
+        {
+         "name": "Semantics",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Semantics"
+        },
+        {
+         "name": "Stuttgarter Wissensmanagement",
+         "tooltip": "Tags\\tNewsinfo\\tQuellentyp\\tKonfe",
+         "children": [],
+         "path": "Newsinfo → Quellentyp → Konferenz → Stuttgarter Wissensmanagement"
+        }
+       ],
+       "path": "Newsinfo → Quellentyp → Konferenz"
+      }
+     ],
+     "path": "Newsinfo → Quellentyp"
+    },
+    {
+     "name": "Social Media Post",
+     "tooltip": "Tags\\tNewsinfo\\tSocial Media Pos",
+     "children": [
+      {
+       "name": "Post-Twitter",
+       "tooltip": "Tags\\tNewsinfo\\tSocial Media Pos",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Social Media Post → Post-Twitter"
+      },
+      {
+       "name": "Post-Facebook",
+       "tooltip": "Tags\\tNewsinfo\\tSocial Media Pos",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Social Media Post → Post-Facebook"
+      },
+      {
+       "name": "Post-Telegram",
+       "tooltip": "Tags\\tNewsinfo\\tSocial Media Pos",
+       "children": [],
+       "note": "AUSGESCHLOSSEN",
+       "path": "Newsinfo → Social Media Post → Post-Telegram"
+      }
+     ],
+     "note": "AUSGESCHLOSSEN",
+     "path": "Newsinfo → Social Media Post"
+    }
+   ],
+   "path": "Newsinfo"
+  },
+  {
+   "name": "Auftragstags",
+   "tooltip": "Tags\\tAuftragstags | Auftragsta",
+   "children": [
+    {
+     "name": "WB-Cyber",
+     "tooltip": "Tags\\tAuftragstags\\tWB-Cyber | D",
+     "children": [
+      {
+       "name": "[WB-C]1 Cyber International",
+       "tooltip": "Tags\\tAuftragstags\\tWB-Cyber\\t[WB",
+       "children": [],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → WB-Cyber → [WB-C]1 Cyber International"
+      },
+      {
+       "name": "[WB-C]2 Cyber Österreich",
+       "tooltip": "Tags\\tAuftragstags\\tWB-Cyber\\t[WB",
+       "children": [],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → WB-Cyber → [WB-C]2 Cyber Österreich"
+      },
+      {
+       "name": "[WB-C]3 Cyberinnovationen International",
+       "tooltip": "Tags\\tAuftragstags\\tWB-Cyber\\t[WB",
+       "children": [],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → WB-Cyber → [WB-C]3 Cyberinnovationen International"
+      },
+      {
+       "name": "[WB-C]4 Cyberinnovationen Österreich",
+       "tooltip": "Tags\\tAuftragstags\\tWB-Cyber\\t[WB",
+       "children": [],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → WB-Cyber → [WB-C]4 Cyberinnovationen Österreich"
+      }
+     ],
+     "path": "Auftragstags → WB-Cyber"
+    },
+    {
+     "name": "WB-KriMiSi",
+     "tooltip": "Tags\\tAuftragstags\\tWB-KriMiSi |",
+     "children": [],
+     "path": "Auftragstags → WB-KriMiSi"
+    },
+    {
+     "name": "WB-InnoTech",
+     "tooltip": "Tags\\tAuftragstags\\tWB-InnoTech ",
+     "children": [],
+     "note": "NICHT VERGEBEN",
+     "path": "Auftragstags → WB-InnoTech"
+    },
+    {
+     "name": "HET-EU Verteidigungspolitik",
+     "tooltip": "Tags\\tAuftragstags\\tHET-EU Verte",
+     "children": [],
+     "note": "NICHT VERGEBEN",
+     "path": "Auftragstags → HET-EU Verteidigungspolitik"
+    },
+    {
+     "name": "HSC",
+     "tooltip": "Tags\\tAuftragstags\\tHSC | Die Na",
+     "children": [
+      {
+       "name": "HSC-Ö",
+       "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö | ",
+       "children": [
+        {
+         "name": "China-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tCh",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → China-Ö"
+        },
+        {
+         "name": "Katar-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tKa",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Katar-Ö"
+        },
+        {
+         "name": "Kuwait-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tKu",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Kuwait-Ö"
+        },
+        {
+         "name": "Oman-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tOm",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Oman-Ö"
+        },
+        {
+         "name": "Russland-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tRu",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Russland-Ö"
+        },
+        {
+         "name": "Saudi-Arabien-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tSa",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Saudi-Arabien-Ö"
+        },
+        {
+         "name": "Türkei-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tTü",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → Türkei-Ö"
+        },
+        {
+         "name": "USA-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tUS",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → USA-Ö"
+        },
+        {
+         "name": "VAE-Ö",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-Ö\\tVA",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-Ö → VAE-Ö"
+        }
+       ],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → HSC → HSC-Ö"
+      },
+      {
+       "name": "HSC-KI",
+       "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-KI |",
+       "children": [
+        {
+         "name": "[KI_]Grundlagendokument",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-KI\\t[",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-KI → [KI_]Grundlagendokument"
+        },
+        {
+         "name": "[KI_]Tools und Usecases",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-KI\\t[",
+         "children": [],
+         "note": "SIEHE PFLICHT-/SONDERREGEL",
+         "path": "Auftragstags → HSC → HSC-KI → [KI_]Tools und Usecases"
+        },
+        {
+         "name": "[KI_]Ausbildung",
+         "tooltip": "Tags\\tAuftragstags\\tHSC\\tHSC-KI\\t[",
+         "children": [],
+         "note": "NICHT VERGEBEN",
+         "path": "Auftragstags → HSC → HSC-KI → [KI_]Ausbildung"
+        }
+       ],
+       "note": "NICHT VERGEBEN",
+       "path": "Auftragstags → HSC → HSC-KI"
+      }
+     ],
+     "note": "NICHT VERGEBEN",
+     "path": "Auftragstags → HSC"
+    }
+   ],
+   "path": "Auftragstags"
+  }
+ ]
+}

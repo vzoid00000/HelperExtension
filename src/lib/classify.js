@@ -1,7 +1,7 @@
-// Relevanzprüfung von Schlagzeilen per Claude: Welche Meldungen gehören in
+// Relevanzprüfung von Schlagzeilen: Welche Meldungen gehören in
 // „Cyber“ bzw. „KriMiSi“ und sind wichtig genug?
 
-import { claudeJson } from './claude.js';
+import { llmJson } from './llm.js';
 
 const BATCH_SIZE = 40;
 
@@ -65,7 +65,7 @@ export async function classifyItems(items, settings, onProgress = () => {}) {
       return `#${it.id} (${it.sourceName}${hint}): ${it.title}${summary}`;
     });
     const user = `Bewerte die folgenden ${batch.length} Meldungen. Gib für JEDE id genau ein Ergebnis zurück.\n\n${lines.join('\n')}`;
-    const data = await claudeJson(settings, SYSTEM, user, SCHEMA, { maxTokens: 16000, effort: 'medium' });
+    const data = await llmJson(settings, SYSTEM, user, SCHEMA, { maxTokens: 16000, effort: 'medium' });
     for (const r of data.results || []) {
       result.set(r.id, {
         category: r.category,

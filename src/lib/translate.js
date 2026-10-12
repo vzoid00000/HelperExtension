@@ -1,10 +1,11 @@
 // Übersetzung Englisch → Deutsch über wählbaren Anbieter.
 //   'claude' – Claude API (beste Qualität, API-Key nötig)
+//   'local'  – eigenes Modell am Heim-PC (OpenAI-kompatible Schnittstelle, siehe lib/llm.js)
 //   'deepl'  – DeepL API (Free-Key reicht, API-Key nötig)
 //   'chrome' – in Chrome eingebaute Übersetzung (ab Chrome 138, kostenlos, ohne Key,
 //              Qualität nur mittel)
 
-import { claudeText } from './claude.js';
+import { llmText } from './llm.js';
 
 const TRANSLATION_INSTRUCTIONS = `Du bist ein professioneller Fachübersetzer (Englisch → Deutsch) für ein behördliches Nachrichten-Dokumentationssystem in Österreich.
 
@@ -37,7 +38,8 @@ export async function translateArticle(article, settings, onProgress = () => {})
   if (!title && !text) throw new Error('Nichts zu übersetzen: Titel und Text sind leer.');
 
   let result;
-  if (provider === 'claude') result = await translateWithClaude(title, text, settings, onProgress);
+  if (provider === 'claude') result = await translateWithLlm(title, text, { ...settings, llmProvider: 'claude' }, onProgress, 'Claude');
+  else if (provider === 'local') result = await translateWithLlm(title, text, { ...settings, llmProvider: 'local' }, onProgress, 'lokalem Modell');
   else if (provider === 'deepl') result = await translateWithDeepL(title, text, settings, onProgress);
   else if (provider === 'chrome') result = await translateWithChrome(title, text, onProgress);
   else throw new Error(`Unbekannter Übersetzungs-Anbieter: ${provider}`);
@@ -45,13 +47,13 @@ export async function translateArticle(article, settings, onProgress = () => {})
   return { ...result, provider };
 }
 
-// ---------------------------------------------------------------- Claude ----
+// ------------------------------------------------------ Claude / lokal ----
 
-async function translateWithClaude(title, text, settings, onProgress) {
-  onProgress('Übersetze mit Claude …');
+async function translateWithLlm(title, text, settings, onProgress, label) {
+  onProgress(`Übersetze mit ${label} …`);
   const [deTitle, deText] = await Promise.all([
-    title ? claudeText(settings, TITLE_INSTRUCTIONS, title, { maxTokens: 1024 }) : Promise.resolve(''),
-    text ? claudeText(settings, TRANSLATION_INSTRUCTIONS, text, { maxTokens: 16000 }) : Promise.resolve('')
+    title ? llmText(settings, TITLE_INSTRUCTIONS, title, { maxTokens: 1024 }) : Promise.resolve(''),
+    text ? llmText(settings, TRANSLATION_INSTRUCTIONS, text, { maxTokens: 16000 }) : Promise.resolve('')
   ]);
   return { title: deTitle.trim(), text: deText.trim() };
 }

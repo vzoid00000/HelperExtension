@@ -17,14 +17,40 @@
   <div id="status" class="status" hidden></div>
 
   <section class="card">
-    <h2>Claude API</h2>
-    <label>API-Key
-      <input id="anthropicApiKey" type="password" placeholder="sk-ant-…" autocomplete="off">
-      <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys. Wird nur lokal in dieser Extension gespeichert. Nötig für Relevanzprüfung und (Standard-)Übersetzung.</span>
+    <h2>Sprachmodell (Relevanzprüfung und Tagging)</h2>
+    <label>Anbieter
+      <select id="llmProvider">
+        <option value="claude">Claude API</option>
+        <option value="local">Lokales Modell am eigenen PC (OpenAI-kompatibel)</option>
+      </select>
     </label>
-    <label>Modell
+    <label>Claude API-Key
+      <input id="anthropicApiKey" type="password" placeholder="sk-ant-…" autocomplete="off">
+      <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys. Wird nur lokal in dieser Extension gespeichert.</span>
+    </label>
+    <label>Claude Modell
       <input id="anthropicModel" type="text" placeholder="claude-opus-5-5">
     </label>
+  </section>
+
+  <section class="card">
+    <h2>Lokales Modell</h2>
+    <label>Server-URL
+      <input id="localLlmUrl" type="text" placeholder="http://192.168.1.50:11434/v1">
+      <span class="hint muted small">Basis-URL der OpenAI-kompatiblen Schnittstelle (Ollama: Port 11434, LM Studio: 1234, vLLM: 8000). <code>/v1</code> wird automatisch ergänzt.</span>
+    </label>
+    <label>Modellname
+      <input id="localLlmModel" type="text" placeholder="qwen2.5:32b">
+    </label>
+    <label>API-Key (optional)
+      <input id="localLlmApiKey" type="password" autocomplete="off">
+    </label>
+    <label>Timeout je Anfrage (Sekunden)
+      <input id="localLlmTimeoutSec" type="number" min="30" max="3600" step="30">
+    </label>
+    <div class="row">
+      <button id="btnTestLocal" class="ghost">Verbindung testen</button>
+    </div>
   </section>
 
   <section class="card">
@@ -32,6 +58,7 @@
     <label>Anbieter
       <select id="translator">
         <option value="claude">Claude API (beste Qualität)</option>
+        <option value="local">Lokales Modell</option>
         <option value="deepl">DeepL API (Free-Key reicht)</option>
         <option value="chrome">Chrome integriert (kostenlos, mittlere Qualität, Chrome 138+)</option>
       </select>
@@ -62,6 +89,7 @@
     <label>Max. Meldungen pro Durchlauf
       <input id="maxItemsPerRun" type="number" min="1" max="200" step="1">
     </label>
+    <label class="check"><input id="autoTags" type="checkbox"> Tags per Modell nach dem Tagging-Handbuch vergeben (Struktur, News, Quellentyp, Orte, Themen, KI, WB)</label>
     <label class="check"><input id="autoSave" type="checkbox"> Nach dem Ausfüllen automatisch auf „Save“ klicken</label>
     <span class="hint muted small">Aus = jede News wird nur ausgefüllt, du kontrollierst und speicherst selbst.</span>
     <label>Täglicher Start (Mo–Fr), Uhrzeit
@@ -78,12 +106,6 @@
     </label>
     <label>Text für „Autor ungenannt“
       <input id="authorUnknownText" type="text" placeholder="Autor ungenannt">
-    </label>
-    <label>Tag-Bezeichnung „Cyber“
-      <input id="tagLabelCyber" type="text" placeholder="Cyber">
-    </label>
-    <label>Tag-Bezeichnung „KriMiSi“
-      <input id="tagLabelKrimisi" type="text" placeholder="KriMiSi">
     </label>
     <label class="check"><input id="fillEnglishTab" type="checkbox"> Reiter „English Translated“ mit dem englischen Original befüllen</label>
     <label class="check"><input id="useSiteExtract" type="checkbox"> OSDP-eigenen „Extract“-Button für den Quelltext verwenden (experimentell)</label>

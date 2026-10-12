@@ -86,9 +86,16 @@
     <div class="row">
       <button id="btnFill" class="primary">Formular ausfüllen</button>
       <label class="check"><input id="saveAfterFill" type="checkbox"> danach „Save“ klicken</label>
+      <label class="check">WB
+        <select id="wbChoice">
+          <option value="auto">auto</option>
+          <option value="yes">ja</option>
+          <option value="no">nein</option>
+        </select>
+      </label>
       <span id="osdpTabInfo" class="muted small"></span>
     </div>
-    <p class="muted small">Lädt den OSDP News-Editor neu und füllt Native, English/German Translated, Metadata und Tags.</p>
+    <p class="muted small">Lädt den OSDP News-Editor neu und füllt Native, English/German Translated, Metadata und Tags (nach Tagging-Handbuch, wenn ein Modell konfiguriert ist).</p>
     <pre id="fillReport" class="report" hidden></pre>
   </section>
 
@@ -96,8 +103,9 @@
     <h2>Werkzeuge</h2>
     <div class="row">
       <button id="btnInspect" class="ghost">OSDP-Formular analysieren (Dump erzeugen)</button>
+      <button id="btnExportTags" class="ghost">Tag-Baum mit Tooltips exportieren</button>
     </div>
-    <p class="muted small">Erzeugt zwei Dateien im Download-Ordner (<code>osdp-dump-….json</code> und <code>….html</code>) mit der Struktur des News-Editors. Vorher die Reiter öffnen, die analysiert werden sollen (z. B. „Metadata“).</p>
+    <p class="muted small">„Analysieren“ erzeugt zwei Dateien (<code>osdp-dump-….json</code>/<code>.html</code>) mit der Struktur des News-Editors; vorher die Reiter öffnen, die analysiert werden sollen (z. B. „Metadata“). „Tag-Baum exportieren“ klappt im Reiter „Tags“ alle Knoten auf und speichert alle Tags mit vollständigem Tooltip als <code>osdp-tags-….json</code>.</p>
   </section>
 
   <script type="module" src="sidepanel.js"></script>

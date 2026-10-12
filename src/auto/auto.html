@@ -62,10 +62,32 @@
       <button id="btnClearSelection" class="ghost">Auswahl aufheben</button>
       <button id="btnForget" class="ghost" title="Liste und Verlauf der bereits eingetragenen URLs löschen">Liste leeren</button>
     </div>
+    <p class="muted small">Spalte „WB“: <em>auto</em> = das Modell entscheidet nach dem Tagging-Handbuch, ob die Meldung in den Wochenbericht gehört; <em>ja</em>/<em>nein</em> erzwingt die Entscheidung.</p>
     <table class="tbl items" id="itemsTable">
       <thead>
-        <tr><th></th><th>Bereich</th><th>Score</th><th>Datum</th><th>Quelle</th><th>Titel</th><th>Status</th></tr>
+        <tr><th></th><th>Bereich</th><th>Score</th><th>WB</th><th>Datum</th><th>Quelle</th><th>Titel</th><th>Status</th></tr>
       </thead>
+      <tbody></tbody>
+    </table>
+  </section>
+
+  <section class="card">
+    <div class="row toolbar">
+      <h2>Verlauf <span id="historyStats" class="muted small"></span></h2>
+      <span class="sep"></span>
+      <label class="check">Zeitraum
+        <select id="historyRange">
+          <option value="today" selected>heute</option>
+          <option value="week">diese Woche</option>
+          <option value="all">alle</option>
+        </select>
+      </label>
+      <button id="btnHistoryMd" class="ghost">Als Markdown kopieren</button>
+      <button id="btnHistoryCsv" class="ghost">CSV herunterladen</button>
+    </div>
+    <p class="muted small">Jede gespeicherte News landet hier mit Zusammenfassung, Struktur und WB-Kennzeichnung. „WB“ anklicken, um die Kennzeichnung im Verlauf zu ändern (ändert nichts in OSDP).</p>
+    <table class="tbl" id="historyTable">
+      <thead><tr><th>Zeit</th><th>Struktur</th><th>WB</th><th>Titel</th><th>Quelle</th><th>Zusammenfassung</th><th></th></tr></thead>
       <tbody></tbody>
     </table>
   </section>

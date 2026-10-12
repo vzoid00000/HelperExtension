@@ -150,7 +150,7 @@ export class OsdpDriver {
 
   /**
    * Trägt einen Artikel vollständig ein.
-   * @param {object} a  { url, titleEn, textEn, titleDe, textDe, author, authorUnknown, date (Date), category }
+   * @param {object} a  { url, titleEn, textEn, titleDe, textDe, author, authorUnknown, date (Date), category, tagPaths? }
    * @param {object} opts  { save: boolean, fresh: boolean, translateFn?: ({title,text}) => Promise<{title,text}> }
    */
   async fillArticle(a, { save = false, fresh = true, translateFn = null } = {}) {
@@ -220,9 +220,14 @@ export class OsdpDriver {
       if (m.date === false) report.problems.push('Datum-Feld im Reiter „Metadata“ nicht gefunden');
     }
 
-    // Tags: Bereich
-    const tagLabel = a.category === 'krimisi' ? s.tagLabelKrimisi || 'KriMiSi' : s.tagLabelCyber || 'Cyber';
-    note('tag', await this.exec('checkTag', { label: tagLabel }));
+    // Tags: vollständige Pfade aus dem Tagger, sonst Minimal-Fallback (nur Struktur-Bereich)
+    if (Array.isArray(a.tagPaths) && a.tagPaths.length) {
+      const r = note('tags', await this.exec('applyTags', { paths: a.tagPaths }));
+      if (r?.failed?.length) report.problems.push(`Tags nicht gesetzt: ${r.failed.map((f) => `${f.path} (${f.error})`).join('; ')}`);
+    } else {
+      const tagLabel = a.category === 'krimisi' ? s.tagLabelKrimisi || 'KriMiSi' : s.tagLabelCyber || 'Cyber';
+      note('tag', await this.exec('checkTag', { label: tagLabel }));
+    }
 
     // Zurück zum Native-Tab, damit der Nutzer den Eintrag sieht
     await this.exec('selectTab', { group: 'native', tab: '^\\s*native\\s*$' }).catch(() => {});
