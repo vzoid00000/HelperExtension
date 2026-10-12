@@ -8,6 +8,13 @@ import { formatDate, toIsoDate } from './dates.js';
 export const OSDP_BASE = 'https://osdp.zentdok.at';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+/** Basis-URL aus dem URL-Muster der Einstellungen (z. B. "http://localhost:4300/*" für den Nachbau). */
+export function osdpBase(settings) {
+  const pattern = (settings?.osdpUrlPattern || '').trim();
+  const m = /^(https?:\/\/[^/*]+)/i.exec(pattern);
+  return m ? m[1] : OSDP_BASE;
+}
+
 /** Läuft in der MAIN-Welt der OSDP-Seite: CKEditor-Inhalt eines Tabs setzen. */
 function ckSetData(groupPattern, tabPattern, html) {
   const text = (el) => (el && el.textContent ? el.textContent : '').replace(/\s+/g, ' ').trim();
@@ -78,7 +85,7 @@ export class OsdpDriver {
     let tab = tabs.find((t) => /newsEditor/i.test(t.url || '')) || tabs[0];
     if (!tab) {
       this.log('Öffne OSDP in neuem Tab …');
-      tab = await chrome.tabs.create({ url: `${OSDP_BASE}/#/newsEditor`, active: false });
+      tab = await chrome.tabs.create({ url: `${osdpBase(this.settings)}/#/newsEditor`, active: false });
       await waitForTabLoad(tab.id, 30000);
     }
     this.tabId = tab.id;
@@ -133,7 +140,7 @@ export class OsdpDriver {
   /** Editor neu laden, damit ein leeres Formular vorliegt. */
   async freshEditor() {
     const tabId = await this.ensureTab();
-    await chrome.tabs.update(tabId, { url: `${OSDP_BASE}/#/newsEditor` });
+    await chrome.tabs.update(tabId, { url: `${osdpBase(this.settings)}/#/newsEditor` });
     await sleep(200);
     await chrome.tabs.reload(tabId);
     await waitForTabLoad(tabId, 30000);

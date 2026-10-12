@@ -154,12 +154,30 @@ Struktur aus dem DOM-Dump (`site-dump/`): Angular 17 + Angular Material, CKEdito
 Für den Reiter „Metadata“ bitte einen Dump mit geöffnetem Reiter erzeugen (`site-dump/README.md`).
 Was die Extension dort findet, steht nach dem ersten Durchlauf in der aufgeklappten Zeile („Metadata-Felder“).
 
+## Lokale Entwicklung mit Nachbau der OSDP-Oberfläche
+
+Ohne Zugriff auf die echte Seite lässt sich das Frontend aus einem HAR-Export lokal betreiben:
+
+```
+node tools/redact-har.mjs site-dump/osdp.har               # Zugangsdaten entfernen → osdp.redacted.har
+node tools/har-to-mock.mjs site-dump/osdp.redacted.har     # Frontend-Dateien + API-Antworten → mock-osdp/
+node tools/mock-osdp-server.mjs                             # http://localhost:4300/#/newsEditor
+```
+
+Der Server liefert die aufgezeichneten Antworten (Login, Tag-Baum, Extract …), protokolliert
+„Save“-Aufrufe und speichert nichts. In den Extension-Einstellungen das URL-Muster des OSDP-Tabs
+auf `http://localhost:4300/*` stellen, dann laufen Side Panel und Automatik gegen den Nachbau.
+Was dafür exportiert werden muss, steht in `site-dump/README.md`.
+
 ## Projektstruktur
 
 ```
 manifest.json                      Manifest V3
 docs/OSDP_Tagging_Handbuch.md      Tagging-Regeln und Tag-Katalog (Quelle)
 tools/build-tag-catalog.mjs        Handbuch → src/config/osdp-tags.json
+tools/redact-har.mjs               HAR-Export schwärzen (Cookies, Tokens, Passwörter)
+tools/har-to-mock.mjs              HAR → lokaler Nachbau (mock-osdp/)
+tools/mock-osdp-server.mjs         Nachbau-Server auf localhost:4300
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
 src/background.js                  Service Worker (Side Panel, Zeitplan)
 src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen, Verlauf)

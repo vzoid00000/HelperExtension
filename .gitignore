@@ -1,0 +1,9 @@
+# Ungeschwärzte HAR-Exporte enthalten Cookies/Tokens – nur die geschwärzte Fassung committen
+site-dump/*.har
+!site-dump/*.redacted.har
+
+# Aus dem HAR erzeugter Nachbau (kann jederzeit neu gebaut werden)
+mock-osdp/
+
+node_modules/
+.DS_Store
