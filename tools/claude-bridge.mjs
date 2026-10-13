@@ -35,13 +35,19 @@ const opt = (name, def) => {
  */
 function resolveClaudeBin(name) {
   if (process.platform !== 'win32' || /[\\/]/.test(name)) return name;
+  const candidates = [];
   try {
-    const found = execFileSync('where.exe', [name], { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] })
-      .split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
-    return found.find((p) => /\.exe$/i.test(p)) || found[0] || name;
+    candidates.push(...execFileSync('where.exe', [name], { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] })
+      .split(/\r?\n/).map((s) => s.trim()).filter(Boolean));
   } catch {
-    return name;
+    /* nicht im PATH */
   }
+  // Bekannte Installationsorte, falls der PATH (noch) nicht stimmt
+  const home = process.env.USERPROFILE || os.homedir();
+  candidates.push(path.join(home, '.local', 'bin', `${name}.exe`));
+  if (process.env.APPDATA) candidates.push(path.join(process.env.APPDATA, 'npm', `${name}.cmd`));
+  const existing = candidates.filter((p) => { try { return fs.statSync(p).isFile(); } catch { return false; } });
+  return existing.find((p) => /\.exe$/i.test(p)) || existing[0] || name;
 }
 
 const PORT = Number(opt('--port', process.env.BRIDGE_PORT || 4310));

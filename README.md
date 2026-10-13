@@ -123,6 +123,20 @@ Extension arbeitet; jede Anfrage erscheint dort als Zeile.
 
 Ist in der Windows-Umgebung ein `ANTHROPIC_API_KEY` gesetzt, würde Claude Code im Druckmodus
 immer diesen Key verwenden; die Brücke entfernt die Variable deshalb für jeden Aufruf.
+
+**„claude wird nicht erkannt“ (Windows):** Der native Installer legt `claude.exe` unter
+`%USERPROFILE%\.local\bin` ab und trägt den Ordner in den Benutzer-PATH ein. Ein schon offenes
+Windows Terminal gibt neuen Tabs aber den alten PATH mit: alle Terminalfenster schließen und ein
+neues öffnen. Die Brücke findet `claude.exe` dort auch ohne PATH. Prüfen und notfalls direkt
+aufrufen:
+
+```
+dir $env:USERPROFILE\.local\bin
+& "$env:USERPROFILE\.local\bin\claude.exe" --version
+```
+
+Fehlt die Datei, ist die Installation nicht durchgelaufen: `winget install Anthropic.ClaudeCode`
+oder, da Node.js ohnehin installiert ist, `npm install -g @anthropic-ai/claude-code`.
 Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
 (Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
 
