@@ -93,6 +93,46 @@ und startet „Alles automatisch“. Chrome muss laufen.
 | Freitag | Freitag der Vorwoche (7 Tage) |
 | Samstag / Sonntag | gestern / vorgestern |
 
+## Claude-Abo statt API-Key: die Claude-Code-Brücke
+
+Wer kein API-Guthaben kaufen will, nutzt das Kontingent seines claude.ai-Abos (Pro/Max) über
+**Claude Code**, das im Abo enthalten ist. `tools/claude-bridge.mjs` ist ein kleiner lokaler Server,
+der jede Anfrage der Extension an `claude -p` weiterreicht. Direkt mit der Website oder mit
+ausgelesenen Anmelde-Tokens arbeitet die Extension bewusst nicht.
+
+Einrichtung auf dem PC, an dem Chrome läuft (Node.js ab 20 nötig):
+
+```
+npm install -g @anthropic-ai/claude-code
+claude auth login                  # mit dem claude.ai-Konto anmelden (Browserfenster)
+claude auth status                 # muss "claude.ai" als Anmeldung zeigen
+node tools/claude-bridge.mjs       # oder Doppelklick auf tools\start-claude-bridge.cmd (Windows)
+```
+
+Die Brücke meldet sich mit `http://localhost:4310/v1` und prüft beim Start die Anmeldung. In den
+Extension-Einstellungen „Claude-Code-Brücke voreinstellen“ klicken, speichern, „Verbindung testen“.
+Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
+(Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
+
+Die Brücke startet das unveränderte Claude Code ohne Werkzeuge und ohne Sitzung
+(`--tools "" --disallowedTools "*" --max-turns 1 --safe-mode --no-session-persistence`), übergibt den
+System-Prompt per Datei und den Artikeltext per stdin und entfernt `ANTHROPIC_API_KEY` aus der
+Umgebung, damit nie über die API abgerechnet wird.
+
+Hinweis zu den Nutzungsbedingungen: Anthropic erlaubt die Anmeldung mit dem eigenen Abo im
+unveränderten Claude Code für den persönlichen Gebrauch; das Kontingent darf nicht für andere
+Personen oder als Dienst weitergegeben werden. Die Brücke ist deshalb nur für den eigenen PC gedacht
+und nimmt nur Verbindungen von `localhost` an.
+
+**Nutzungslimit:** Meldet Claude Code, dass das Abo-Kontingent erschöpft ist, antwortet die Brücke
+mit HTTP 429 und der Zeit, ab der es weitergeht (soweit Claude Code sie nennt). Die Automatik hält
+den Durchlauf an, zeigt „Nutzungslimit erreicht – bitte warten“ und merkt sich die bereits
+erledigten Meldungen; später einfach erneut starten. Bis zur gemeldeten Zeit beantwortet die Brücke
+weitere Anfragen sofort mit 429, ohne Claude Code erneut aufzurufen.
+
+Verbrauch je Artikel liegt grob bei einem bis drei Claude-Code-Aufrufen (Relevanz wird gebündelt,
+dann Tagging und Übersetzung). Mit `--model sonnet` reicht das Kontingent deutlich länger.
+
 ## Sprachmodell: Claude oder eigener PC
 
 | | Claude API | Lokales Modell |

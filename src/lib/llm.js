@@ -8,6 +8,19 @@ import { claudeRequest, responseText } from './claude.js';
 
 const sysText = (system) => (Array.isArray(system) ? system.map((b) => b.text).join('\n\n') : system);
 
+/** Fehler, bei dem Weiterarbeiten keinen Sinn hat: Nutzungslimit/Rate-Limit erreicht. */
+export class RateLimitError extends Error {
+  constructor(message, { retryAt = null, provider = '' } = {}) {
+    super(message);
+    this.name = 'RateLimitError';
+    this.rateLimited = true;
+    this.retryAt = retryAt;
+    this.provider = provider;
+  }
+}
+
+export const isRateLimit = (e) => !!(e && (e.rateLimited || e.name === 'RateLimitError'));
+
 /**
  * Textantwort.
  * @param {object} settings
@@ -71,6 +84,19 @@ async function localRequest(settings, body) {
   }
   if (!res.ok) {
     const detail = await res.text().catch(() => '');
+    if (res.status === 429) {
+      // Vermittler/Server meldet erschöpftes Kontingent (z. B. Claude-Code-Brücke: {"error":{"message":…,"retry_at":…}})
+      let message = 'Nutzungslimit erreicht – bitte eine Weile warten und dann erneut starten.';
+      let retryAt = null;
+      try {
+        const j = JSON.parse(detail);
+        message = j?.error?.message || j?.message || message;
+        retryAt = j?.error?.retry_at || j?.retry_at || null;
+      } catch {
+        if (detail) message = detail.slice(0, 300);
+      }
+      throw new RateLimitError(message, { retryAt, provider: 'local' });
+    }
     const err = new Error(`Lokales Modell: HTTP ${res.status} ${detail.slice(0, 300)}`);
     err.status = res.status;
     throw err;

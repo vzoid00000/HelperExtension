@@ -6,6 +6,7 @@ Alle Tests laufen mit Node ≥ 20 ohne Build-Schritt. Die Browser-Tests brauchen
 ```
 node tests/catalog.test.mjs          # Tag-Katalog: Regeln, Auflösung, Validierung (ohne Browser)
 node tests/har-tools.test.mjs        # redact-har, har-to-mock, mock-osdp-server (ohne Browser)
+node tests/bridge.test.mjs           # Claude-Code-Brücke mit CLI-Attrappe (ohne Browser)
 node tests/extension-v2.test.mjs     # Extension laden, Extractor, Filler gegen Nachbau-Fixture
 node tests/extension-v3.test.mjs     # Tag-Baum (applyTags, exportTagTree), lokaler LLM-Client, Verlauf
 ```

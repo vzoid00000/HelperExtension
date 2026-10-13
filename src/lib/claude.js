@@ -38,7 +38,13 @@ export async function claudeRequest(settings, body) {
       detail = await res.text().catch(() => '');
     }
     if (res.status === 401) throw new Error('Claude API: API-Key ungültig (401).');
-    if (res.status === 429) throw new Error('Claude API: Rate-Limit erreicht (429). Kurz warten und erneut versuchen.');
+    if (res.status === 429) {
+      const err = new Error(`Claude API: Rate-Limit erreicht (429). Bitte einige Minuten warten und erneut starten.${detail ? ' ' + detail.slice(0, 200) : ''}`);
+      err.rateLimited = true;
+      err.name = 'RateLimitError';
+      err.retryAt = res.headers.get('retry-after') ? new Date(Date.now() + Number(res.headers.get('retry-after')) * 1000).toISOString() : null;
+      throw err;
+    }
     if (res.status === 529 || res.status >= 500) throw new Error(`Claude API vorübergehend nicht erreichbar (${res.status}).`);
     throw new Error(`Claude API Fehler ${res.status}: ${detail}`);
   }

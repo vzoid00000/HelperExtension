@@ -9,6 +9,7 @@ import { extractViaTab } from '../lib/tabloader.js';
 import { classifyItems } from '../lib/classify.js';
 import { translateArticle } from '../lib/translate.js';
 import { OsdpDriver } from '../lib/osdp-driver.js';
+import { isRateLimit } from '../lib/llm.js';
 import { TagCatalog, selectionToText, STRUCTURE_PATHS, PATH_NEWS, PATH_SOURCE_TYPE, PATH_NO_LOCATION } from '../lib/tag-catalog.js';
 import { suggestTags } from '../lib/tagger.js';
 import { loadHistory, addHistoryEntry, updateHistoryEntry, removeHistoryEntry, filterHistory, historyStats, historyToMarkdown, historyToCsv } from '../lib/history.js';
@@ -113,8 +114,14 @@ async function run(fn) {
     await fn();
   } catch (err) {
     console.error(err);
-    log(`Fehler: ${err.message || err}`, 'err');
-    setStatus(err.message || String(err), 'err');
+    if (isRateLimit(err)) {
+      const until = err.retryAt ? ` Voraussichtlich wieder möglich ab ${new Date(err.retryAt).toLocaleString('de-AT')}.` : '';
+      log(`⏸ Nutzungslimit erreicht: ${err.message}${until} Der Durchlauf wurde angehalten – später einfach erneut starten, bereits erledigte Meldungen bleiben erledigt.`, 'err');
+      setStatus(`Nutzungslimit erreicht – bitte warten.${until}`, 'err');
+    } else {
+      log(`Fehler: ${err.message || err}`, 'err');
+      setStatus(err.message || String(err), 'err');
+    }
   } finally {
     running = false;
     setButtons(false);
@@ -459,6 +466,11 @@ async function processItem(it, driver) {
     }
     log(settings.autoSave ? `Gespeichert${report.snackbar ? ' – OSDP: „' + report.snackbar + '“' : ''}.` : 'Ausgefüllt – bitte in OSDP prüfen und speichern.', 'ok');
   } catch (e) {
+    if (isRateLimit(e)) {
+      // Nicht als Fehler der Meldung werten: Auswahl bleibt, der Durchlauf wird oben angehalten
+      it.status = it.category ? 'relevant' : 'new';
+      throw e;
+    }
     it.status = 'error';
     it.error = e.message || String(e);
     log(`Fehler bei „${it.title}“: ${it.error}`, 'err');

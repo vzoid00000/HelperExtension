@@ -104,7 +104,10 @@ async function guard(fn, button) {
     await fn();
   } catch (err) {
     console.error(err);
-    setStatus(err.message || String(err), 'err');
+    if (err?.rateLimited) {
+      const until = err.retryAt ? ` Voraussichtlich wieder möglich ab ${new Date(err.retryAt).toLocaleString('de-AT')}.` : '';
+      setStatus(`Nutzungslimit erreicht – bitte warten.${until} (${err.message})`, 'err');
+    } else setStatus(err.message || String(err), 'err');
   } finally {
     button.disabled = false;
   }

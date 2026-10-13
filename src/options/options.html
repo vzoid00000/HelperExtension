@@ -20,10 +20,14 @@
     <h2>Sprachmodell (Relevanzprüfung und Tagging)</h2>
     <label>Anbieter
       <select id="llmProvider">
-        <option value="claude">Claude API</option>
-        <option value="local">Lokales Modell am eigenen PC (OpenAI-kompatibel)</option>
+        <option value="claude">Claude API (API-Key, Abrechnung pro Token)</option>
+        <option value="local">Lokaler Server (Claude-Code-Brücke mit Abo-Kontingent oder eigenes Modell)</option>
       </select>
     </label>
+    <div class="row">
+      <button id="btnPresetBridge" class="ghost">Claude-Code-Brücke voreinstellen</button>
+      <span class="muted small">Setzt Anbieter + Übersetzung auf die Brücke (<code>http://localhost:4310/v1</code>, Modell <code>opus</code>). Die Brücke startest du mit <code>node tools/claude-bridge.mjs</code>, siehe README.</span>
+    </div>
     <label>Claude API-Key
       <input id="anthropicApiKey" type="password" placeholder="sk-ant-…" autocomplete="off">
       <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys. Wird nur lokal in dieser Extension gespeichert.</span>
@@ -34,13 +38,14 @@
   </section>
 
   <section class="card">
-    <h2>Lokales Modell</h2>
+    <h2>Lokaler Server (Claude-Code-Brücke oder eigenes Modell)</h2>
     <label>Server-URL
-      <input id="localLlmUrl" type="text" placeholder="http://192.168.1.50:11434/v1">
-      <span class="hint muted small">Basis-URL der OpenAI-kompatiblen Schnittstelle (Ollama: Port 11434, LM Studio: 1234, vLLM: 8000). <code>/v1</code> wird automatisch ergänzt.</span>
+      <input id="localLlmUrl" type="text" placeholder="http://localhost:4310/v1">
+      <span class="hint muted small">Claude-Code-Brücke: <code>http://localhost:4310/v1</code>. Eigenes Modell (OpenAI-kompatibel): Ollama Port 11434, LM Studio 1234, vLLM 8000. <code>/v1</code> wird automatisch ergänzt.</span>
     </label>
     <label>Modellname
-      <input id="localLlmModel" type="text" placeholder="qwen2.5:32b">
+      <input id="localLlmModel" type="text" placeholder="opus">
+      <span class="hint muted small">Brücke: <code>opus</code>, <code>sonnet</code> oder <code>haiku</code> (bzw. volle Modell-ID). Eigenes Modell: z. B. <code>qwen2.5:32b</code>.</span>
     </label>
     <label>API-Key (optional)
       <input id="localLlmApiKey" type="password" autocomplete="off">

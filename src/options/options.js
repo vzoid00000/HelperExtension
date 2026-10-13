@@ -33,6 +33,14 @@ async function init() {
     $('sourcesText').value = sourcesToText(DEFAULT_SOURCES);
   });
 
+  $('btnPresetBridge').addEventListener('click', () => {
+    $('llmProvider').value = 'local';
+    $('translator').value = 'local';
+    $('localLlmUrl').value = 'http://localhost:4310/v1';
+    $('localLlmModel').value = 'opus';
+    setStatus('Voreinstellung gesetzt – bitte „Speichern“ und dann „Verbindung testen“ (die Brücke muss laufen).', 'ok');
+  });
+
   $('btnSave').addEventListener('click', async () => {
     const s = readForm();
     if (s.sourcesText && parseSourcesText(s.sourcesText).length === 0) {
