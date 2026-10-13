@@ -101,17 +101,28 @@ Wer kein API-Guthaben kaufen will, nutzt das Kontingent seines claude.ai-Abos (P
 der jede Anfrage der Extension an `claude -p` weiterreicht. Direkt mit der Website oder mit
 ausgelesenen Anmelde-Tokens arbeitet die Extension bewusst nicht.
 
-Einrichtung auf dem PC, an dem Chrome läuft (Node.js ab 20 nötig):
+Einrichtung auf dem PC, an dem Chrome läuft. Claude Code braucht ein claude.ai-Abo (Pro oder
+Max; der Gratis-Plan enthält kein Claude Code), die Brücke braucht Node.js (LTS-Installer von
+nodejs.org, Version 20 oder neuer). Git ist nicht nötig.
 
 ```
-npm install -g @anthropic-ai/claude-code
+# Windows, PowerShell (nativer Installer, empfohlen; zeigt beim Download keinen Fortschritt an):
+irm https://claude.ai/install.ps1 | iex
+# alternativ überall: npm install -g @anthropic-ai/claude-code   (Node.js 22 oder neuer)
+
+claude --version                   # in einem NEUEN Terminal prüfen
 claude auth login                  # mit dem claude.ai-Konto anmelden (Browserfenster)
-claude auth status                 # muss "claude.ai" als Anmeldung zeigen
+claude auth status                 # "authMethod": "claude.ai" muss erscheinen
 node tools/claude-bridge.mjs       # oder Doppelklick auf tools\start-claude-bridge.cmd (Windows)
 ```
 
-Die Brücke meldet sich mit `http://localhost:4310/v1` und prüft beim Start die Anmeldung. In den
-Extension-Einstellungen „Claude-Code-Brücke voreinstellen“ klicken, speichern, „Verbindung testen“.
+Die Brücke meldet sich mit `http://localhost:4310/v1`, zeigt den gefundenen Claude-Code-Pfad und
+prüft beim Start die Anmeldung. In den Extension-Einstellungen „Claude-Code-Brücke voreinstellen“
+klicken, speichern, „Verbindung testen“. Das Fenster der Brücke muss offen bleiben, solange die
+Extension arbeitet; jede Anfrage erscheint dort als Zeile.
+
+Ist in der Windows-Umgebung ein `ANTHROPIC_API_KEY` gesetzt, würde Claude Code im Druckmodus
+immer diesen Key verwenden; die Brücke entfernt die Variable deshalb für jeden Aufruf.
 Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
 (Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
 

@@ -12,12 +12,13 @@
 // Erreicht das Abo-Kontingent sein Limit, antwortet die Brücke mit HTTP 429 und
 // {"error": {"message": "…", "retry_at": "<ISO-Zeit, falls bekannt>"}}; die Extension hält dann an.
 //
-// Voraussetzungen: Node ≥ 20, Claude Code installiert (`npm install -g @anthropic-ai/claude-code`)
-// und angemeldet (`claude login`). Es darf KEIN ANTHROPIC_API_KEY gesetzt sein, sonst würde
-// Claude Code über die API abrechnen – die Brücke entfernt die Variable für den Aufruf.
+// Voraussetzungen: Node ≥ 20, Claude Code installiert (Windows: `irm https://claude.ai/install.ps1 | iex`
+// in PowerShell, sonst `npm install -g @anthropic-ai/claude-code`) und mit dem claude.ai-Abo
+// angemeldet (`claude auth login`, Pro/Max nötig). Es darf KEIN ANTHROPIC_API_KEY gesetzt sein,
+// sonst würde Claude Code über die API abrechnen – die Brücke entfernt die Variable für den Aufruf.
 
 import http from 'node:http';
-import { spawn } from 'node:child_process';
+import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -27,10 +28,26 @@ const opt = (name, def) => {
   const i = args.indexOf(name);
   return i >= 0 ? args[i + 1] : def;
 };
+/**
+ * Unter Windows liegt Claude Code je nach Installation als claude.exe (nativer Installer,
+ * %USERPROFILE%\.local\bin) oder als claude.cmd (npm) vor. Eine .exe wird direkt gestartet,
+ * eine .cmd braucht die Shell (cmd.exe) und selbst gesetzte Anführungszeichen.
+ */
+function resolveClaudeBin(name) {
+  if (process.platform !== 'win32' || /[\\/]/.test(name)) return name;
+  try {
+    const found = execFileSync('where.exe', [name], { encoding: 'utf8', windowsHide: true, stdio: ['ignore', 'pipe', 'ignore'] })
+      .split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
+    return found.find((p) => /\.exe$/i.test(p)) || found[0] || name;
+  } catch {
+    return name;
+  }
+}
+
 const PORT = Number(opt('--port', process.env.BRIDGE_PORT || 4310));
 const DEFAULT_MODEL = opt('--model', process.env.BRIDGE_MODEL || 'opus');
 const EFFORT = opt('--effort', process.env.BRIDGE_EFFORT || 'medium');
-const CLAUDE_BIN = opt('--claude', process.env.CLAUDE_BIN || 'claude');
+const CLAUDE_BIN = resolveClaudeBin(opt('--claude', process.env.CLAUDE_BIN || 'claude'));
 const PARALLEL = Math.max(1, Number(opt('--parallel', process.env.BRIDGE_PARALLEL || 2)));
 const TIMEOUT_MS = Number(opt('--timeout', 600)) * 1000;
 const VERBOSE = args.includes('--verbose');
@@ -91,7 +108,8 @@ function parseResetTime(text) {
 /** Beim Start prüfen, ob Claude Code mit dem claude.ai-Konto angemeldet ist. */
 function checkAuth() {
   return new Promise((resolve) => {
-    const child = spawnClaude(['auth', 'status', '--json']);
+    // `claude auth status` liefert standardmäßig JSON ({ loggedIn, authMethod, … })
+    const child = spawnClaude(['auth', 'status']);
     let out = '';
     let err = '';
     child.stdout.on('data', (d) => (out += d));
@@ -125,21 +143,25 @@ function claudeEnv() {
   for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'CLAUDE_CODE_USE_BEDROCK', 'CLAUDE_CODE_USE_VERTEX', 'CLAUDE_CODE_USE_FOUNDRY', 'ANTHROPIC_MODEL']) delete env[k];
   env.CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC = '1';
   env.CLAUDE_CODE_SKIP_PROMPT_HISTORY = '1';
+  // Unbeaufsichtigter Betrieb: bei erschöpftem Kontingent (429) sofort abbrechen statt lange zu warten
+  env.CLAUDE_CODE_RETRY_WATCHDOG = '1';
   return env;
 }
 
-/** Unter Windows läuft die CLI als claude.cmd über die Shell: Argumente müssen selbst in Anführungszeichen. */
+/** Nur für claude.cmd über die Shell: Argumente müssen selbst in Anführungszeichen. */
 function winQuote(arg) {
   if (arg === '') return '""';
   return /[\s"]/.test(arg) ? `"${arg.replace(/"/g, '\\"')}"` : arg;
 }
 
+// Shell nur, wenn Claude Code als Skript (claude.cmd/.bat) vorliegt; claude.exe läuft direkt.
+const USE_SHELL = process.platform === 'win32' && !/\.exe$/i.test(CLAUDE_BIN);
+
 function spawnClaude(cliArgs, { input } = {}) {
-  const isWin = process.platform === 'win32';
-  const child = spawn(CLAUDE_BIN, isWin ? cliArgs.map(winQuote) : cliArgs, {
+  const child = spawn(CLAUDE_BIN, USE_SHELL ? cliArgs.map(winQuote) : cliArgs, {
     env: claudeEnv(),
     cwd: WORK_DIR,
-    shell: isWin,
+    shell: USE_SHELL,
     windowsHide: true,
     stdio: ['pipe', 'pipe', 'pipe']
   });
@@ -319,10 +341,11 @@ server.listen(PORT, '127.0.0.1', async () => {
   console.log(`Claude-Code-Brücke läuft: http://localhost:${PORT}/v1  (Modell ${DEFAULT_MODEL}, Effort ${EFFORT}, max. ${PARALLEL} parallel)`);
   console.log('Extension-Einstellungen: Anbieter „Lokaler Server“, URL http://localhost:' + PORT + '/v1, Modell ' + DEFAULT_MODEL);
   console.log('Status: http://localhost:' + PORT + '/__bridge/status');
+  console.log(`Claude Code: ${CLAUDE_BIN}${USE_SHELL ? ' (über cmd.exe)' : ''}`);
   if (!args.includes('--skip-auth-check')) {
     const auth = await checkAuth();
     stats.auth = auth;
-    if (!auth.ok) console.log(`⚠ Claude Code meldet keine Anmeldung: ${auth.message}\n  Bitte einmal „claude auth login“ (bzw. „claude login“) ausführen und die Brücke neu starten.`);
+    if (!auth.ok) console.log(`⚠ Claude Code meldet keine Anmeldung: ${auth.message}\n  Bitte einmal „claude auth login“ ausführen (claude.ai-Konto mit Pro/Max) und die Brücke neu starten.`);
     else if (auth.method && auth.method !== 'claude.ai') console.log(`⚠ Claude Code ist mit „${auth.method}“ angemeldet, nicht mit dem claude.ai-Abo – Anfragen würden über die API abgerechnet.`);
     else console.log(`Anmeldung: ${auth.method || 'ok'} – Abo-Kontingent wird verwendet.`);
   }
