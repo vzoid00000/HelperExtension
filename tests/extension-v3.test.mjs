@@ -118,6 +118,46 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
   await page.close();
 }
 
+// 4) Einstellungen: Sparmodus-Voreinstellung, Modellauswahl, effort-Parameter bei Haiku
+{
+  const page = await context.newPage();
+  await page.goto(`chrome-extension://${extId}/src/options/options.html`);
+  await page.waitForTimeout(500);
+  await page.click('#btnPresetCheap');
+  await page.fill('#anthropicApiKey', 'sk-ant-test');
+  await page.click('#btnSave');
+  await page.waitForTimeout(300);
+  const saved = await page.evaluate(async () => (await chrome.storage.local.get('settings')).settings);
+  check(saved.llmProvider === 'claude' && saved.translator === 'claude' && saved.anthropicModel === 'claude-haiku-5-5' && saved.anthropicApiKey === 'sk-ant-test', 'Sparmodus gespeichert: ' + JSON.stringify({ llmProvider: saved.llmProvider, translator: saved.translator, model: saved.anthropicModel }));
+  // Eigene Modell-ID (nicht in der Auswahl) bleibt beim Neuladen erhalten
+  await page.evaluate(async () => { const s = (await chrome.storage.local.get('settings')).settings; await chrome.storage.local.set({ settings: { ...s, anthropicModel: 'claude-custom-9' } }); });
+  await page.reload();
+  await page.waitForTimeout(500);
+  check((await page.inputValue('#anthropicModel')) === 'claude-custom-9', 'Eigene Modell-ID bleibt in der Auswahl erhalten');
+
+  // claude.js: effort wird für Haiku entfernt, JSON-Schema bleibt; Opus unverändert
+  const bodies = [];
+  await page.route('https://api.anthropic.com/**', (route) => {
+    bodies.push(JSON.parse(route.request().postData()));
+    route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ content: [{ type: 'text', text: '{"ok":true}' }], stop_reason: 'end_turn' }) });
+  });
+  const r = await page.evaluate(async () => {
+    const { claudeJson, claudeText } = await import('../lib/claude.js');
+    const haiku = { anthropicApiKey: 'k', anthropicModel: 'claude-haiku-5-5' };
+    const a = await claudeJson(haiku, 'sys', 'u', { type: 'object' }, { effort: 'high' });
+    const b = await claudeText(haiku, 'sys', 'u', { effort: 'medium' });
+    const c = await claudeText({ anthropicApiKey: 'k', anthropicModel: 'claude-opus-5-5' }, 'sys', 'u', { effort: 'medium' });
+    return { a, b, c };
+  });
+  check(r.a?.ok === true && r.b === '{"ok":true}' && bodies.length === 3, 'Claude-Client antwortet über abgefangene API');
+  check(bodies[0].model === 'claude-haiku-5-5' && bodies[0].output_config?.format?.type === 'json_schema' && !('effort' in bodies[0].output_config), 'Haiku: effort entfernt, JSON-Schema bleibt: ' + JSON.stringify(bodies[0].output_config));
+  check(!('output_config' in bodies[1]), 'Haiku Text: output_config ganz entfernt');
+  check(bodies[2].output_config?.effort === 'medium' && bodies[2].fallbacks === 'default', 'Opus: effort bleibt');
+  await page.unroute('https://api.anthropic.com/**');
+  await page.evaluate(() => chrome.storage.local.remove('settings'));
+  await page.close();
+}
+
 await context.close();
 mock.close();
 fs.rmSync(userDataDir, { recursive: true, force: true });

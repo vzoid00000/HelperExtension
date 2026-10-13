@@ -16,6 +16,14 @@ export async function claudeRequest(settings, body) {
   const apiKey = (settings.anthropicApiKey || '').trim();
   if (!apiKey) throw new Error('Kein Claude API-Key hinterlegt (Einstellungen).');
   const model = settings.anthropicModel || DEFAULT_CLAUDE_MODEL;
+  const payload = { model, fallbacks: 'default', ...body };
+  // Der effort-Parameter ist für Haiku nicht sicher verfügbar; dort Standardaufwand verwenden,
+  // statt die Anfrage mit einem 400 zu verlieren. Format-Vorgaben (JSON-Schema) bleiben erhalten.
+  if (/haiku/i.test(model) && payload.output_config && 'effort' in payload.output_config) {
+    const { effort, ...rest } = payload.output_config;
+    if (Object.keys(rest).length) payload.output_config = rest;
+    else delete payload.output_config;
+  }
 
   const res = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
@@ -26,7 +34,7 @@ export async function claudeRequest(settings, body) {
       'anthropic-beta': 'server-side-fallback-2026-07-01',
       'anthropic-dangerous-direct-browser-access': 'true'
     },
-    body: JSON.stringify({ model, fallbacks: 'default', ...body })
+    body: JSON.stringify(payload)
   });
 
   if (!res.ok) {

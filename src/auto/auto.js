@@ -395,8 +395,9 @@ async function processItem(it, driver) {
       log(selectionToText(selection).replace(/\n/g, ' · '));
       for (const w of selection.warnings) log(`  Tag-Hinweis: ${w}`, 'warn');
     } else {
-      // Minimal-Pflichttags ohne Modell
-      const structure = it.category === 'krimisi' ? 'KriMiSi' : 'Cyber';
+      // Minimal-Pflichttags ohne Modell: Struktur aus der Relevanzprüfung, sonst aus der Quellen-Kategorie
+      const hint = it.category && it.category !== 'none' ? it.category : (it.sourceCategory !== 'both' ? it.sourceCategory : '');
+      const structure = hint === 'krimisi' ? 'KriMiSi' : 'Cyber';
       tagPaths = [STRUCTURE_PATHS[structure], PATH_NEWS, `${PATH_SOURCE_TYPE} → Nachrichtenseite`, PATH_NO_LOCATION];
       if (it.wbChoice === 'yes') tagPaths.push(structure === 'KriMiSi' ? 'Auftragstags → WB-KriMiSi' : 'Auftragstags → WB-Cyber');
       selection = { structure, wb: it.wbChoice === 'yes' ? (structure === 'KriMiSi' ? 'WB-KriMiSi' : 'WB-Cyber') : '', ki: false, summary: it.reason || '', paths: tagPaths, warnings: ['Tags ohne Modell: nur Pflichttags, Ort = „kein Standort“ – bitte in OSDP ergänzen'] };

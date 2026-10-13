@@ -60,7 +60,8 @@ Die WB-Kennzeichnung lässt sich im Verlauf umschalten, falls sie in OSDP nachtr
 1. Repository klonen oder ZIP entpacken
 2. Chrome: `chrome://extensions` → **Entwicklermodus** → **„Entpackte Erweiterung laden“** → Projektordner
 3. Extension-Icon → Side Panel → ⚙ Einstellungen:
-   - Sprachmodell wählen: **Claude API** (API-Key von console.anthropic.com) oder **lokales Modell**
+   - Sprachmodell wählen: **Claude API** (API-Key von console.anthropic.com; Knopf „Sparmodus“ wählt
+     das günstige Haiku 5.5) oder **lokales Modell** (Claude-Code-Brücke oder eigener Server)
    - Übersetzer wählen (Claude, lokal, DeepL, Chrome)
    - „Speichern“, dann „Übersetzung testen“ bzw. „Verbindung testen“
 4. In OSDP einloggen (ein Tab mit `osdp.zentdok.at` genügt)
@@ -132,6 +133,32 @@ weitere Anfragen sofort mit 429, ohne Claude Code erneut aufzurufen.
 
 Verbrauch je Artikel liegt grob bei einem bis drei Claude-Code-Aufrufen (Relevanz wird gebündelt,
 dann Tagging und Übersetzung). Mit `--model sonnet` reicht das Kontingent deutlich länger.
+
+## Am Arbeits-PC ohne Installation
+
+Darf auf dem PC nichts installiert werden (kein Node.js, kein Claude Code), fällt die Brücke weg.
+Die Extension selbst braucht nur den Entwicklermodus in `chrome://extensions`; ist der per
+Richtlinie gesperrt, läuft auch sie nicht. Sonst bleiben drei Wege:
+
+1. **Claude API mit API-Key (funktioniert sofort, kostet Cent-Beträge).** Konto auf
+   console.anthropic.com anlegen, Guthaben laden (Mindestbetrag 5 $, optional ein monatliches
+   Ausgabenlimit setzen), unter „API Keys“ einen Key erzeugen. In den Einstellungen
+   **„Sparmodus: API-Key + Haiku“** klicken, Key einfügen, „Speichern“, „Übersetzung testen“.
+   Haiku 5.5 reicht für Übersetzung und Tagging; bei rund zehn Meldungen am Tag liegt der
+   Verbrauch grob bei 10–40 Cent pro Arbeitstag (der Tag-Katalog wird zwischengespeichert).
+   Sonnet 5.5 kostet etwa das 3–5-Fache, Opus 5.5 etwa das 5–10-Fache. Bei einem Rate-Limit
+   (HTTP 429) hält die Automatik an und zeigt an, ab wann es weitergeht.
+2. **Ohne Modell (kostenlos, halbautomatisch).** Übersetzung auf „Chrome integriert“ stellen
+   (Chrome 138+, Sprachpaket wird beim ersten Mal geladen), „Tags per Modell“ ausschalten.
+   Die Relevanzprüfung entfällt: „Quellen scannen“, dann die passenden Meldungen per Haken selbst
+   auswählen und „Ausgewählte eintragen“. Gesetzt werden nur die Pflichttags (Struktur aus der
+   Quellen-Kategorie, News, Nachrichtenseite, „kein Standort“); Ort, Themen und WB trägst du in
+   OSDP selbst nach. Einzelne Artikel gehen genauso über das Side Panel.
+3. **Brücke am Heim-PC** ist nur im eigenen Netz sinnvoll. Sie über einen Tunnel aus dem Internet
+   erreichbar zu machen ist nicht vorgesehen: der Firmen-Proxy blockiert so etwas meist, der
+   Heim-PC müsste laufen, und ein offener Zugang zum eigenen Abo-Kontingent ist ein Risiko.
+   Erlaubt die IT ein portables Node.js (nur entpacken, kein Installer), läuft die Brücke auch am
+   Arbeits-PC.
 
 ## Sprachmodell: Claude oder eigener PC
 

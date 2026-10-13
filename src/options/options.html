@@ -25,15 +25,24 @@
       </select>
     </label>
     <div class="row">
+      <button id="btnPresetCheap" class="ghost">Sparmodus: API-Key + Haiku</button>
+      <span class="muted small">Für PCs, auf denen nichts installiert werden darf: Anbieter + Übersetzung auf Claude API, Modell Haiku 5.5 (günstigstes Modell, grob 10–40 Cent pro Arbeitstag). Danach API-Key eintragen und speichern.</span>
+    </div>
+    <div class="row">
       <button id="btnPresetBridge" class="ghost">Claude-Code-Brücke voreinstellen</button>
-      <span class="muted small">Setzt Anbieter + Übersetzung auf die Brücke (<code>http://localhost:4310/v1</code>, Modell <code>opus</code>). Die Brücke startest du mit <code>node tools/claude-bridge.mjs</code>, siehe README.</span>
+      <span class="muted small">Abo-Kontingent statt API-Key; braucht Node.js + Claude Code auf diesem PC. Setzt Anbieter + Übersetzung auf die Brücke (<code>http://localhost:4310/v1</code>, Modell <code>opus</code>), siehe README.</span>
     </div>
     <label>Claude API-Key
       <input id="anthropicApiKey" type="password" placeholder="sk-ant-…" autocomplete="off">
-      <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys. Wird nur lokal in dieser Extension gespeichert.</span>
+      <span class="hint muted small">Erstellen unter console.anthropic.com → API Keys (Guthaben vorab laden, Mindestbetrag 5 $). Wird nur lokal in dieser Extension gespeichert.</span>
     </label>
     <label>Claude Modell
-      <input id="anthropicModel" type="text" placeholder="claude-opus-5-5">
+      <select id="anthropicModel">
+        <option value="claude-haiku-5-5">Haiku 5.5 – am günstigsten, für Übersetzung und Tagging ausreichend</option>
+        <option value="claude-sonnet-5-5">Sonnet 5.5 – Mittelweg (etwa 3–5× Haiku)</option>
+        <option value="claude-opus-5-5">Opus 5.5 – beste Qualität, am teuersten (etwa 5–10× Haiku)</option>
+      </select>
+      <span class="hint muted small">Kostenangaben sind grobe Schätzungen für rund zehn Meldungen am Tag; der Tag-Katalog wird zwischengespeichert und kostet nur beim ersten Aufruf voll.</span>
     </label>
   </section>
 

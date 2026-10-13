@@ -26,11 +26,26 @@ function readForm() {
 
 async function init() {
   const settings = await loadSettings();
+  // Gespeicherte Modell-ID, die nicht in der Auswahl steht (z. B. ältere/eigene ID), als Option ergänzen
+  const modelSel = $('anthropicModel');
+  const storedModel = settings.anthropicModel || DEFAULT_SETTINGS.anthropicModel;
+  if (storedModel && ![...modelSel.options].some((o) => o.value === storedModel)) {
+    modelSel.append(new Option(storedModel, storedModel));
+  }
   for (const f of TEXT_FIELDS) $(f).value = settings[f] ?? DEFAULT_SETTINGS[f] ?? '';
   for (const f of BOOL_FIELDS) $(f).checked = !!(settings[f] ?? DEFAULT_SETTINGS[f]);
 
   $('btnDefaults').addEventListener('click', () => {
     $('sourcesText').value = sourcesToText(DEFAULT_SOURCES);
+  });
+
+  $('btnPresetCheap').addEventListener('click', () => {
+    $('llmProvider').value = 'claude';
+    $('translator').value = 'claude';
+    $('anthropicModel').value = 'claude-haiku-5-5';
+    const hasKey = !!$('anthropicApiKey').value.trim();
+    setStatus(hasKey ? 'Sparmodus gesetzt – bitte „Speichern“ und „Übersetzung testen“.' : 'Sparmodus gesetzt – jetzt den API-Key von console.anthropic.com eintragen, „Speichern“ und „Übersetzung testen“.', 'ok');
+    if (!hasKey) $('anthropicApiKey').focus();
   });
 
   $('btnPresetBridge').addEventListener('click', () => {
