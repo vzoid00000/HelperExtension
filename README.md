@@ -265,6 +265,10 @@ node tools/har-to-mock.mjs site-dump/osdp.redacted.har     # Frontend-Dateien + 
 node tools/mock-osdp-server.mjs                             # http://localhost:4300/#/newsEditor
 ```
 
+Windows: Doppelklick auf `tools\start-mock-osdp.cmd` erzeugt den Nachbau beim ersten Start und
+startet den Server. Dafür müssen `tools/har-to-mock.mjs`, `tools/mock-osdp-server.mjs`,
+`tools/mock-osdp-index.html` und `site-dump/osdp.redacted.har` im Projektordner liegen.
+
 Der Server liefert die aufgezeichneten Antworten (Login, Tag-Baum, Extract …), protokolliert
 „Save“-Aufrufe und speichert nichts. In den Extension-Einstellungen das URL-Muster des OSDP-Tabs
 auf `http://localhost:4300/*` stellen, dann laufen Side Panel und Automatik gegen den Nachbau.
@@ -279,6 +283,9 @@ tools/build-tag-catalog.mjs        Handbuch → src/config/osdp-tags.json
 tools/redact-har.mjs               HAR-Export schwärzen (Cookies, Tokens, Passwörter)
 tools/har-to-mock.mjs              HAR → lokaler Nachbau (mock-osdp/)
 tools/mock-osdp-server.mjs         Nachbau-Server auf localhost:4300
+tools/start-mock-osdp.cmd          Windows-Starter für den Nachbau
+tools/claude-bridge.mjs            Claude-Code-Brücke (Abo-Kontingent statt API-Key)
+tools/start-claude-bridge.cmd      Windows-Starter für die Brücke
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
 src/background.js                  Service Worker (Side Panel, Zeitplan)
 src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen, Verlauf)
