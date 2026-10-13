@@ -7,3 +7,6 @@ mock-osdp/
 
 node_modules/
 .DS_Store
+
+# Gepackte Extension (wird bei Bedarf neu erzeugt)
+*.zip
