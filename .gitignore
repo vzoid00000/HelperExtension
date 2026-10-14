@@ -10,3 +10,6 @@ node_modules/
 
 # Gepackte Extension (wird bei Bedarf neu erzeugt)
 *.zip
+
+# Zugangs-Token der Bruecke (lokal erzeugt)
+tools/bridge-token.txt

@@ -201,6 +201,41 @@ sofort mit 429, ohne Claude Code erneut aufzurufen.
 Verbrauch je Meldung: eine Übersetzungs- und eine Tagging-Anfrage (die Relevanzprüfung bündelt bis
 zu 50 Schlagzeilen je Anfrage). Mit `--model sonnet` reicht das Kontingent deutlich länger.
 
+## Brücke von der Arbeit aus nutzen (Heim-PC bleibt an)
+
+Darf am Arbeits-PC nichts installiert werden, kann die Brücke zu Hause laufen und über einen
+verschlüsselten Tunnel erreichbar sein. Die Extension in der Arbeit spricht dann die Tunnel-Adresse
+an; das Abo-Kontingent wird weiter nur von dir selbst genutzt. Zwei Dinge sind Pflicht: ein
+Zugangs-Token (sonst könnte jeder mit der Adresse dein Kontingent verbrauchen) und HTTPS (der
+Tunnel liefert es). Ein offener Port am Heimrouter ist nicht vorgesehen.
+
+Zu Hause, einmalig:
+
+```
+winget install Cloudflare.cloudflared     # oder cloudflared.exe von Cloudflare laden und nach tools\ legen
+```
+
+Zu Hause, jeden Abend bzw. bevor du gehst, zwei Fenster offen lassen:
+
+1. `tools\start-claude-bridge-remote.cmd` – Brücke mit Token. Beim ersten Start wird der Token in
+   `tools\bridge-token.txt` erzeugt und im Fenster angezeigt (Datei bleibt lokal, steht in .gitignore).
+2. `tools\start-tunnel.cmd` – zeigt nach ein paar Sekunden eine Adresse wie
+   `https://xxxx-xxxx.trycloudflare.com`. Diese Adresse und den Token notieren (z. B. in die eigene
+   Mail schicken). Die Adresse ändert sich bei jedem Neustart des Tunnels.
+
+Außerdem: Energieoptionen so stellen, dass der PC nicht in den Ruhezustand geht (Bildschirm aus ist
+in Ordnung); Chrome muss zu Hause nicht laufen.
+
+In der Arbeit, in den Extension-Einstellungen: Anbieter „Lokaler Server“, Server-URL
+`https://xxxx-xxxx.trycloudflare.com/v1`, Modellname `opus`, API-Key = der Token, Übersetzung
+„Lokales Modell“, „Speichern“, „Verbindung testen“. Zu Hause im Brückenfenster erscheint jede
+Anfrage; ohne gültigen Token antwortet die Brücke mit 401 und protokolliert den Versuch.
+
+Ohne Token startet die Brücke nur auf localhost. `--host 0.0.0.0` (eigenes Netz/VPN) verlangt
+ebenfalls einen Token. Blockiert der Firmen-Proxy die Tunnel-Adresse, bleibt nur der API-Key-Weg
+unten. Für eine feste Adresse statt der wechselnden trycloudflare-Adresse braucht es ein
+kostenloses Cloudflare-Konto mit benanntem Tunnel oder ngrok mit fester Domain.
+
 ## Am Arbeits-PC ohne Installation
 
 Darf auf dem PC nichts installiert werden (kein Node.js, kein Claude Code), fällt die Brücke weg.
@@ -334,6 +369,8 @@ tools/mock-osdp-server.mjs         Nachbau-Server auf localhost:4300
 tools/start-mock-osdp.cmd          Windows-Starter für den Nachbau
 tools/claude-bridge.mjs            Claude-Code-Brücke (Abo-Kontingent statt API-Key)
 tools/start-claude-bridge.cmd      Windows-Starter für die Brücke
+tools/start-claude-bridge-remote.cmd Brücke mit Zugangs-Token (für den Tunnel)
+tools/start-tunnel.cmd             Cloudflare-Tunnel zur Brücke
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
 src/background.js                  Service Worker (App-Tab öffnen, Zeitplan)
 src/app/                           App-Seite: app.html, app.js, ui.js, views/ (Lauf, Quellen, Verlauf, Regeln, Einstellungen), ui.css, app.css

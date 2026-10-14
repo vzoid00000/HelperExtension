@@ -3,6 +3,8 @@
 // Relevanzprüfung, Tagging und Übersetzung über das Abo-Kontingent statt über API-Tokens.
 //
 //   node tools/claude-bridge.mjs [--port 4310] [--model opus] [--effort medium] [--claude <pfad>] [--parallel 2]
+//                               [--token <t> | --token-file <datei>] [--host 127.0.0.1]
+//   Zugriff von außen (Tunnel): Token Pflicht, siehe README „Brücke von der Arbeit aus nutzen“.
 //
 // Schnittstelle (OpenAI-kompatibel, wie sie die Extension unter „Lokaler Server“ erwartet):
 //   GET  /v1/models
@@ -22,6 +24,7 @@ import { spawn, execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import crypto from 'node:crypto';
 
 const args = process.argv.slice(2);
 const opt = (name, def) => {
@@ -57,6 +60,38 @@ const CLAUDE_BIN = resolveClaudeBin(opt('--claude', process.env.CLAUDE_BIN || 'c
 const PARALLEL = Math.max(1, Number(opt('--parallel', process.env.BRIDGE_PARALLEL || 2)));
 const TIMEOUT_MS = Number(opt('--timeout', 600)) * 1000;
 const VERBOSE = args.includes('--verbose');
+// Erreichbarkeit: Standard nur localhost. --host 0.0.0.0 öffnet die Brücke im Netz (dann Token Pflicht).
+const HOST = opt('--host', process.env.BRIDGE_HOST || '127.0.0.1');
+// Zugangs-Token (Pflicht für Zugriff von außen, z. B. über einen Tunnel): --token <t>, BRIDGE_TOKEN
+// oder --token-file <datei> (wird beim ersten Start mit einem Zufallswert angelegt).
+const TOKEN = loadToken();
+
+function loadToken() {
+  const direct = opt('--token', process.env.BRIDGE_TOKEN || '');
+  if (direct) return String(direct).trim();
+  const file = opt('--token-file', '');
+  if (!file) return '';
+  try {
+    const existing = fs.readFileSync(file, 'utf8').trim();
+    if (existing) return existing;
+  } catch {
+    /* Datei fehlt → anlegen */
+  }
+  const fresh = crypto.randomBytes(24).toString('base64url');
+  fs.writeFileSync(file, fresh + '\n', { mode: 0o600 });
+  console.log(`Neuer Zugangs-Token erzeugt und in ${file} gespeichert.`);
+  return fresh;
+}
+
+/** Bearer-Token prüfen (zeitkonstanter Vergleich). Ohne konfigurierten Token ist alles erlaubt (nur localhost). */
+function authorized(req) {
+  if (!TOKEN) return true;
+  const m = /^Bearer\s+(.+)$/i.exec(req.headers.authorization || '');
+  if (!m) return false;
+  const a = Buffer.from(m[1].trim());
+  const b = Buffer.from(TOKEN);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
 
 const stats = { started: new Date().toISOString(), requests: 0, ok: 0, failed: 0, rateLimited: 0, lastErrors: [], lastUsage: null, totalCostUsd: 0 };
 let rateLimitUntil = null; // ISO-Zeit, bis zu der Anfragen sofort mit 429 beantwortet werden
@@ -284,6 +319,11 @@ const server = http.createServer((req, res) => {
     res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,OPTIONS' });
     return res.end();
   }
+  if (!authorized(req)) {
+    stats.unauthorized = (stats.unauthorized || 0) + 1;
+    console.log(`${new Date().toISOString().slice(11, 19)} ABGELEHNT ${req.method} ${u.pathname} von ${req.socket.remoteAddress} (Token fehlt oder falsch)`);
+    return json(res, 401, { error: { message: 'Zugangs-Token fehlt oder ist falsch – in den Extension-Einstellungen unter „Lokaler Server“ als API-Key eintragen.', type: 'unauthorized' } });
+  }
   if (req.method === 'GET' && /\/models$/.test(u.pathname)) {
     return json(res, 200, { object: 'list', data: ['opus', 'sonnet', 'haiku', DEFAULT_MODEL].filter((v, i, a) => a.indexOf(v) === i).map((id) => ({ id, object: 'model', owned_by: 'claude-code' })) });
   }
@@ -343,8 +383,14 @@ const server = http.createServer((req, res) => {
   json(res, 404, { error: { message: 'unbekannter Pfad' } });
 });
 
-server.listen(PORT, '127.0.0.1', async () => {
-  console.log(`Claude-Code-Brücke läuft: http://localhost:${PORT}/v1  (Modell ${DEFAULT_MODEL}, Effort ${EFFORT}, max. ${PARALLEL} parallel)`);
+if (HOST !== '127.0.0.1' && HOST !== 'localhost' && !TOKEN) {
+  console.error(`Abbruch: --host ${HOST} macht die Brücke im Netz erreichbar – dafür ist ein Zugangs-Token Pflicht (--token, BRIDGE_TOKEN oder --token-file).`);
+  process.exit(1);
+}
+
+server.listen(PORT, HOST, async () => {
+  console.log(`Claude-Code-Brücke läuft: http://localhost:${PORT}/v1  (Modell ${DEFAULT_MODEL}, Effort ${EFFORT}, max. ${PARALLEL} parallel${HOST !== '127.0.0.1' ? ', Host ' + HOST : ''})`);
+  if (TOKEN) console.log(`Zugangs-Token aktiv – in der Extension als API-Key unter „Lokaler Server“ eintragen: ${TOKEN}`);
   console.log('Extension-Einstellungen: Anbieter „Lokaler Server“, URL http://localhost:' + PORT + '/v1, Modell ' + DEFAULT_MODEL);
   console.log('Status: http://localhost:' + PORT + '/__bridge/status');
   console.log(`Claude Code: ${CLAUDE_BIN}${USE_SHELL ? ' (über cmd.exe)' : ''}`);

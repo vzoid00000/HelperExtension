@@ -67,6 +67,28 @@ try {
   }
 }
 
+// Zugangs-Token: ohne/falsch → 401, richtig → 200; --token-file legt die Datei an
+{
+  const PORT3 = PORT + 2;
+  const tokenFile = path.join(process.env.TMPDIR || '/tmp', `bridge-token-${PORT3}.txt`);
+  fs.rmSync(tokenFile, { force: true });
+  const srv3 = spawn('node', [path.join(ROOT, 'tools/claude-bridge.mjs'), '--port', String(PORT3), '--claude', wrapper, '--token-file', tokenFile], { env: { ...process.env, FAKE_CLAUDE_LOG: logFile }, stdio: ['ignore', 'pipe', 'pipe'] });
+  await new Promise((r) => setTimeout(r, 700));
+  try {
+    const token = fs.existsSync(tokenFile) ? fs.readFileSync(tokenFile, 'utf8').trim() : '';
+    check(token.length >= 20, 'Token-Datei angelegt: ' + token.length + ' Zeichen');
+    const no = await fetch(`http://localhost:${PORT3}/v1/models`);
+    const wrong = await fetch(`http://localhost:${PORT3}/v1/models`, { headers: { authorization: 'Bearer falsch' } });
+    const okRes = await fetch(`http://localhost:${PORT3}/v1/models`, { headers: { authorization: `Bearer ${token}` } });
+    check(no.status === 401 && wrong.status === 401 && okRes.status === 200, `Token-Pflicht: ohne ${no.status}, falsch ${wrong.status}, richtig ${okRes.status}`);
+    const chat = await fetch(`http://localhost:${PORT3}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', authorization: `Bearer ${token}` }, body: JSON.stringify({ messages: [{ role: 'user', content: 'Hello' }] }) });
+    check(chat.status === 200, 'Chat mit Token: ' + chat.status);
+  } finally {
+    srv3.kill();
+    fs.rmSync(tokenFile, { force: true });
+  }
+}
+
 fs.rmSync(wrapper, { force: true });
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : '\nBrücken-Tests bestanden');
 if (failures) console.log(srvOut);
