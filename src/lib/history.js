@@ -206,44 +206,99 @@ export async function exportHistory() {
   return (await loadHistory()).map((e) => ({ ...e }));
 }
 
-function sanitizeEntry(raw) {
-  if (!raw || typeof raw !== 'object') return null;
-  if (!raw.url && !raw.title) return null;
-  const e = { ...raw };
-  e.id = e.id ? String(e.id) : newId();
-  e.at = Number(e.at) || Date.now();
-  if (e.tags && !Array.isArray(e.tags)) e.tags = [];
+// Bekannte Felder eines Eintrags in der Reihenfolge, in der der Lauf sie schreibt (alles andere wird
+// beim Import verworfen): [Name, Art, Längengrenze]. Die Reihenfolge hält einen Export nach Re-Import identisch.
+const ENTRY_FIELDS = [
+  ['url', 'str', 2000], ['title', 'str', 500], ['titleDe', 'str', 500], ['sourceName', 'str', 200], ['siteName', 'str', 200],
+  ['dateIso', 'str', 40], ['structure', 'str', 40], ['wb', 'str', 40], ['ki', 'bool'], ['tags', 'list'], ['chipsFinal', 'list'],
+  ['summary', 'str', 4000], ['author', 'str', 300], ['authorUnknown', 'bool'], ['saved', 'bool?'], ['confirmedBy', 'str', 40],
+  ['problems', 'list'], ['warnings', 'list']
+];
+const MAX_LIST = 100;
+
+/** Zeitstempel aus Zahl (ms), Ziffernfolge oder ISO-Text; sonst fallback (Import-Zeitpunkt). */
+export function parseTimestamp(v, fallback) {
+  if (typeof v === 'number') return Number.isFinite(v) && v > 0 ? v : fallback;
+  if (typeof v === 'string' && v.trim()) {
+    const s = v.trim();
+    const n = /^\d+$/.test(s) ? Number(s) : Date.parse(s);
+    return Number.isFinite(n) && n > 0 ? n : fallback;
+  }
+  return fallback;
+}
+
+/**
+ * Reduziert einen fremden Eintrag (Import) auf bekannte Felder mit geprüften Werten: nur http(s)-URLs,
+ * Texte gekürzt, Listen nur aus Zeichenketten, `at` als Zahl (fehlend/unlesbar → now). Liefert null,
+ * wenn weder URL noch Titel übrig bleiben.
+ */
+export function sanitizeEntry(raw, now = Date.now()) {
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  const e = {
+    id: raw.id != null && String(raw.id).trim() ? String(raw.id).trim().slice(0, 80) : newId(),
+    at: parseTimestamp(raw.at, now)
+  };
+  for (const [k, kind, max] of ENTRY_FIELDS) {
+    const v = raw[k];
+    if (kind === 'str') {
+      if (v == null || typeof v === 'object' || typeof v === 'boolean') continue;
+      const s = String(v).trim().slice(0, max);
+      if (s) e[k] = s;
+    } else if (kind === 'bool') {
+      if (k in raw) e[k] = !!v;
+    } else if (kind === 'bool?') {
+      if (typeof v === 'boolean') e[k] = v;
+    } else if (Array.isArray(v)) {
+      e[k] = v.filter((x) => typeof x === 'string' || typeof x === 'number').map((x) => String(x).slice(0, 300)).slice(0, MAX_LIST);
+    }
+  }
+  if (e.url && !/^https?:\/\//i.test(e.url)) delete e.url;
+  if (!e.url && !e.title) return null;
   return e;
 }
 
 /**
- * Importiert Einträge (Array oder { entries }). merge=true behält vorhandene Einträge (gleiche id wird übersprungen),
- * merge=false ersetzt den Verlauf. Liefert { added, skipped, total }.
+ * Vereinigt vorhandene Einträge mit importierten (rein, ohne Storage): gleiche id wird übersprungen,
+ * unbrauchbare Einträge ebenfalls; die Liste wird nach Zeit sortiert und auf MAX gekürzt. `added` zählt
+ * nur Einträge, die nach dem Kürzen noch da sind; `dropped` nennt die weggeschnittenen (alte wie neue).
+ * Liefert { list, added, skipped, dropped }. Wirft, wenn input keine Liste ist.
  */
-export async function importHistory(entries, { merge = true } = {}) {
-  const input = Array.isArray(entries) ? entries : Array.isArray(entries?.entries) ? entries.entries : null;
-  if (!input) throw new Error('Ungültige Verlaufsdaten: Liste erwartet.');
-  const current = merge ? await loadHistory() : [];
-  const known = new Set(current.map((e) => e.id));
-  let added = 0;
+export function mergeHistory(current, input, { now = Date.now() } = {}) {
+  const raws = Array.isArray(input) ? input : Array.isArray(input?.entries) ? input.entries : null;
+  if (!raws) throw new Error('Ungültige Verlaufsdaten: Liste erwartet.');
+  const list = [...(current || [])];
+  const known = new Set(list.map((e) => e.id));
+  const addedIds = new Set();
   let skipped = 0;
-  for (const raw of input) {
-    const e = sanitizeEntry(raw);
+  for (const raw of raws) {
+    const e = sanitizeEntry(raw, now);
     if (!e || known.has(e.id)) {
       skipped++;
       continue;
     }
     known.add(e.id);
-    current.push(e);
-    added++;
+    addedIds.add(e.id);
+    list.push(e);
   }
-  current.sort((a, b) => (b.at || 0) - (a.at || 0));
-  if (current.length > MAX) current.length = MAX;
-  await chrome.storage.local.set({ [KEY]: current });
-  return { added, skipped, total: current.length };
+  list.sort((a, b) => (b.at || 0) - (a.at || 0));
+  const dropped = Math.max(0, list.length - MAX);
+  if (dropped) list.length = MAX;
+  const added = list.reduce((n, e) => n + (addedIds.has(e.id) ? 1 : 0), 0);
+  return { list, added, skipped, dropped };
 }
 
-export function historyToMarkdown(list, title = 'Eingetragene News') {
+/**
+ * Importiert Einträge (Array oder { entries }). merge=true behält vorhandene Einträge (gleiche id wird übersprungen),
+ * merge=false ersetzt den Verlauf. Liefert { added, skipped, dropped, total } (siehe mergeHistory).
+ */
+export async function importHistory(entries, { merge = true } = {}) {
+  const current = merge ? await loadHistory() : [];
+  const { list, added, skipped, dropped } = mergeHistory(current, entries);
+  await chrome.storage.local.set({ [KEY]: list });
+  return { added, skipped, dropped, total: list.length };
+}
+
+export function historyToMarkdown(list, title = 'Eingetragene Meldungen') {
   const lines = [`# ${title}`, ''];
   for (const e of list) {
     const d = new Date(e.at);

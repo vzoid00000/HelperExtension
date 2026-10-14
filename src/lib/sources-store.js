@@ -47,7 +47,8 @@ export function withStableIds(list) {
  */
 export function normalizeSource(input = {}) {
   if (!input || typeof input !== 'object') throw new Error('Ungültige Quelle.');
-  const name = String(input.name ?? '').replace(/\s+/g, ' ').trim();
+  // Führendes „#“ ist im Textformat das Zeichen für „deaktiviert“ und gehört nicht in den Namen
+  const name = String(input.name ?? '').replace(/^\s*#+\s*/, '').replace(/\s+/g, ' ').trim();
   if (!name) throw new Error('Name der Quelle fehlt.');
   if (name.length > MAX_NAME) throw new Error(`Name der Quelle ist zu lang (max. ${MAX_NAME} Zeichen).`);
 
@@ -94,6 +95,13 @@ export function getSources(settings = {}) {
     if (parsed.length) return withStableIds(parsed);
   }
   return withStableIds(DEFAULT_SOURCES);
+}
+
+/** Gilt gerade die Standardliste (keine eigene Liste gespeichert)? Für den Hinweis in der Quellen-Ansicht. */
+export function usesDefaultSources(settings = {}) {
+  if (Array.isArray(settings.sources) && settings.sources.length) return false;
+  if (settings.sourcesText && parseSourcesText(settings.sourcesText).length) return false;
+  return true;
 }
 
 /** Quellen eines Bereichs; 'both'-Quellen gehören zu beiden Bereichen, area 'both' liefert alle. */
@@ -171,36 +179,44 @@ export async function resetSources() {
 
 /**
  * Einmalige Migration der alten Textliste (settings.sourcesText) in settings.sources.
- * Verändert das übergebene settings-Objekt mit und speichert. Liefert { migrated, sources }.
+ * Verändert das übergebene settings-Objekt mit und speichert. Liefert { migrated, sources, dropped, droppedNames }:
+ * dropped = Zeilen der alten Liste, die heute nicht mehr gültig sind (z. B. kaputtes URL-Muster) und
+ * verworfen wurden – der Aufrufer soll sie im Hinweis nennen, der alte Text ist danach weg.
  */
 export async function migrateSources(settings = null) {
   const s = settings || (await readSettings());
   const hasList = Array.isArray(s.sources) && s.sources.length > 0;
-  if (!s.sourcesText) return { migrated: false, sources: getSources(s) };
+  if (!s.sourcesText) return { migrated: false, sources: getSources(s), dropped: 0, droppedNames: [] };
   if (hasList) {
     // Liste existiert schon → alter Text ist überholt und wird nur verworfen
     s.sourcesText = '';
     await writeSettings({ sourcesText: '' });
-    return { migrated: false, sources: getSources(s) };
+    return { migrated: false, sources: getSources(s), dropped: 0, droppedNames: [] };
   }
+  const rawLines = s.sourcesText.split('\n').map((l) => l.trim()).filter(Boolean);
   const parsed = parseSourcesText(s.sourcesText);
   const sources = [];
+  const droppedNames = [];
   for (const p of parsed) {
     try {
       sources.push(normalizeSource(p));
     } catch {
-      // ungültige Zeile der alten Liste wird übersprungen
+      // ungültige Zeile der alten Liste (z. B. Name zu lang, kaputtes Muster) wird verworfen
+      droppedNames.push(p.name || p.url);
     }
   }
+  // Zeilen, die schon parseSourcesText nicht lesen konnte (keine URL), zählen ebenfalls als verworfen
+  const unparsed = Math.max(0, rawLines.length - parsed.length);
   const list = withStableIds(sources);
   s.sources = list;
   s.sourcesText = '';
   await writeSettings({ sources: list, sourcesText: '' });
-  return { migrated: list.length > 0, sources: getSources(s) };
+  return { migrated: list.length > 0, sources: getSources(s), dropped: droppedNames.length + unparsed, droppedNames };
 }
 
 /**
- * Lädt eine Quelle probeweise. Liefert { ok, count, sample: [{ title, url, dateIso }], error }.
+ * Lädt eine Quelle probeweise. Liefert { ok, count, sample: [{ title, url, dateIso }], error, empty }.
+ * empty=true: Quelle ließ sich laden, enthielt aber keine Meldungen (sonst ist error ein Ladefehler).
  * Läuft nur in einer Extension-Seite (DOMParser, Hintergrund-Tabs).
  */
 export async function testSource(source, { limit = 5 } = {}) {
@@ -208,7 +224,7 @@ export async function testSource(source, { limit = 5 } = {}) {
   try {
     src = normalizeSource(source);
   } catch (e) {
-    return { ok: false, count: 0, sample: [], error: e.message };
+    return { ok: false, count: 0, sample: [], error: e.message, empty: false };
   }
   try {
     const { loadSource } = await import('./feeds.js');
@@ -218,9 +234,9 @@ export async function testSource(source, { limit = 5 } = {}) {
       url: it.url || '',
       dateIso: it.date ? toIsoDate(it.date) : ''
     }));
-    if (!items.length) return { ok: false, count: 0, sample, error: 'Keine Einträge gefunden (Feed leer, Seite ohne Artikel-Links oder URL-Muster passt nicht).' };
-    return { ok: true, count: items.length, sample, error: '' };
+    if (!items.length) return { ok: false, count: 0, sample, error: 'Keine Einträge gefunden (Feed leer, Seite ohne Artikel-Links oder URL-Muster passt nicht).', empty: true };
+    return { ok: true, count: items.length, sample, error: '', empty: false };
   } catch (e) {
-    return { ok: false, count: 0, sample: [], error: e?.message || String(e) };
+    return { ok: false, count: 0, sample: [], error: e?.message || String(e), empty: false };
   }
 }

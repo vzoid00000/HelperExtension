@@ -11,16 +11,24 @@
 //   - Berechtigungs-Guard liest die Rollenrechte synchron; ein Deep-Link direkt nach dem Laden
 //     landet daher oft auf #/permissionError. Deshalb: Seite laden, dann per Hash navigieren.
 //   - Toasts (ngx-toastr) stehen unten rechts und verschwinden nach 10 s; „Item Added!“ löst
-//     resetArticleForm aus (Formular leer). Die Freigabe-Schleife (waitForReview) wertet beides aus.
+//     resetArticleForm aus (Formular leer). Die Freigabe-Schleife (waitForReview) wertet beides aus –
+//     ein leeres Formular zählt aber nur mit Save-Indiz (Klick auf „Save“ oder Spinner gesehen).
+//   - Das Verlassen des Quellfelds löst checkURLDuplicates aus (Toast „Duplicate …“ bei Treffer);
+//     precheckDuplicate nutzt das, bevor Übersetzung und Tagging Tokens kosten.
 //
-// Die Extension speichert nie selbst: fillArticle füllt das Formular, waitForReview wartet,
-// bis der Nutzer im OSDP-Tab auf „Save“ klickt oder in der Leiste „Überspringen“/„Abbrechen“ wählt.
+// Die Extension speichert nie selbst: precheckDuplicate/fillArticle füllen das Formular, waitForReview
+// wartet, bis der Nutzer im OSDP-Tab auf „Save“ klickt oder in der Leiste „Überspringen“/„Abbrechen“
+// wählt. Ergebnisse meldet der Beobachter des Content-Scripts sofort per chrome.runtime.sendMessage
+// ({ type: 'osdp-helper-review', session, event, chips, toasts }); das Polling bleibt Rückfallebene.
 
 import { waitForTabLoad } from './tabloader.js';
 import { formatDate, toIsoDate } from './dates.js';
 
 export const OSDP_BASE = 'https://osdp.zentdok.at';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+/** Typ der Nachrichten, die der Beobachter im OSDP-Tab (osdp-filler.js) an die App schickt. */
+export const REVIEW_MESSAGE = 'osdp-helper-review';
+const REVIEW_EVENTS = new Set(['saved', 'duplicate', 'skip', 'abort']);
 
 /** Basis-URL aus dem URL-Muster der Einstellungen (z. B. "http://localhost:4300/*" für den Nachbau). */
 export function osdpBase(settings) {
@@ -157,9 +165,9 @@ export class OsdpDriver {
     this.settings = settings;
     this.log = log;
     this.tabId = null;
-    // true, sobald fillArticle Inhalte eingetragen hat, die noch nicht gespeichert/verworfen wurden
+    // true, sobald precheckDuplicate/fillArticle Inhalte eingetragen haben, die noch nicht gespeichert/verworfen wurden
     this.formDirty = false;
-    // letzter Füllstand ({ url, sourceValue, chips }) als Vorgabe für waitForReview
+    // letzter Füllstand ({ url, sourceValue, chips }) als Vorgabe für waitForReview und formState().ours
     this.lastFill = null;
   }
 
@@ -176,15 +184,24 @@ export class OsdpDriver {
     }
   }
 
-  /** OSDP-Tab finden (bei create=false nie einen neuen öffnen, sondern Fehler werfen). */
+  /**
+   * OSDP-Tab finden (bei create=false nie einen neuen öffnen, sondern Fehler werfen). Ein gemerkter Tab
+   * wird nur weiterverwendet, wenn er noch eine OSDP-Seite zeigt (osdpUrlPattern) – sonst würde eine
+   * fremde Seite gescriptet und weggenavigiert.
+   */
   async ensureTab({ create = true } = {}) {
     if (this.tabId) {
+      let keep = false;
       try {
-        await chrome.tabs.get(this.tabId);
-        return this.tabId;
+        const t = await chrome.tabs.get(this.tabId);
+        const url = t?.url || t?.pendingUrl || '';
+        keep = !!t && (!url || patternToRegex(this.settings.osdpUrlPattern).test(url));
+        if (!keep) this.log('Der bisherige OSDP-Tab zeigt keine OSDP-Seite mehr – suche einen anderen.');
       } catch {
-        this.tabId = null;
+        keep = false; // Tab geschlossen
       }
+      if (keep) return this.tabId;
+      this.tabId = null;
     }
     const tabs = await chrome.tabs.query({ url: this.settings.osdpUrlPattern || `${OSDP_BASE}/*` });
     let tab = tabs.find((t) => /newsEditor/i.test(t.url || '')) || tabs[0];
@@ -292,6 +309,65 @@ export class OsdpDriver {
   }
 
   /**
+   * Formularzustand ohne Neuladen (öffnet keinen Tab): Grundlage für die Rückfrage, bevor freshEditor
+   * ein nicht von uns gefülltes Formular verwirft.
+   * @returns {{ sourceValue: string, titleValue: string, chips: string[], hasContent: boolean, ours: boolean, hasEditor: boolean }}
+   *   ours = der Inhalt stammt aus dem letzten fillArticle/precheckDuplicate dieses Drivers
+   */
+  async formState() {
+    const p = await this.exec('probe', {}, { create: false }).catch(() => null);
+    const sourceValue = p?.sourceValue || '';
+    const titleValue = p?.titleValue || '';
+    const chips = p?.chips || [];
+    const hasContent = !!(sourceValue || titleValue || chips.length);
+    const ours = hasContent && !!sourceValue && !!this.lastFill && sourceValue === this.lastFill.sourceValue;
+    return { sourceValue, titleValue, chips, hasContent, ours, hasEditor: !!p?.hasEditor };
+  }
+
+  /**
+   * Billige Duplikatprüfung VOR Übersetzung und Tagging: leeres Formular, Quelle + Titel eintragen (das
+   * Verlassen des Quellfelds löst OSDPs checkURLDuplicates aus) und bis zu waitMs auf den Toast
+   * „Duplicate, URL already in the database!“ warten.
+   * @returns {{ ok: boolean, duplicate: boolean, prepared: boolean, toasts: object[], sourceValue: string, titleValue: string, error?: string }}
+   *   prepared = Quelle + Titel stehen im sauberen Editor → fillArticle(a, { editorPrepared: true }) füllt direkt weiter.
+   *   Bei duplicate bleibt formDirty gesetzt: die nächste Meldung lädt den Editor neu.
+   */
+  async precheckDuplicate({ url, title }, { waitMs = 3000 } = {}) {
+    const fresh = await this.freshEditor();
+    const staleToastIds = (fresh?.toasts || []).map((t) => t.id).filter(Boolean);
+    const native = await this.exec('fillNative', { url, title });
+    this.formDirty = true;
+    const sourceValue = native?.sourceValue || url || '';
+    this.lastFill = { url, sourceValue, chips: [] };
+    const toasts = [];
+    const seen = (t) => toasts.some((s) => (t.id && s.id === t.id) || (s.kind === t.kind && s.title === t.title && s.message === t.message));
+    let state = null;
+    let duplicate = false;
+    const start = Date.now();
+    for (;;) {
+      state = await this.exec('watchSave', { ignoreToastIds: staleToastIds }).catch(() => null);
+      for (const t of state?.freshToasts || []) if (!seen(t)) toasts.push(t);
+      if (state?.duplicate) {
+        duplicate = true;
+        break;
+      }
+      if (Date.now() - start >= waitMs) break;
+      await sleep(250);
+    }
+    if (duplicate) this.log('OSDP meldet beim Quellfeld: Duplikat – URL ist bereits in der Datenbank.');
+    const ok = !!native?.ok;
+    return {
+      ok,
+      duplicate,
+      prepared: ok && !duplicate,
+      toasts,
+      sourceValue: state?.sourceValue ?? sourceValue,
+      titleValue: state?.titleValue ?? '',
+      error: native?.error
+    };
+  }
+
+  /**
    * Tags setzen: bevorzugt über die Angular-Komponente (UIDs), sonst per DOM-Klick (Pfade).
    * @returns {{ok: boolean, applied: string[], failed: Array<{path?: string, uid?: number, error: string}>, chips: string[], method: string}}
    */
@@ -322,10 +398,12 @@ export class OsdpDriver {
    * Trägt einen Artikel vollständig ein (ohne zu speichern – das macht der Nutzer, siehe waitForReview).
    * @param {object} a  { url, titleEn, textEn, titleDe, textDe, author, authorUnknown, date (Date), category,
    *                      tagPaths?: string[], tagUids?: number[] }
-   * @param {object} opts  { save: boolean (nur Tests, Standard false), translateFn?: ({title,text}) => Promise<{title,text}> }
+   * @param {object} opts  { save: boolean (nur Tests, Standard false), translateFn?: ({title,text}) => Promise<{title,text}>,
+   *                         editorPrepared: boolean (true = precheckDuplicate hat Quelle + Titel gerade in den sauberen
+   *                         Editor eingetragen → kein freshEditor; fillNative läuft trotzdem, ist idempotent) }
    * @returns report { ok, steps, problems, chips: string[] (Chips nach dem Tag-Setzen), sourceValue, titleValue, saved?, duplicate? }
    */
-  async fillArticle(a, { save = false, translateFn = null } = {}) {
+  async fillArticle(a, { save = false, translateFn = null, editorPrepared = false } = {}) {
     const s = this.settings;
     const report = { steps: {}, problems: [] };
     const note = (key, r) => {
@@ -334,7 +412,9 @@ export class OsdpDriver {
       return r;
     };
 
-    const fresh = await this.freshEditor();
+    let fresh = editorPrepared === true ? await this.probe() : null;
+    // Ohne vorbereiteten Editor (oder wenn er inzwischen weg ist): leeres Formular sicherstellen
+    if (!fresh?.hasEditor || (fresh.groups || []).length < 2) fresh = await this.freshEditor();
     // Toasts, die jetzt schon sichtbar sind (z. B. „Item Added!“ der vorigen Meldung), zählen nicht
     const staleToastIds = (fresh?.toasts || []).map((t) => t.id).filter(Boolean);
 
@@ -437,17 +517,24 @@ export class OsdpDriver {
 
   /**
    * Freigabe-Schleife: Leiste im OSDP-Tab anzeigen und warten, bis der Nutzer gespeichert hat
-   * (Toast „Item Added!“ oder Formular-Reset), „Überspringen“/„Abbrechen“ gewählt hat oder die
-   * App per external() eine Entscheidung liefert ('skip' | 'abort' | 'saved').
+   * (Toast „Item Added!“ oder Formular-Reset nach einem Save-Indiz), „Überspringen“/„Abbrechen“
+   * gewählt hat oder die App per external() eine Entscheidung liefert ('skip' | 'abort' | 'saved').
+   *
+   * Zwei Wege: Der Beobachter im Content-Script meldet Ergebnisse per chrome.runtime.sendMessage
+   * ({ type: 'osdp-helper-review', session, event, reason, chips, toasts }) – die Schleife wacht dann
+   * sofort auf. Zusätzlich wird alle pollMs gemessen (Rückfallebene). Reihenfolge je Tick: Tab da? →
+   * watchSave (erkannter Save/Duplikat gewinnt) → Nachricht → external() → readOverlay (Leiste).
+   * Ein leeres Formular (formReset) zählt nur als gespeichert, wenn vorher ein Save-Indiz zu sehen war
+   * (saveClicked aus dem Content-Script oder ein Spinner); ohne Indiz wird weiter gewartet.
    *
    * @param {object} o
    *   index, total, title, structure, wb  → Anzeige in der Leiste
    *   pollMs (1000), timeoutMs (4 h)
-   *   external: () => 'skip'|'abort'|'saved'|null|Promise  (App-Buttons; wird pro Tick zuerst gefragt)
+   *   external: () => 'skip'|'abort'|'saved'|null|Promise  (App-Buttons)
    *   onTick: (info) => void  ({ tick, elapsedMs, chips, watch })
    *   expectSource: Quell-URL im Formular (Standard: Wert aus dem letzten fillArticle bzw. erster Messung)
-   *   hint: Text in der Leiste
-   * @returns {{ outcome: 'saved'|'duplicate'|'skip'|'abort'|'timeout'|'lost', chips: string[], toasts: object[], tookMs: number, reason?: string }}
+   *   hint: Text in der Leiste; beginnt er mit „⚠“, wird die Leiste als Warnung gestylt („Bitte prüfen“)
+   * @returns {{ outcome: 'saved'|'duplicate'|'skip'|'abort'|'timeout'|'lost', chips: string[], toasts: object[], tookMs: number, reason?: string, via: 'message'|'poll'|'app' }}
    *   chips = zuletzt gesehene nicht-leere Chip-Liste VOR dem Reset (für die Korrekturerkennung)
    */
   async waitForReview({ index = 0, total = 0, title = '', structure = '', wb = '', pollMs = 1000, timeoutMs = 4 * 3600 * 1000, external = () => null, onTick = () => {}, expectSource, hint } = {}) {
@@ -456,19 +543,102 @@ export class OsdpDriver {
     let chips = this.lastFill?.chips?.slice() || [];
     const toastsSeen = [];
     const seenToast = (t) => toastsSeen.some((s) => (t.id && s.id === t.id) || (s.kind === t.kind && s.title === t.title && s.message === t.message));
+    const noteToasts = (list) => {
+      for (const t of list || []) if (t && !seenToast(t)) toastsSeen.push(t);
+    };
     let outcome = 'timeout';
     let reason = '';
+    let via = 'poll';
     let session = null;
     let failures = 0;
     let tick = 0;
+    // Save-Indiz (Klick auf „Save“ laut Content-Script oder Spinner): erst damit zählt ein leeres Formular als gespeichert
+    let saveIndicated = false;
     // Toasts, die beim Start schon sichtbar sind (OSDP zeigt sie 10 s), sind Reste der vorigen Meldung
     let staleToastIds = [];
 
-    const overlay = { title, index, total, structure, wb, hint };
+    // Nachrichten des Beobachters aus dem OSDP-Tab: Posteingang + Wecker für die Wartezeit
+    const inbox = [];
+    let wake = null;
+    const wait = (ms) => new Promise((resolve) => {
+      if (inbox.length) return resolve();
+      const timer = setTimeout(() => {
+        wake = null;
+        resolve();
+      }, ms);
+      wake = () => {
+        clearTimeout(timer);
+        wake = null;
+        resolve();
+      };
+    });
+    const takeMessage = () => {
+      while (inbox.length) {
+        const m = inbox.shift();
+        if (session && m.session && m.session !== session) continue;
+        if (REVIEW_EVENTS.has(m.event)) return m;
+      }
+      return null;
+    };
+    const onMessage = (msg, sender, sendResponse) => {
+      if (!msg || msg.type !== REVIEW_MESSAGE) return undefined;
+      if (sender?.tab?.id != null && this.tabId != null && sender.tab.id !== this.tabId) return undefined;
+      if (session && msg.session && msg.session !== session) return undefined;
+      sendResponse({ ack: true });
+      if (REVIEW_EVENTS.has(msg.event)) {
+        inbox.push(msg);
+        if (wake) wake();
+      }
+      return undefined;
+    };
+    const runtime = typeof chrome !== 'undefined' && chrome.runtime?.onMessage ? chrome.runtime : null;
+    const watch = (ignoreToasts) => this.exec('watchSave', { expectSource: expect, ignoreToastIds: ignoreToasts }, { create: false });
+    /** Messpunkt auswerten; true = Ergebnis gefunden (outcome/reason gesetzt). */
+    const evaluate = (w) => {
+      if (!w) return false;
+      if (!expect && w.sourceValue) expect = w.sourceValue;
+      if (w.chips?.length) chips = w.chips;
+      noteToasts(w.freshToasts || w.toasts);
+      if (w.saveClicked || w.spinnerSeen || w.spinner) saveIndicated = true;
+      if (w.success) {
+        outcome = 'saved';
+        reason = 'toast';
+        return true;
+      }
+      if (w.duplicate) {
+        outcome = 'duplicate';
+        reason = 'toast';
+        return true;
+      }
+      if (w.formReset && saveIndicated && !w.errorToast && !(w.errorVisible || []).length && !w.spinner) {
+        outcome = 'saved';
+        reason = 'formReset';
+        return true;
+      }
+      return false;
+    };
+    /** Nachricht des Beobachters übernehmen; bei Überspringen/Abbrechen gewinnt ein inzwischen sichtbarer Save/Duplikat. */
+    const applyMessage = async (m) => {
+      via = 'message';
+      if (m.chips?.length) chips = m.chips;
+      noteToasts(m.toasts);
+      if (m.event === 'saved' || m.event === 'duplicate') {
+        outcome = m.event;
+        reason = m.reason || 'message';
+        return;
+      }
+      const w = await watch(staleToastIds).catch(() => null);
+      if (w && evaluate(w)) return;
+      outcome = m.event;
+      reason = m.reason || 'overlay';
+    };
+
+    const overlay = { title, index, total, structure, wb, hint, expectSource: expect };
+    if (runtime) runtime.onMessage.addListener(onMessage);
     try {
       const shown = await this.exec('showOverlay', overlay, { create: false }).catch(() => null);
       if (shown?.session) session = shown.session;
-      const base = await this.exec('watchSave', { expectSource: expect }, { create: false }).catch(() => null);
+      const base = await watch([]).catch(() => null);
       if (base) {
         staleToastIds = (base.toasts || []).map((t) => t.id).filter(Boolean);
         if (!expect && base.sourceValue) expect = base.sourceValue;
@@ -476,30 +646,18 @@ export class OsdpDriver {
       }
       while (Date.now() - start < timeoutMs) {
         tick++;
-        // 1) App-Entscheidung (Buttons in der Extension-Seite)
-        let ext = null;
-        try {
-          ext = await external();
-        } catch {
-          ext = null;
-        }
-        if (ext === 'skip' || ext === 'abort' || ext === 'saved') {
-          outcome = ext;
-          reason = 'app';
-          break;
-        }
-        // 2) Tab noch da?
+        // 1) Tab noch da?
         if (!(await this.tabAlive())) {
           outcome = 'lost';
           reason = 'tab';
           break;
         }
-        // 3) Leiste + Messpunkt
-        let ov = null;
+        // 2) Messpunkt zuerst: ein erkannter Save/Duplikat gewinnt gegen Überspringen/Abbrechen im selben Tick
         let w = null;
+        let ov = null;
         try {
+          w = await watch(staleToastIds);
           ov = await this.exec('readOverlay', {}, { create: false });
-          w = await this.exec('watchSave', { expectSource: expect, ignoreToastIds: staleToastIds }, { create: false });
           failures = 0;
         } catch {
           // Seite lädt gerade oder ist nicht erreichbar: ein paar Ticks tolerieren
@@ -509,6 +667,27 @@ export class OsdpDriver {
             break;
           }
         }
+        if (evaluate(w)) break;
+        // 3) Nachricht des Beobachters (sofortiger Weg)
+        const msg = takeMessage();
+        if (msg) {
+          await applyMessage(msg);
+          break;
+        }
+        // 4) App-Entscheidung (Buttons in der Extension-Seite)
+        let ext = null;
+        try {
+          ext = await external();
+        } catch {
+          ext = null;
+        }
+        if (ext === 'skip' || ext === 'abort' || ext === 'saved') {
+          outcome = ext;
+          reason = 'app';
+          via = 'app';
+          break;
+        }
+        // 5) Leiste
         if (ov) {
           if (session && ov.session && ov.session !== session) {
             // Neue isolierte Welt → Dokument wurde neu geladen; die Eingaben sind weg
@@ -524,38 +703,25 @@ export class OsdpDriver {
           }
           if (!ov.visible) await this.exec('showOverlay', overlay, { create: false }).catch(() => {});
         }
-        if (w) {
-          if (!expect && w.sourceValue) expect = w.sourceValue;
-          if (w.chips?.length) chips = w.chips;
-          for (const t of w.freshToasts || w.toasts || []) if (!seenToast(t)) toastsSeen.push(t);
-          if (w.success) {
-            outcome = 'saved';
-            reason = 'toast';
-            break;
-          }
-          if (w.duplicate) {
-            outcome = 'duplicate';
-            reason = 'toast';
-            break;
-          }
-          if (w.formReset && !w.errorToast && !(w.errorVisible || []).length && !w.spinner) {
-            outcome = 'saved';
-            reason = 'formReset';
-            break;
-          }
-        }
         try {
           onTick({ tick, elapsedMs: Date.now() - start, chips, watch: w });
         } catch {
           /* ignorieren */
         }
-        await sleep(pollMs);
+        // Warten – eine Nachricht aus dem OSDP-Tab weckt sofort
+        await wait(pollMs);
+        const woke = takeMessage();
+        if (woke) {
+          await applyMessage(woke);
+          break;
+        }
       }
     } finally {
+      if (runtime) runtime.onMessage.removeListener(onMessage);
       await this.exec('hideOverlay', {}, { create: false }).catch(() => {});
     }
     if (outcome === 'saved' || outcome === 'lost') this.formDirty = false; // Formular ist leer bzw. weg
     if (outcome === 'saved') this.lastFill = null;
-    return { outcome, reason, chips, toasts: toastsSeen, tookMs: Date.now() - start };
+    return { outcome, reason, chips, toasts: toastsSeen, tookMs: Date.now() - start, via };
   }
 }

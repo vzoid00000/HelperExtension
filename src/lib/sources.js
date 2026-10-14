@@ -48,10 +48,15 @@ export const SOURCE_KINDS = ['rss', 'html'];
 export const CATEGORY_LABELS = { cyber: 'Cyber', krimisi: 'KriMiSi', both: 'Beide' };
 export const KIND_LABELS = { rss: 'RSS/Atom-Feed', html: 'Übersichtsseite' };
 
-/** Quellen-Liste als Text (eine Quelle pro Zeile) für Import/Export. */
+/**
+ * Quellen-Liste als Text (eine Quelle pro Zeile) für Import/Export. „|“ ist das Trennzeichen und
+ * wird im Namen durch „/“ ersetzt, ein führendes „#“ (= deaktiviert) im Namen entfernt – sonst ginge
+ * die Zeile beim Zurücklesen verloren bzw. würde falsch gelesen.
+ */
 export function sourcesToText(sources) {
+  const safeName = (name) => String(name || '').replace(/\s*\|\s*/g, ' / ').replace(/^#+\s*/, '').trim() || 'Quelle';
   return sources
-    .map((s) => [s.enabled === false ? '#' + s.name : s.name, s.url, s.category || 'both', s.type || 'rss', s.pattern || ''].join(' | ').replace(/\s*\|\s*$/, ''))
+    .map((s) => [s.enabled === false ? '#' + safeName(s.name) : safeName(s.name), s.url, s.category || 'both', s.type || 'rss', s.pattern || ''].join(' | ').replace(/\s*\|\s*$/, ''))
     .join('\n');
 }
 

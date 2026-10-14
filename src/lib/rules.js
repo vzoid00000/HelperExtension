@@ -7,6 +7,10 @@
 // correctionFromChips() vergleicht den Tag-Vorschlag der Extension mit den Chips, die beim Speichern
 // tatsächlich im OSDP-Formular standen, und draftRuleFromCorrection() macht daraus einen Regel-Vorschlag
 // (reines Template, ohne Modell). distillRule() formuliert optional per Modell eine allgemeine Regel.
+//
+// Alle Schreibzugriffe auf den Key 'rules' laufen über eine modulinterne Warteschlange (withRulesLock):
+// recordRuleHits() wird aus dem Lauf ohne await aufgerufen und darf eine gleichzeitig angelegte oder
+// geänderte Regel nicht überschreiben (Read-Modify-Write auf den ganzen Key).
 
 import { SEP, TOPIC_ROOTS } from './tag-catalog.js';
 import { llmText } from './llm.js';
@@ -52,6 +56,19 @@ export function normalizeRule(input = {}) {
 
 // --------------------------------------------------------------- Storage ----
 
+// Warteschlange für Read-Modify-Write auf 'rules': jeder Schreibzugriff wartet auf den vorigen.
+let queue = Promise.resolve();
+
+/**
+ * Führt fn (lesen → ändern → schreiben) exklusiv aus; gleichzeitige Aufrufe laufen nacheinander.
+ * Ein Fehler in fn blockiert die Warteschlange nicht. Auch für Fremdschreiber (Import) gedacht.
+ */
+export function withRulesLock(fn) {
+  const run = queue.then(fn, fn);
+  queue = run.catch(() => {});
+  return run;
+}
+
 export async function loadRules() {
   const stored = await chrome.storage.local.get(KEY);
   return stored[KEY] || [];
@@ -61,45 +78,56 @@ export async function saveRules(list) {
   await chrome.storage.local.set({ [KEY]: list });
 }
 
-export async function addRule(input) {
-  const list = await loadRules();
-  const rule = normalizeRule({ ...input, id: '' });
-  list.push(rule);
-  await saveRules(list);
-  return rule;
+export function addRule(input) {
+  return withRulesLock(async () => {
+    const list = await loadRules();
+    const rule = normalizeRule({ ...input, id: '' });
+    list.push(rule);
+    await saveRules(list);
+    return rule;
+  });
 }
 
-export async function updateRule(id, patch = {}) {
-  const list = await loadRules();
-  const idx = list.findIndex((r) => r.id === id);
-  if (idx < 0) return null;
-  const merged = normalizeRule({ ...list[idx], ...patch, id: list[idx].id, createdAt: list[idx].createdAt });
-  list[idx] = merged;
-  await saveRules(list);
-  return merged;
+export function updateRule(id, patch = {}) {
+  return withRulesLock(async () => {
+    const list = await loadRules();
+    const idx = list.findIndex((r) => r.id === id);
+    if (idx < 0) return null;
+    const merged = normalizeRule({ ...list[idx], ...patch, id: list[idx].id, createdAt: list[idx].createdAt });
+    list[idx] = merged;
+    await saveRules(list);
+    return merged;
+  });
 }
 
-export async function removeRule(id) {
-  const list = await loadRules();
-  const rest = list.filter((r) => r.id !== id);
-  if (rest.length === list.length) return false;
-  await saveRules(rest);
-  return true;
+export function removeRule(id) {
+  return withRulesLock(async () => {
+    const list = await loadRules();
+    const rest = list.filter((r) => r.id !== id);
+    if (rest.length === list.length) return false;
+    await saveRules(rest);
+    return true;
+  });
 }
 
-/** Zählt für die genannten Regeln einen Treffer (Regel wurde in einen Prompt eingespeist). */
-export async function recordRuleHits(ids) {
+/**
+ * Zählt für die genannten Regeln einen Treffer (Regel stand wirklich im Prompt – die ids liefert
+ * rulesBlockWithIds). Läuft über die Warteschlange, damit kein gleichzeitiges addRule/updateRule verloren geht.
+ */
+export function recordRuleHits(ids) {
   const wanted = new Set(ids || []);
-  if (!wanted.size) return;
-  const list = await loadRules();
-  let changed = false;
-  for (const r of list) {
-    if (wanted.has(r.id)) {
-      r.hits = (Number(r.hits) || 0) + 1;
-      changed = true;
+  if (!wanted.size) return Promise.resolve();
+  return withRulesLock(async () => {
+    const list = await loadRules();
+    let changed = false;
+    for (const r of list) {
+      if (wanted.has(r.id)) {
+        r.hits = (Number(r.hits) || 0) + 1;
+        changed = true;
+      }
     }
-  }
-  if (changed) await saveRules(list);
+    if (changed) await saveRules(list);
+  });
 }
 
 // ---------------------------------------------------------------- Prompt ----
@@ -118,24 +146,31 @@ const HEADINGS = {
 };
 
 /**
- * Textblock für den System-Prompt. '' ohne passende Regeln. Hart begrenzt auf maxRules Regeln
- * und maxChars Zeichen (älteste zuerst, weil sie am längsten bewährt sind).
+ * Textblock für den System-Prompt samt ids der Regeln, die wirklich darin stehen (nur diese zählen
+ * als „verwendet“, siehe recordRuleHits). text = '' und ids = [] ohne passende Regeln. Hart begrenzt
+ * auf maxRules Regeln und maxChars Zeichen (älteste zuerst, weil sie am längsten bewährt sind).
+ * @returns {{ text: string, ids: string[] }}
  */
-export function rulesPromptBlock(rules, scope, { maxRules = 40, maxChars = 6000 } = {}) {
+export function rulesBlockWithIds(rules, scope, { maxRules = 40, maxChars = 6000 } = {}) {
   const active = rulesForScope(rules, scope).slice(0, Math.max(0, maxRules));
-  if (!active.length) return '';
+  if (!active.length) return { text: '', ids: [] };
   const heading = HEADINGS[scope] || HEADINGS.tagging;
   const lines = [heading];
+  const ids = [];
   let length = heading.length;
-  let n = 0;
   for (const r of active) {
-    const line = `${n + 1}. ${r.text}`;
+    const line = `${ids.length + 1}. ${r.text}`;
     if (length + 1 + line.length > maxChars) break;
     lines.push(line);
     length += 1 + line.length;
-    n++;
+    ids.push(r.id);
   }
-  return n ? lines.join('\n') : '';
+  return ids.length ? { text: lines.join('\n'), ids } : { text: '', ids: [] };
+}
+
+/** Nur der Textblock (siehe rulesBlockWithIds). '' ohne passende Regeln. */
+export function rulesPromptBlock(rules, scope, opts) {
+  return rulesBlockWithIds(rules, scope, opts).text;
 }
 
 // ------------------------------------------------------------ Korrektur ----
@@ -246,12 +281,16 @@ export function draftRuleFromCorrection(correction, article = {}) {
 
 /**
  * Formuliert per Modell EINE allgemeine Regel (max. 2 Sätze) aus einer Korrektur. Nur auf Knopfdruck.
+ * removed/added sind die echte Korrektur; article.tags (z. B. aus dem Verlauf) werden nur als
+ * „bisher vergeben“ mitgegeben, nicht als entfernt. maxTokens deckt auch das Thinking von Claude ab
+ * (es zählt zu max_tokens); die Länge der Regel wird ohnehin nachträglich begrenzt.
  * @param {{removed: string[], added: string[], reason?: string, scope?: string}} correction
- * @param {{title?: string, summary?: string, reason?: string}} article
+ * @param {{title?: string, summary?: string, reason?: string, tags?: string[]}} article
  */
 export async function distillRule(correction, article = {}, settings = {}) {
   const removed = strList(correction?.removed).map(tagLabel);
   const added = strList(correction?.added).map(tagLabel);
+  const current = strList(article?.tags).map(tagLabel).slice(0, 30);
   const reason = String(correction?.reason || '').trim();
   if (!removed.length && !added.length && !reason) throw new Error('Keine Korrektur vorhanden, aus der eine Regel abgeleitet werden könnte.');
   const scope = RULE_SCOPES.includes(correction?.scope) ? correction.scope : 'tagging';
@@ -264,11 +303,12 @@ export async function distillRule(correction, article = {}, settings = {}) {
   const user = [
     article?.title ? `Meldung: ${shorten(article.title, 160)}` : '',
     article?.summary || article?.reason ? `Inhalt: ${shorten(article.summary || article.reason, 300)}` : '',
+    current.length ? `Bisher vergebene Tags (zur Einordnung, nicht beanstandet): ${current.join('; ')}` : '',
     removed.length ? `Vom Modell vergeben, vom Bearbeiter entfernt: ${removed.join('; ')}` : '',
     added.length ? `Vom Bearbeiter ergänzt: ${added.join('; ')}` : '',
     reason ? `Begründung des Bearbeiters: ${shorten(reason, 300)}` : ''
   ].filter(Boolean).join('\n');
-  const out = await llmText(settings, system, user, { maxTokens: 200, effort: 'low' });
+  const out = await llmText(settings, system, user, { maxTokens: 1500, effort: 'low' });
   const text = String(out || '').replace(/\s+/g, ' ').replace(/^["„“']+|["“”']+$/g, '').trim();
   if (!text) throw new Error('Das Modell hat keine Regel geliefert.');
   return text.length > MAX_RULE_TEXT ? shorten(text, MAX_RULE_TEXT) : text;
@@ -281,18 +321,19 @@ export async function exportRules() {
 }
 
 /**
- * Importiert Regeln (Array oder { rules }). merge=true behält vorhandene Regeln (gleiche id oder gleicher
- * Text im selben Bereich wird übersprungen), merge=false ersetzt. Liefert { added, skipped, total }.
+ * Vereinigt vorhandene Regeln mit importierten (rein, ohne Storage): gleiche id oder gleicher Text im
+ * selben Bereich wird übersprungen, ungültige Einträge ebenfalls. Liefert { list, added, skipped }.
+ * Wirft, wenn input keine Liste ist.
  */
-export async function importRules(list, { merge = true } = {}) {
-  const input = Array.isArray(list) ? list : Array.isArray(list?.rules) ? list.rules : null;
-  if (!input) throw new Error('Ungültige Regeldaten: Liste erwartet.');
-  const current = merge ? await loadRules() : [];
-  const ids = new Set(current.map((r) => r.id));
-  const texts = new Set(current.map((r) => `${r.scope}|${norm(r.text)}`));
+export function mergeRules(current, input) {
+  const raws = Array.isArray(input) ? input : Array.isArray(input?.rules) ? input.rules : null;
+  if (!raws) throw new Error('Ungültige Regeldaten: Liste erwartet.');
+  const list = [...(current || [])];
+  const ids = new Set(list.map((r) => r.id));
+  const texts = new Set(list.map((r) => `${r.scope}|${norm(r.text)}`));
   let added = 0;
   let skipped = 0;
-  for (const raw of input) {
+  for (const raw of raws) {
     let rule;
     try {
       rule = normalizeRule(raw);
@@ -306,10 +347,24 @@ export async function importRules(list, { merge = true } = {}) {
     }
     ids.add(rule.id);
     texts.add(`${rule.scope}|${norm(rule.text)}`);
-    current.push(rule);
+    list.push(rule);
     added++;
   }
-  current.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
-  await saveRules(current);
-  return { added, skipped, total: current.length };
+  list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+  return { list, added, skipped };
+}
+
+/**
+ * Importiert Regeln (Array oder { rules }). merge=true behält vorhandene Regeln (gleiche id oder gleicher
+ * Text im selben Bereich wird übersprungen), merge=false ersetzt. Liefert { added, skipped, total }.
+ */
+export function importRules(list, { merge = true } = {}) {
+  // Eingabe vor dem Betreten der Warteschlange prüfen (wirft synchron verständlich)
+  if (!Array.isArray(list) && !Array.isArray(list?.rules)) return Promise.reject(new Error('Ungültige Regeldaten: Liste erwartet.'));
+  return withRulesLock(async () => {
+    const current = merge ? await loadRules() : [];
+    const { list: next, added, skipped } = mergeRules(current, list);
+    await saveRules(next);
+    return { added, skipped, total: next.length };
+  });
 }

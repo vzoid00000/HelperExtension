@@ -28,7 +28,7 @@ export async function init(c) {
   $('btnHistoryMd').addEventListener('click', async () => {
     const list = currentList();
     try {
-      await copyText(historyToMarkdown(list, `Eingetragene News (${RANGE_LABEL[range]})`));
+      await copyText(historyToMarkdown(list, `Eingetragene Meldungen – ${RANGE_LABEL[range]}`));
       toastOk('Markdown kopiert', `${plural(list.length, 'Eintrag', 'Einträge')} in der Zwischenablage.`);
     } catch (e) {
       toastError('Kopieren fehlgeschlagen', e.message);
@@ -81,10 +81,12 @@ async function onTableClick(e) {
     render();
     toastOk('Eintrag entfernt');
   } else if (action === 'correct') {
+    // Aus dem Verlauf ist nichts „falsch“ vorbelegt: Die gespeicherten Tags gehen nur als Referenz
+    // (article.tags) mit – der Bearbeiter beschreibt die Korrektur selbst.
     ctx.views.rules?.openRuleDialog({
       scope: 'tagging',
-      example: { title: entry.title || entry.titleDe || '', url: entry.url || '', wrongTags: entry.tags || [], rightTags: [] },
-      article: { title: entry.title, titleDe: entry.titleDe, summary: entry.summary, url: entry.url }
+      example: { title: entry.title || entry.titleDe || '', url: entry.url || '', wrongTags: [], rightTags: [] },
+      article: { title: entry.title, titleDe: entry.titleDe, summary: entry.summary, url: entry.url, tags: entry.tags || [] }
     });
   }
 }
@@ -121,11 +123,15 @@ function render() {
     else wbBtn.append(el('span', 'muted', '–'));
     tdWb.append(wbBtn);
     const tdTitle = el('td', 'title-cell');
-    const a = el('a', '', e.titleDe || e.title || e.url);
-    a.href = e.url || '#';
-    a.target = '_blank';
-    a.rel = 'noopener';
-    a.title = [e.title, e.titleDe].filter(Boolean).join('\n');
+    // Nur mit echter Artikel-URL ein Link (href="#" würde eine zweite App-Instanz öffnen)
+    const hasUrl = /^https?:\/\//i.test(e.url || '');
+    const a = el(hasUrl ? 'a' : 'span', '', e.titleDe || e.title || e.url);
+    if (hasUrl) {
+      a.href = e.url;
+      a.target = '_blank';
+      a.rel = 'noopener';
+    }
+    a.title = [e.title, e.titleDe, hasUrl ? '' : 'Kein Link: Eintrag ohne Artikel-URL'].filter(Boolean).join('\n');
     tdTitle.append(a);
     const tdSrc = el('td', 'col-source', e.sourceName || e.siteName || '');
     tdSrc.title = `${e.sourceName || e.siteName || ''}${e.dateIso ? ' · Artikel vom ' + formatDate(new Date(e.dateIso)) : ''}${e.author ? ' · ' + (e.authorUnknown ? 'Autor ungenannt' : e.author) : ''}`;

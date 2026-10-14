@@ -2,13 +2,13 @@
 // (DOM-Dump, Tag-Export) und Datensicherung (Gesamtexport/-import). Logik aus der alten
 // Optionsseite übernommen; Quellen werden in der Ansicht „Quellen“ verwaltet.
 
-import { saveSettings, DEFAULT_SETTINGS } from '../../lib/settings.js';
+import { saveSettings, DEFAULT_SETTINGS, validateUrlPattern, PROVIDER_LABELS } from '../../lib/settings.js';
 import { translateArticle } from '../../lib/translate.js';
 import { testLocalLlm } from '../../lib/llm.js';
 import { OsdpDriver } from '../../lib/osdp-driver.js';
-import { exportAllData, importAllData } from '../../lib/data-transfer.js';
+import { exportAllData, importAllData, MAX_IMPORT_BYTES } from '../../lib/data-transfer.js';
 import { toIsoDate } from '../../lib/dates.js';
-import { $, toastOk, toastError, setStatusEl, download, readFileAsText, stamp, plural } from '../ui.js';
+import { $, toastOk, toastWarn, toastError, setStatusEl, download, readFileAsText, stamp, plural } from '../ui.js';
 
 const TEXT_FIELDS = ['llmProvider', 'anthropicApiKey', 'anthropicModel', 'localLlmUrl', 'localLlmModel', 'localLlmApiKey', 'localLlmTimeoutSec', 'translator', 'deeplApiKey', 'minScore', 'maxItemsPerRun', 'autoRunTime', 'osdpDateFormat', 'authorUnknownText', 'osdpUrlPattern'];
 const BOOL_FIELDS = ['autoTags', 'fillEnglishTab', 'useSiteExtract'];
@@ -88,9 +88,10 @@ async function save() {
     setStatus('Uhrzeit bitte als HH:MM angeben.', 'err');
     return toastError('Nicht gespeichert', 'Uhrzeit bitte als HH:MM angeben.');
   }
-  if (s.osdpUrlPattern && !/^(https?|file):\/\//i.test(s.osdpUrlPattern)) {
-    setStatus('Das URL-Muster des OSDP-Tabs muss mit http://, https:// oder file:// beginnen.', 'err');
-    return toastError('Nicht gespeichert', 'URL-Muster des OSDP-Tabs ungültig.');
+  const patternError = validateUrlPattern(s.osdpUrlPattern);
+  if (patternError) {
+    setStatus(`URL-Muster des OSDP-Tabs: ${patternError}`, 'err');
+    return toastError('Nicht gespeichert', patternError);
   }
   if (s.llmProvider === 'local' && s.localLlmUrl && !/^https?:\/\//i.test(s.localLlmUrl)) {
     setStatus('Die Server-URL muss mit http:// oder https:// beginnen.', 'err');
@@ -110,7 +111,7 @@ async function save() {
 
 async function testLocal() {
   const s = { ...DEFAULT_SETTINGS, ...ctx.settings, ...readForm() };
-  setStatus('Teste lokales Modell …', 'busy');
+  setStatus('Teste Verbindung zum lokalen Server …', 'busy');
   $('btnTestLocal').disabled = true;
   try {
     const r = await testLocalLlm(s);
@@ -134,7 +135,7 @@ async function testTranslation() {
       s,
       (m) => setStatus(m, 'busy')
     );
-    setStatus(`OK (${r.provider}): „${r.title}“ – ${r.text}${r.warnings.length ? ' · Hinweise: ' + r.warnings.join('; ') : ''}`, 'ok');
+    setStatus(`OK (${PROVIDER_LABELS[r.provider] || r.provider}): „${r.title}“ – ${r.text}${r.warnings.length ? ' · Hinweise: ' + r.warnings.join('; ') : ''}`, 'ok');
     toastOk('Übersetzung OK', `„${r.title}“`);
   } catch (e) {
     setStatus(e.message, 'err');
@@ -148,12 +149,30 @@ async function testTranslation() {
 
 async function exportData() {
   try {
-    const data = await exportAllData({ includeSecrets: true });
-    await download(`osdp-helper-daten-${toIsoDate(new Date())}.json`, JSON.stringify(data, null, 2), 'application/json');
-    toastOk('Daten exportiert', `${plural(data.history.length, 'Verlaufseintrag', 'Verlaufseinträge')}, ${plural(data.rules.length, 'Regel', 'Regeln')}, ${plural(data.sources.length, 'Quelle', 'Quellen')}. Die Datei enthält API-Keys – nicht weitergeben.`);
+    // API-Keys nur auf ausdrücklichen Wunsch (Weitergabe an Kollegen/Support ohne Schlüssel)
+    const includeSecrets = confirm('API-Keys (Claude, DeepL, lokaler Server) mit exportieren?\n\nOK = mit Keys (nur für die eigene Sicherung, Datei nicht weitergeben)\nAbbrechen = ohne Keys (zum Weitergeben von Quellen, Regeln und Verlauf)');
+    const data = await exportAllData({ includeSecrets });
+    await download(`osdp-helper-daten-${toIsoDate(new Date())}${includeSecrets ? '-mit-keys' : ''}.json`, JSON.stringify(data, null, 2), 'application/json');
+    const summary = `${plural(data.history.length, 'Verlaufseintrag', 'Verlaufseinträge')}, ${plural(data.rules.length, 'Regel', 'Regeln')}, ${plural(data.sources.length, 'Quelle', 'Quellen')}.`;
+    if (includeSecrets) toastWarn('Daten exportiert (mit API-Keys)', `${summary} Die Datei enthält API-Keys – nicht weitergeben.`);
+    else toastOk('Daten exportiert (ohne API-Keys)', summary);
   } catch (e) {
     toastError('Export fehlgeschlagen', e.message);
   }
+}
+
+/** Lesbare Zusammenfassung des Import-Berichts (keine rohen Kennungen). */
+function describeImport(rep) {
+  const parts = [];
+  if (rep.settings) {
+    const skipped = rep.settings.skipped?.length || 0;
+    parts.push(skipped ? `Einstellungen (${plural(skipped, 'ungültiger Wert', 'ungültige Werte')} übersprungen: ${rep.settings.skipped.map((s) => s.key).join(', ')})` : 'Einstellungen');
+  }
+  if (rep.sources) parts.push(`${plural(rep.sources.added, 'Quelle', 'Quellen')} neu`);
+  if (rep.rules) parts.push(`${plural(rep.rules.added, 'Regel', 'Regeln')} neu`);
+  if (rep.history) parts.push(`${plural(rep.history.added, 'Verlaufseintrag', 'Verlaufseinträge')} neu${rep.history.dropped ? ` (${plural(rep.history.dropped, 'ältester Eintrag', 'älteste Einträge')} über dem Limit verworfen)` : ''}`);
+  if (rep.processed) parts.push(`${plural(rep.processed, 'URL', 'URLs')} als erledigt gemerkt`);
+  return parts;
 }
 
 async function importData() {
@@ -161,15 +180,17 @@ async function importData() {
   const file = input.files?.[0];
   input.value = '';
   if (!file) return;
+  // Während eines Laufs würde reloadAll() den Zustand unter der Schleife austauschen
+  if (ctx.views.run?.isRunning?.()) return toastWarn('Bitte zuerst den Lauf beenden', 'Der Import ersetzt den Arbeitszustand – während eines Laufs ist das nicht möglich.');
+  if (file.size > MAX_IMPORT_BYTES) {
+    const msg = `Datei zu groß (${(file.size / 1048576).toFixed(1)} MB, erlaubt sind ${MAX_IMPORT_BYTES / 1048576} MB).`;
+    setStatus(`Import fehlgeschlagen: ${msg}`, 'err');
+    return toastError('Import fehlgeschlagen', msg);
+  }
   try {
     const text = await readFileAsText(file);
     const rep = await importAllData(text, { merge: true });
-    const parts = [];
-    if (rep.settings) parts.push('Einstellungen');
-    if (rep.sources) parts.push(`Quellen +${rep.sources.added}`);
-    if (rep.rules) parts.push(`Regeln +${rep.rules.added}`);
-    if (rep.history) parts.push(`Verlauf +${rep.history.added}`);
-    if (rep.processed) parts.push(`erledigt ${rep.processed}`);
+    const parts = describeImport(rep);
     await ctx.reloadAll();
     setStatus(`Import abgeschlossen: ${parts.join(', ')}.`, 'ok');
     toastOk('Daten importiert', parts.join(' · '));

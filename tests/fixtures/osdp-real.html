@@ -165,6 +165,20 @@
       window.__resetForm();
     }, 600);
   });
+  // Duplikatprüfung wie OSDP: focusout auf dem Quellfeld → POST checkURLDuplicates → bei 409 Fehlertoast.
+  // URLs aus window.__markDuplicate(url) gelten als bereits in der Datenbank (Antwort kommt nach 300 ms);
+  // die Liste überlebt ein Neuladen der Fixture (localStorage), wie eine echte Datenbank.
+  const DUP_KEY = 'osdpFixtureDuplicates';
+  const readDup = () => { try { return new Set(JSON.parse(localStorage.getItem(DUP_KEY) || '[]')); } catch { return new Set(); } };
+  window.__duplicateUrls = readDup();
+  window.__markDuplicate = (url) => { window.__duplicateUrls.add(url); try { localStorage.setItem(DUP_KEY, JSON.stringify([...window.__duplicateUrls])); } catch { /* nur im Speicher */ } };
+  window.__clearDuplicates = () => { window.__duplicateUrls.clear(); try { localStorage.removeItem(DUP_KEY); } catch { /* ignorieren */ } };
+  document.querySelectorAll('input[formcontrolname="article_source"]').forEach((el) => el.addEventListener('focusout', () => {
+    const url = el.value;
+    if (!url) return;
+    window.__events.push(['checkURLDuplicates', url]);
+    if (window.__duplicateUrls.has(url)) setTimeout(() => window.__showToast('error', 'Error', 'Duplicate, URL already in the database!'), 300);
+  }));
   // Extract → Titel + Inhalt füllen
   document.getElementById('btnExtract').addEventListener('click', () => {
     const ov = document.querySelector('.ngx-spinner-overlay'); ov.style.display = 'block';

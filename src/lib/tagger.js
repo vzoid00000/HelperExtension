@@ -7,6 +7,15 @@
 // zwischen Anfragen gecacht wird). Das Regelwerk des Bearbeiters (rulesText) folgt als eigener
 // Block OHNE cache_control, damit der gecachte Katalogblock stabil bleibt. Für 'local'
 // (Claude-Code-Brücke, eigenes Modell) werden alle Blöcke zu einem System-String zusammengefügt.
+// Das Ausgabeformat (Felder, erlaubte Werte) trägt allein das JSON-Schema (API: output_config,
+// lokal: an den System-Prompt angehängt); RULES wiederholt es nicht.
+//
+// Hinweis zur Einstellung useSiteExtract (experimentell): Das Tagging läuft in der App VOR dem
+// Ausfüllen auf dem per fetch extrahierten Artikeltext (article.text) und dem dort übersetzten
+// Titel. Ist useSiteExtract aktiv, holt der Driver den Quelltext erst beim Ausfüllen über den
+// OSDP-„Extract“-Button und übersetzt ihn dort; Tags und Freigabe-Card beziehen sich dann auf
+// einen anderen Text als den in OSDP eingetragenen, und titleDe kann in der Meldung leer bleiben.
+// Bewusst nicht umgebaut – die Standardeinstellung (aus) ist der getestete Pfad.
 
 import { llmJson } from './llm.js';
 import { buildSelection, SOURCE_TYPES, shortenAtWord } from './tag-catalog.js';
@@ -15,7 +24,14 @@ import { buildSelection, SOURCE_TYPES, shortenAtWord } from './tag-catalog.js';
 export const MAX_ARTICLE_CHARS = 10000;
 /** Obergrenze für den Katalogtext im Prompt (Zeichen); Baseline (alt, treeText mit Beschreibungen) war 46.077. */
 export const MAX_CATALOG_CHARS = 30000;
+/**
+ * max_tokens für die Tagging-Antwort. Auf dem Standardmodell (Opus) zählt das Nachdenken bei
+ * effort 'high' mit in max_tokens; 2.000 reichten dafür nicht (stop_reason max_tokens → Fehler).
+ */
+export const TAGGING_MAX_TOKENS = 8000;
 
+// Pflichtregeln aus dem Handbuch. Enthält KEINE Wiederholung des Ausgabeformats (steht im Schema)
+// und keine Wiederholung der Katalogköpfe (Pfadschreibweise, Ortsliste, WB-Definition).
 const RULES = `Du vergibst Tags für englische Newsartikel im österreichischen Dokumentationssystem OSDP nach dem Tagging-Handbuch. Nur Tags aus dem Katalog, exakt so geschrieben; nie Tags erfinden.
 
 PFLICHT
@@ -26,21 +42,11 @@ PFLICHT
 
 HIERARCHIE: Passt ein Untertag, nur diesen (ohne Übertag). Passt keiner, den Übertag (z. B. Remote-Access-Trojaner → "Schadsoftware", nicht "Spyware"). Über- und Untertag gemeinsam nur in begründeter Ausnahme.
 
-AUFTRAGSTAGS: ki = true nur, wenn Künstliche Intelligenz tatsächlich Thema ist (Entwicklung, Einsatz, Risiko, Tool), nicht bei beiläufiger Erwähnung. WB ("WB-Cyber" bei Struktur Cyber, "WB-KriMiSi" bei KriMiSi, nie bei InnoTech) nur für besonders wichtige Meldungen: große Cyberkampagnen, Vorfälle mit strategischen Folgen, entscheidende Sicherheitsänderungen, große Konflikteskalationen, bedeutende militärische/diplomatische Maßnahmen. Die meisten Artikel: wb = "none". Keine anderen Auftragstags.
+AUFTRAGSTAGS: ki = true nur, wenn Künstliche Intelligenz tatsächlich Thema ist (Entwicklung, Einsatz, Risiko, Tool), nicht bei beiläufiger Erwähnung. WB (Definition im Katalog; WB-Cyber zu Struktur Cyber, WB-KriMiSi zu KriMiSi, nie bei InnoTech) nur für besonders wichtige Meldungen: große Cyberkampagnen, Vorfälle mit strategischen Folgen, entscheidende Sicherheitsänderungen, große Konflikteskalationen, bedeutende militärische/diplomatische Maßnahmen. Die meisten Artikel: wb = "none". Keine anderen Auftragstags.
 
 NIE: Newsinfo → zeitlicher Aspekt, Informationsverschmutzung, Social Media Post (thematische Tags wie "Informationskrieg" oder "Soziale Medien" bleiben erlaubt).
 
-AUSGABE: JSON mit
-- structure: "Cyber" | "KriMiSi" | "InnoTech"
-- sourceType: einer der Quellentypen
-- locations: exakte Ortsnamen aus dem Katalog (z. B. "USA", "Vereinigtes Königreich", "Taiwan", "Global")
-- topics: vollständige Pfade mit " > " (z. B. "Cyber > Cyberangriff > Schadsoftware > Ransomware", "KriMiSi > Militärische Handlung > Angriff > Luftangriff", "Allgemeine Tags > Akteur > Internationale Organisation > NATO")
-- ki: true | false
-- wb: "none" | "WB-Cyber" | "WB-KriMiSi"
-- wbReason: ein deutscher Satz
-- summary: EIN deutscher Satz (Sachverhalt, Akteure, Folge)
-- notes: nur bei Grenzfällen ein kurzer Hinweis, sonst ""
-Knapp antworten, kein Text außerhalb des JSON.`;
+AUSGABE: JSON gemäß Schema, knapp, kein Text außerhalb. topics als vollständige Pfade mit " > " (z. B. "Cyber > Cyberangriff > Schadsoftware > Ransomware"), locations als Namen aus der ORTE-Liste; summary = EIN deutscher Satz (Sachverhalt, Akteure, Folge), wbReason ein Satz, notes nur bei Grenzfällen, sonst "".`;
 
 const SCHEMA = {
   type: 'object',
@@ -87,7 +93,7 @@ function composeCatalogPrompt(catalog, maxDescription) {
     catalog.compactText('InnoTech', { maxDescription }),
     catalog.compactText('Allgemeine Tags', { maxDescription }),
     '',
-    '=== ORTE (nur den Namen angeben; Kontinentnamen sind selbst wählbar, Gruppenbezeichnungen mit "(nur die Einträge)" nicht) ===',
+    '=== ORTE (Einträge durch ";" getrennt; Namen exakt wie hier, bei Klammerzusatz genügt die Kurzform; Kontinentnamen sind selbst wählbar, Gruppenbezeichnungen mit "(nur die Einträge)" nicht) ===',
     catalog.geoText(),
     '',
     '=== WB (Auftragstags) ===',
@@ -128,6 +134,9 @@ export function limitArticleText(text, max = MAX_ARTICLE_CHARS) {
   const cut = t.slice(0, max - marker.length).replace(/\s+\S*$/, '');
   return (cut || t.slice(0, max - marker.length)) + marker;
 }
+
+/** Die festen Handbuch-Regeln (erster System-Block) – für Tests und Prompt-Vergleiche. */
+export const TAGGING_RULES = RULES;
 
 /**
  * System-Prompt für das Tagging.
@@ -176,6 +185,6 @@ export async function suggestTags(article, catalog, settings, opts = {}) {
   const forceWb = opts.forceWb || 'auto';
   const system = buildTaggingSystem(settings, catalog, opts.rulesText || '');
   const user = buildTaggingUser(article, { forceWb });
-  const raw = await llmJson(settings, system, user, SCHEMA, { maxTokens: 2000, effort: 'high' });
+  const raw = await llmJson(settings, system, user, SCHEMA, { maxTokens: TAGGING_MAX_TOKENS, effort: 'high' });
   return buildSelection(catalog, raw, { forceWb, categoryHint: article.category });
 }

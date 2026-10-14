@@ -1,10 +1,32 @@
 // Einheitlicher Zugriff auf das Sprachmodell für Relevanzprüfung, Tagging und
 // Übersetzung. Zwei Anbieter:
-//   'claude' – Claude API (Standard)
-//   'local'  – eigenes Modell auf dem Heim-PC über eine OpenAI-kompatible
+//   'claude' – Claude API
+//   'local'  – „Lokaler Server“: im Normalfall die Claude-Code-Brücke (tools/claude-bridge.mjs,
+//              http://localhost:4310/v1), sonst ein eigenes Modell über eine OpenAI-kompatible
 //              Chat-Completions-Schnittstelle (Ollama, LM Studio, vLLM, llama.cpp …)
+// Fehlermeldungen des lokalen Pfads nennen immer die URL und sagen, was zu tun ist.
 
 import { claudeRequest, responseText } from './claude.js';
+
+/** Anzeige-Name des lokalen Anbieters (einheitlich in Fehlermeldungen und UI). */
+export const LOCAL_SERVER_LABEL = 'Lokaler Server';
+/** Standard-URL der Claude-Code-Brücke. */
+export const BRIDGE_URL = 'http://localhost:4310/v1';
+/** Windows-Starter der Brücke (README). */
+export const BRIDGE_START_HINT = 'tools\\start-claude-bridge.cmd';
+
+/** Zeigt die URL auf die Claude-Code-Brücke (localhost, Port 4310)? */
+export const isBridgeUrl = (url) => /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\]):4310(?:[/?#]|$)/i.test(String(url || '').trim());
+
+/** Name des lokalen Anbieters für die Anzeige: „Claude-Code-Brücke“ bei Brücken-URL, sonst „Lokaler Server“. */
+export const localServerName = (settings) => (isBridgeUrl(settings?.localLlmUrl) ? 'Claude-Code-Brücke' : LOCAL_SERVER_LABEL);
+
+/** Handlungshinweis für einen nicht erreichbaren lokalen Server (immer mit Brücke und URL). */
+function localUnreachableHint(base) {
+  return isBridgeUrl(base)
+    ? `Claude-Code-Brücke nicht erreichbar (${base}) – Brücke starten (${BRIDGE_START_HINT} bzw. node tools/claude-bridge.mjs; das Fenster offen lassen) oder URL in den Einstellungen prüfen.`
+    : `${LOCAL_SERVER_LABEL} nicht erreichbar (${base}) – läuft der Server und erlaubt er Zugriffe aus Chrome-Erweiterungen (CORS)? Für die Claude-Code-Brücke: Brücke starten (${BRIDGE_START_HINT}) oder URL in den Einstellungen prüfen (${BRIDGE_URL}).`;
+}
 
 // System-Prompt als String: Für 'local' werden Block-Arrays (wie sie die Claude API mit
 // cache_control erwartet) in der gegebenen Reihenfolge zu EINEM String zusammengefügt;
@@ -62,9 +84,10 @@ export async function llmJson(settings, system, user, schema, { maxTokens = 1600
 
 // ------------------------------------------------------------ lokal ----
 
-function localBase(settings) {
-  const url = (settings.localLlmUrl || '').trim().replace(/\/+$/, '');
-  if (!url) throw new Error('Keine URL für das lokale Modell hinterlegt (Einstellungen → Lokales Modell).');
+/** Basis-URL des lokalen Servers (…/v1); exportiert für Anzeige und Tests. */
+export function localBase(settings) {
+  const url = (settings?.localLlmUrl || '').trim().replace(/\/+$/, '');
+  if (!url) throw new Error(`Keine Server-URL hinterlegt (Einstellungen → ${LOCAL_SERVER_LABEL}). Für die Claude-Code-Brücke: ${BRIDGE_URL} eintragen („Claude-Code-Brücke voreinstellen“) und die Brücke starten (${BRIDGE_START_HINT}).`);
   return /\/v\d+$/.test(url) ? url : `${url}/v1`;
 }
 
@@ -83,7 +106,10 @@ async function localRequest(settings, body) {
       signal: ctrl.signal
     });
   } catch (e) {
-    throw new Error(`Lokales Modell nicht erreichbar (${base}): ${e.message}. Läuft der Server und erlaubt er Anfragen von chrome-extension://?`);
+    if (e?.name === 'AbortError') {
+      throw new Error(`${localServerName(settings)} antwortet nicht (${base}): Zeitlimit von ${Number(settings.localLlmTimeoutSec) || 600} s überschritten – Brücke/Server prüfen oder das Zeitlimit in den Einstellungen erhöhen.`);
+    }
+    throw new Error(`${localUnreachableHint(base)} (${e.message})`);
   } finally {
     clearTimeout(timer);
   }
@@ -102,7 +128,7 @@ async function localRequest(settings, body) {
       }
       throw new RateLimitError(message, { retryAt, provider: 'local' });
     }
-    const err = new Error(`Lokales Modell: HTTP ${res.status} ${detail.slice(0, 300)}`);
+    const err = new Error(`${localServerName(settings)} (${base}): HTTP ${res.status} ${detail.slice(0, 300)}`.trim());
     err.status = res.status;
     throw err;
   }
@@ -123,7 +149,7 @@ function extractJson(text) {
   const t = String(text).replace(/```(?:json)?/gi, '').trim();
   const start = t.indexOf('{');
   const end = t.lastIndexOf('}');
-  if (start < 0 || end < 0) throw new Error('Lokales Modell: Antwort enthält kein JSON');
+  if (start < 0 || end < 0) throw new Error(`${LOCAL_SERVER_LABEL}: Antwort enthält kein JSON`);
   return JSON.parse(t.slice(start, end + 1));
 }
 
@@ -155,15 +181,15 @@ async function localJson(settings, system, user, schema, { maxTokens }) {
   return extractJson(text);
 }
 
-/** Verbindungstest für das lokale Modell. */
+/** Verbindungstest für den lokalen Server (Claude-Code-Brücke oder eigenes Modell). */
 export async function testLocalLlm(settings) {
   const base = localBase(settings);
   const headers = {};
   if (settings.localLlmApiKey) headers.authorization = `Bearer ${settings.localLlmApiKey}`;
   const res = await fetch(`${base}/models`, { headers }).catch((e) => {
-    throw new Error(`Nicht erreichbar (${base}): ${e.message}`);
+    throw new Error(`${localUnreachableHint(base)} (${e.message})`);
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status} von ${base}/models`);
+  if (!res.ok) throw new Error(`${localServerName(settings)} (${base}): HTTP ${res.status} von ${base}/models`);
   const data = await res.json();
   const models = (data.data || []).map((m) => m.id);
   const answer = await localChat(settings, 'Antworte nur mit dem Wort OK.', 'Test', { maxTokens: 20 });

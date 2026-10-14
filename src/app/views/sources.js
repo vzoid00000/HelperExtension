@@ -2,11 +2,12 @@
 // ein-/ausschalten; Standardliste wiederherstellen; Import/Export als Text (eine Quelle je Zeile).
 // Datenhaltung in lib/sources-store.js (settings.sources).
 
-import { addSource, updateSource, removeSource, resetSources, testSource, saveSourceList, parseSourcesText, sourcesToText } from '../../lib/sources-store.js';
-import { $, el, clear, areaBadge, iconButton, toastOk, toastWarn, toastError, setStatusEl, bindDialog, openDialog, closeDialog, setInvalid, fmtRelative, shortText, plural } from '../ui.js';
+import { addSource, updateSource, removeSource, resetSources, testSource, saveSourceList, parseSourcesText, sourcesToText, usesDefaultSources, DEFAULT_SOURCES } from '../../lib/sources-store.js';
+import { $, el, clear, svgIcon, areaBadge, iconButton, toastOk, toastWarn, toastError, setStatusEl, bindDialog, openDialog, closeDialog, setInvalid, fmtRelative, shortText, plural } from '../ui.js';
 
 let ctx = null;
 let editingId = null;
+const DEFAULT_COUNT = DEFAULT_SOURCES.length;
 
 export async function init(c) {
   ctx = c;
@@ -51,8 +52,29 @@ function scanCell(s) {
   return td;
 }
 
+/**
+ * Hinweis über der Tabelle, solange die Standardliste gilt (keine eigene Liste gespeichert): Eine leere
+ * Liste ist nicht speicherbar – wird die letzte Quelle gelöscht, erscheint die Standardliste wieder.
+ */
+function renderDefaultNotice() {
+  let box = $('sourcesDefaultNotice');
+  if (!box) {
+    box = el('div', 'alert alert-info');
+    box.id = 'sourcesDefaultNotice';
+    box.append(svgIcon('info'));
+    const body = el('div');
+    body.append(el('div', 'alert-title', 'Standardliste aktiv'), el('div', 'muted', `Es ist keine eigene Quellenliste gespeichert – es gelten die ${DEFAULT_COUNT} Standardquellen. Jede Änderung (Hinzufügen, Bearbeiten, Ein-/Ausschalten, Löschen) speichert die Liste als eigene. Eine leere Liste gibt es nicht: Wird die letzte Quelle gelöscht, gilt wieder diese Standardliste.`));
+    box.append(body);
+    const card = $('sourcesManageTable').closest('.card');
+    if (card?.parentNode) card.parentNode.insertBefore(box, card);
+    else $('view-sources')?.append(box);
+  }
+  box.hidden = !usesDefaultSources(ctx.settings || {});
+}
+
 function render() {
   const list = ctx.sources || [];
+  renderDefaultNotice();
   const tbody = clear($('sourcesManageTable').querySelector('tbody'));
   for (const s of list) {
     const tr = el('tr');
@@ -116,13 +138,18 @@ async function onTableClick(e) {
   if (!s) return;
   if (btn.dataset.action === 'edit') return openSourceDialog(s);
   if (btn.dataset.action === 'delete') {
-    if (!confirm(`Quelle „${s.name}“ löschen?`)) return;
+    const last = (ctx.sources || []).length === 1;
+    const question = last
+      ? `Quelle „${s.name}“ löschen? Das ist die letzte Quelle – eine leere Liste gibt es nicht. Danach gilt wieder die Standardliste (${DEFAULT_COUNT} Quellen).`
+      : `Quelle „${s.name}“ löschen?`;
+    if (!confirm(question)) return;
     try {
       await removeSource(s.id);
       await ctx.reloadSources();
       render();
       ctx.views.run?.renderSources();
-      toastOk('Quelle gelöscht', s.name);
+      if (last) toastWarn('Letzte Quelle gelöscht', `„${s.name}“ entfernt – es gilt wieder die Standardliste (${ctx.sources.length} Quellen).`);
+      else toastOk('Quelle gelöscht', s.name);
     } catch (err) {
       toastError('Löschen fehlgeschlagen', err.message);
     }
@@ -146,7 +173,8 @@ function describeTest(r) {
 
 function showTestResult(r, name) {
   if (r.ok) toastOk(`${name}: OK`, describeTest(r));
-  else toastWarn(`${name}: keine Meldungen`, describeTest(r));
+  else if (r.empty || /^Keine Einträge gefunden/.test(r.error || '')) toastWarn(`${name}: keine Meldungen`, describeTest(r));
+  else toastWarn(`${name}: Quelle nicht ladbar`, describeTest(r));
 }
 
 // ------------------------------------------------------------- Dialog ----
@@ -237,14 +265,19 @@ function openTextDialog() {
 async function applyText() {
   const text = $('sourcesTextArea').value;
   const parsed = parseSourcesText(text);
+  const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+  const unreadable = Math.max(0, lines.length - parsed.length);
   if (!parsed.length) return toastError('Keine gültige Zeile', 'Format: Name | URL | cyber/krimisi/both | rss/html | URL-Muster');
+  // Zeilen ohne lesbare URL würden stillschweigend verschwinden – vorher nachfragen
+  if (unreadable && !confirm(`${plural(unreadable, 'Zeile', 'Zeilen')} ohne gültige URL (Format: Name | URL | …) würden verworfen. Trotzdem ${plural(parsed.length, 'Quelle', 'Quellen')} übernehmen?`)) return;
   try {
     const saved = await saveSourceList(parsed);
     closeDialog($('sourcesTextDialog'));
     await ctx.reloadSources();
     render();
     ctx.views.run?.renderSources();
-    toastOk('Quellen übernommen', `${plural(saved.length, 'Quelle', 'Quellen')} gespeichert.`);
+    if (unreadable) toastWarn('Quellen übernommen', `${plural(saved.length, 'Quelle', 'Quellen')} gespeichert, ${plural(unreadable, 'Zeile', 'Zeilen')} ohne gültige URL verworfen.`);
+    else toastOk('Quellen übernommen', `${plural(saved.length, 'Quelle', 'Quellen')} gespeichert.`);
   } catch (e) {
     toastError('Übernehmen fehlgeschlagen', e.message);
   }

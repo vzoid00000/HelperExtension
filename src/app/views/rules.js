@@ -58,7 +58,7 @@ function render() {
     const tdScope = el('td');
     tdScope.append(scopeBadge(r.scope));
     const tdText = el('td', 'col-rule', r.text);
-    if (r.hits) tdText.title = `${plural(r.hits, 'Mal', 'Mal')} in Prompts verwendet`;
+    if (r.hits) tdText.title = `${r.hits}-mal an das Modell mitgegeben`;
     const tdReason = el('td', 'col-reason muted', r.reason || '–');
     const tdExample = el('td', 'col-example');
     const ex = r.example;
@@ -115,7 +115,9 @@ async function onTableClick(e) {
 
 /**
  * Regel-Dialog öffnen (leer, zum Bearbeiten oder vorbefüllt aus Verlauf/Korrektur).
- * example: { title, url, wrongTags, rightTags } · correction: { removed, added, reason } · article: { title, summary … }
+ * example: { title, url, wrongTags, rightTags } · correction: { removed, added, reason } ·
+ * article: { title, summary, tags? … } – article.tags (z. B. aus dem Verlauf) werden nur als Referenz
+ * angezeigt und gelten nicht als falsch.
  */
 function openRuleDialog({ id = null, scope = 'tagging', text = '', reason = '', example = null, correction = null, article = null } = {}) {
   editingId = id;
@@ -125,9 +127,24 @@ function openRuleDialog({ id = null, scope = 'tagging', text = '', reason = '', 
   $('ruleText').value = text || '';
   $('ruleReason').value = reason || '';
   $('ruleExample').value = example?.title || example?.url || '';
+  renderReferenceTags(article?.tags || []);
   setInvalid($('ruleText'), false);
   openDialog($('ruleDialog'));
   (text ? $('ruleReason') : $('ruleText')).focus();
+}
+
+/** Hinweiszeile unter dem Beispiel: die bei der Meldung vergebenen Tags (nur zur Orientierung). */
+function renderReferenceTags(tags) {
+  let box = $('ruleExampleTags');
+  if (!box) {
+    box = el('div', 'hint');
+    box.id = 'ruleExampleTags';
+    $('ruleExample').closest('.field')?.append(box);
+  }
+  const list = (tags || []).filter(Boolean);
+  box.hidden = !list.length;
+  box.textContent = list.length ? `Bei dieser Meldung vergebene Tags (nur zur Orientierung, nicht als falsch markiert): ${list.map(leafName).join(', ')}` : '';
+  box.title = list.join('\n');
 }
 
 function readExample() {

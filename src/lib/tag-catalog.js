@@ -16,6 +16,8 @@ export const PATH_NO_LOCATION = 'Newsinfo → geographische Lokationen → kein 
 export const PATH_WB = { 'WB-Cyber': 'Auftragstags → WB-Cyber', 'WB-KriMiSi': 'Auftragstags → WB-KriMiSi' };
 export const PATH_KI = 'Auftragstags → HSC → HSC-KI → [KI_]Tools und Usecases';
 export const TOPIC_ROOTS = ['Cyber', 'KriMiSi', 'InnoTech', 'Allgemeine Tags'];
+/** Listentrenner in geoText() – Kommas kommen in Ortsnamen vor ("Kongo, Demokratische Republik"). */
+export const GEO_LIST_SEP = '; ';
 export const SOURCE_TYPES = ['Nachrichtenseite', 'Behördenseite', 'Blog', 'Unternehmens- oder Vereinsseite', 'wissenschaftliche Fachzeitschrift', 'Konferenz'];
 
 // Zweige, die laut Handbuch nie vergeben werden (inkl. aller Untertags).
@@ -45,6 +47,36 @@ const CONTAINER_PATHS = new Set([
 const ALLOWED_AUFTRAG = new Set([PATH_WB['WB-Cyber'], PATH_WB['WB-KriMiSi'], PATH_KI]);
 
 const norm = (s) => (s || '').toLowerCase().replace(/\s+/g, ' ').trim();
+
+/** Trennzeichen, die in Eingabe-Pfaden akzeptiert werden ("Cyber > Cyberangriff", "Cyber / Cyberangriff" …). */
+const INPUT_SEP_RE = /\s*(→|>|›|\/|\\)\s*/g;
+/** Enthält die Eingabe einen Pfadtrenner (also mehr als einen Blattnamen)? */
+export const hasPathSeparator = (input) => /(→|>|›|\/|\\)/.test(String(input || ''));
+/** Eingabe-Pfad in die Katalogschreibweise bringen: "Cyber > Cyberangriff" → "Cyber → Cyberangriff". */
+export const normalizePath = (input) => String(input || '').replace(INPUT_SEP_RE, SEP).replace(/\s+/g, ' ').trim();
+
+/** Klammerzusatz am Ende entfernen: "Belarus (Weißrussland)" → "Belarus". */
+const stripParen = (s) => String(s || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+
+/**
+ * Zusätzliche Schreibweisen eines Katalognamens (normalisiert), unter denen resolve() ihn findet:
+ * die Kurzform ohne Klammerzusatz ("Belarus"), der Klammerinhalt selbst ("Weißrussland"; nicht bei
+ * 3-Buchstaben-Ländercodes wie "(GBR)") und bei "Kongo, Demokratische Republik" die natürliche
+ * Wortfolge "Demokratische Republik Kongo". Groß-/Kleinschreibung und Umlaute wie bei norm().
+ */
+export function nameAliases(name) {
+  const base = norm(name);
+  const out = new Set();
+  const short = norm(stripParen(name));
+  if (short) out.add(short);
+  const paren = String(name || '').match(/\(([^)]+)\)\s*$/);
+  if (paren && !/^[A-Z]{3}$/.test(paren[1].trim())) out.add(norm(paren[1]));
+  const comma = String(name || '').match(/^([^\s,]+),\s*(.+)$/);
+  if (comma) out.add(norm(`${comma[2]} ${comma[1]}`));
+  out.delete(base);
+  out.delete('');
+  return [...out];
+}
 
 // ------------------------------------------------- Beschreibungen kompakt ----
 // Teilbäume, deren Einträge reine Eigennamen sind (das Modell kennt sie; Beschreibung entfällt).
@@ -111,6 +143,8 @@ export class TagCatalog {
     this.tree = json.tree;
     this.byPath = new Map();
     this.byName = new Map();
+    // Aliasse (Kurzform, Klammerinhalt, Komma-Umstellung) → Einträge; nur befragt, wenn byName nichts liefert
+    this.byAlias = new Map();
     const walk = (node, parents) => {
       const segments = [...parents, node.name];
       const path = segments.join(SEP);
@@ -128,6 +162,10 @@ export class TagCatalog {
       const key = norm(node.name);
       if (!this.byName.has(key)) this.byName.set(key, []);
       this.byName.get(key).push(entry);
+      for (const alias of nameAliases(node.name)) {
+        if (!this.byAlias.has(alias)) this.byAlias.set(alias, []);
+        this.byAlias.get(alias).push(entry);
+      }
       node.children.forEach((c) => walk(c, segments));
     };
     this.tree.forEach((n) => walk(n, []));
@@ -159,22 +197,39 @@ export class TagCatalog {
   }
 
   /**
+   * Einträge zu einem (Blatt-)Namen: exakter Name, sonst Alias (Kurzform/Klammerinhalt/Komma-Umstellung),
+   * sonst die Eingabe ohne eigenen Klammerzusatz ("Hongkong (China)" → "Hongkong").
+   */
+  lookupName(name) {
+    const key = norm(name);
+    const short = norm(stripParen(key));
+    return this.byName.get(key)
+      || this.byAlias.get(key)
+      || (short !== key ? (this.byName.get(short) || this.byAlias.get(short)) : null)
+      || [];
+  }
+
+  /**
    * Löst einen Namen oder (Teil-)Pfad zu einem Katalog-Eintrag auf.
-   * @param {string} input  z. B. "Ransomware", "Cyber > Cyberangriff > Schadsoftware > Ransomware"
+   * Ein vollständiger Pfad, der im Katalog existiert, aber nicht unter `within` liegt, ergibt null
+   * (kein Rückfall auf den Blattnamen – sonst würde "Allgemeine Tags > … > Resilienz" innerhalb
+   * von "Cyber" stillschweigend zu "Cyber → Cyber Security → Resilienz").
+   * @param {string} input  z. B. "Ransomware", "Cyber > Cyberangriff > Schadsoftware > Ransomware", "Belarus"
    * @param {string} [within]  Pfad-Präfix, innerhalb dessen gesucht wird
    */
   resolve(input, within = '') {
     if (!input) return null;
-    const cleaned = String(input).replace(/\s*(→|>|›|\/|\\)\s*/g, SEP).replace(/\s+/g, ' ').trim();
+    const inside = (e) => !within || e.path === within || e.path.startsWith(within + SEP);
+    const cleaned = normalizePath(input);
     const direct = this.byPath.get(cleaned);
-    if (direct && (!within || direct.path.startsWith(within))) return direct;
+    if (direct) return inside(direct) ? direct : null;
 
-    // Pfad-Suffix (z. B. "Cyberangriff → Ransomware" ohne Wurzel)
+    // Pfad-Suffix (z. B. "Cyberangriff → Ransomware" ohne Wurzel) oder Blattname/Alias
     const segs = cleaned.split(SEP).map(norm);
     const last = segs[segs.length - 1];
-    let candidates = (this.byName.get(last) || []).filter((e) => !within || e.path.startsWith(within));
+    let candidates = this.lookupName(last).filter(inside);
     if (candidates.length > 1 && segs.length > 1) {
-      const narrowed = candidates.filter((e) => segs.every((s) => e.segments.map(norm).includes(s)));
+      const narrowed = candidates.filter((e) => segs.slice(0, -1).every((s) => e.segments.map(norm).includes(s)));
       if (narrowed.length) candidates = narrowed;
     }
     if (candidates.length > 1) {
@@ -244,11 +299,13 @@ export class TagCatalog {
   }
 
   /**
-   * Geografische Lokationen kompakt, eine Zeile je Gruppe: "Kontinent: Land, Land, …" für die sechs
+   * Geografische Lokationen kompakt, eine Zeile je Gruppe: "Kontinent: Land; Land; …" für die sechs
    * Kontinente (der Kontinentname ist selbst ein wählbarer Ort), danach die Gruppen
    * "Nicht/Eingeschränkt anerkannt", "Übersee- & Extraterritoriale Gebiete", "Welt- und Randmeere"
    * (Gruppenname nicht wählbar, nur die Einträge) und zuletzt die Sonderknoten
    * (Global, kein Standort, Weltraum, Luftraum, Antarktis …). Nur erlaubte Einträge, keine Namen gehen verloren.
+   * Listentrenner ist GEO_LIST_SEP ("; "), weil Ortsnamen selbst Kommas enthalten
+   * ("Kongo, Demokratische Republik").
    */
   geoText() {
     const root = this.nodeAt(PATH_GEO);
@@ -261,14 +318,14 @@ export class TagCatalog {
       if (child.name === 'Kontinente und Staaten') {
         for (const continent of child.children) {
           const cPath = `${path}${SEP}${continent.name}`;
-          lines.push(`${continent.name}: ${allowedChildren(continent, cPath).map((c) => c.name).join(', ')}`);
+          lines.push(`${continent.name}: ${allowedChildren(continent, cPath).map((c) => c.name).join(GEO_LIST_SEP)}`);
         }
       } else if (child.children.length) {
         const items = allowedChildren(child, path).map((c) => c.name);
-        lines.push(`${child.name}${this.isAllowed(path) ? '' : ' (nur die Einträge)'}: ${items.join(', ')}`);
+        lines.push(`${child.name}${this.isAllowed(path) ? '' : ' (nur die Einträge)'}: ${items.join(GEO_LIST_SEP)}`);
       } else if (this.isAllowed(path)) singles.push(child.name);
     }
-    if (singles.length) lines.push(`Sonstige: ${singles.join(', ')}`);
+    if (singles.length) lines.push(`Sonstige: ${singles.join(GEO_LIST_SEP)}`);
     return lines.join('\n');
   }
 
@@ -333,10 +390,12 @@ export function buildSelection(catalog, raw, opts = {}) {
   // 5) Themen-Tags (Cyber, KriMiSi, InnoTech, Allgemeine Tags)
   const topics = [];
   for (const t of raw.topics || []) {
-    let e = null;
+    // Vollständige Pfade zuerst ohne Präfix exakt nachschlagen (ein Treffer außerhalb der Wurzel-Schleife
+    // wäre sonst null und der Blattname könnte in einer anderen Wurzel „passen“); dann je Wurzel auflösen.
+    let e = hasPathSeparator(t) ? catalog.get(normalizePath(t)) : null;
     for (const root of TOPIC_ROOTS) {
-      e = catalog.resolve(t, root);
       if (e) break;
+      e = catalog.resolve(t, root);
     }
     if (!e) e = catalog.resolve(t);
     if (!e) {

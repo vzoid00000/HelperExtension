@@ -10,6 +10,13 @@
 // Plausibilitätsprüfung (checkTranslation), deren Ergebnis als warnings mitgeliefert wird.
 // Für Claude/lokal geht Titel + Text in EINER Anfrage (Protokoll: erste Zeile Schlagzeile,
 // Leerzeile, dann Text), siehe splitTranslation().
+//
+// Hinweis zur Einstellung useSiteExtract (experimentell): Normalerweise übersetzt die App vor dem
+// Ausfüllen und schreibt titleDe/textDe in die Meldung. Mit useSiteExtract ruft erst der Driver
+// (osdp-driver.js, fillArticle) diese Funktion über translateFn auf – mit dem Text aus dem
+// OSDP-„Extract“-Button; das Ergebnis landet nur im Formular, nicht in der Meldung (Freigabe-Card,
+// Verlauf ohne deutschen Titel), und die Tags wurden vorher auf dem fetch-Extrakt bestimmt.
+// Bewusst nicht umgebaut (nur dokumentiert); Standard ist useSiteExtract = aus.
 
 import { llmText } from './llm.js';
 
@@ -46,7 +53,7 @@ export async function translateArticle(article, settings, onProgress = () => {},
 
   let result;
   if (provider === 'claude') result = await translateWithLlm(title, text, { ...settings, llmProvider: 'claude' }, onProgress, 'Claude', rulesText);
-  else if (provider === 'local') result = await translateWithLlm(title, text, { ...settings, llmProvider: 'local' }, onProgress, 'lokalem Modell', rulesText);
+  else if (provider === 'local') result = await translateWithLlm(title, text, { ...settings, llmProvider: 'local' }, onProgress, 'lokalem Server', rulesText);
   else if (provider === 'deepl') result = await translateWithDeepL(title, text, settings, onProgress);
   else if (provider === 'chrome') result = await translateWithChrome(title, text, onProgress);
   else throw new Error(`Unbekannter Übersetzungs-Anbieter: ${provider}`);
@@ -71,10 +78,26 @@ export function buildTranslationSystem(rulesText = '') {
   return rules ? `${TRANSLATION_INSTRUCTIONS}\n\n${rules}` : TRANSLATION_INSTRUCTIONS;
 }
 
+const TITLE_ONLY_INSTRUCTIONS = `Du bist Fachübersetzer Englisch → Deutsch für ein behördliches Nachrichten-Dokumentationssystem in Österreich.
+Übersetze die gelieferte englische Schlagzeile in eine korrekte, präzise deutsche Schlagzeile. Eigennamen und Abkürzungen unverändert lassen. Gib ausschließlich die deutsche Schlagzeile aus – ohne Anführungszeichen, ohne Punkt am Ende, ohne Erklärung.`;
+
 async function translateWithLlm(title, text, settings, onProgress, label, rulesText = '') {
   onProgress(`Übersetze mit ${label} …`);
   const out = await llmText(settings, buildTranslationSystem(rulesText), buildTranslationUser(title, text), { maxTokens: 16000 });
-  return splitTranslation(out, { hasTitle: !!title, hasText: !!text });
+  const result = splitTranslation(out, { hasTitle: !!title, hasText: !!text });
+  if (title && !result.title) {
+    // Schlagzeile fehlt in der Antwort (Modell hat mit dem Fließtext begonnen): nur den Titel
+    // nachübersetzen – kleine Anfrage, der Artikeltext bleibt unverändert erhalten.
+    onProgress('Schlagzeile fehlte – übersetze den Titel nach …');
+    try {
+      const t = await llmText(settings, TITLE_ONLY_INSTRUCTIONS, title, { maxTokens: 300 });
+      result.title = cleanTitle(String(t || '').split('\n').map((l) => l.trim()).find(Boolean) || '');
+      if (result.title) result.warnings.push('Schlagzeile wurde in einer zweiten Anfrage nachübersetzt');
+    } catch (e) {
+      result.warnings.push(`Schlagzeile konnte nicht nachübersetzt werden: ${e.message}`);
+    }
+  }
+  return result;
 }
 
 // Floskeln, mit denen Modelle eine Übersetzung gern einleiten („Hier ist die Übersetzung:“).
@@ -84,19 +107,70 @@ const LEAD_IN_RE = [
   /^[^\n]*übersetzung[^\n]*:\s*$/i
 ];
 const LABEL_RE = /^(?:schlagzeile|titel|überschrift|headline|title)\s*:\s*/i;
-const TEXT_LABEL_RE = /^(?:text|artikeltext|artikel|body)\s*:\s*\n?/i;
+const TEXT_LABEL_RE = /^(?:\*\*|__)?(?:text|artikeltext|artikel|body)\s*:\s*(?:\*\*|__)?[ \t]*\n?/i;
+// Markdown-Hervorhebung, die die ganze Zeile oder das Label umschließt ("**Schlagzeile:**", "**Titel**")
+const MARKDOWN_WRAP_RE = /^(\*{1,2}|_{1,2})(.+?)\1(?=\s|$|[:.,;!?])\s*/;
+// Öffnendes → mögliche schließende Anführungszeichen (deutsch, englisch, Guillemets, gerade)
+const QUOTE_PAIRS = { '„': '“”', '“': '”', '"': '"', '»': '«', '«': '»', '‚': '‘’', '‘': '’', '\'': '\'' };
+// Abkürzungen am Ende, deren Punkt zum Wort gehört und nicht als Satzpunkt entfernt wird
+const ABBREV_END_RE = /(?:^|\s)(?:Co|Inc|Ltd|Corp|Jr|Sr|Dr|Prof|Nr|St|Mio|Mrd|ca|vs|bzw|etc|usw|u\. ?a|z\. ?B)\.$/i;
+/** Maximale Länge einer Zeile, die noch als Schlagzeile gilt (länger = Absatz). */
+export const MAX_TITLE_LINE = 220;
 
-function cleanTitle(s) {
+/** Markdown-Reste und Labels am Anfang entfernen: "**Schlagzeile:** …", "# …", "Titel: **…**". */
+export function stripTitleMarkup(s) {
   let t = String(s || '').replace(/\s+/g, ' ').trim();
-  t = t.replace(LABEL_RE, '').trim();
-  t = t.replace(/^[„“"»‚'‘]+/, '').replace(/[“”"«‘’']+$/, '').trim();
-  if (/[^.]\.$/.test(t) && !/\.\.\.$|…$/.test(t)) t = t.slice(0, -1);
+  for (let i = 0; i < 4; i++) {
+    const before = t;
+    t = t.replace(/^#+\s*/, '');
+    t = t.replace(MARKDOWN_WRAP_RE, '$2 ').trim();
+    t = t.replace(LABEL_RE, '').trim();
+    if (t === before) break;
+  }
   return t;
+}
+
+/** Anführungszeichen nur entfernen, wenn sie den GANZEN Titel umschließen (kein weiteres Zitatzeichen innen). */
+function stripEnclosingQuotes(t) {
+  const closers = QUOTE_PAIRS[t[0]];
+  if (!closers || t.length < 3 || !closers.includes(t[t.length - 1])) return t;
+  const inner = t.slice(1, -1);
+  if ([...inner].some((ch) => ch === t[0] || closers.includes(ch))) return t;
+  return inner.trim();
+}
+
+/** Endet die Zeile mit einem Satzpunkt (kein „…“, keine Abkürzung)? */
+const endsWithSentencePeriod = (t) => /[^.]\.$/.test(t) && !/\.\.\.$|…$/.test(t) && !ABBREV_END_RE.test(t);
+
+export function cleanTitle(s) {
+  let t = stripTitleMarkup(s);
+  t = stripEnclosingQuotes(t);
+  if (endsWithSentencePeriod(t)) t = t.slice(0, -1);
+  return t;
+}
+
+/** Ab dieser Länge gilt eine Zeile mit Satzpunkt als Fließtext (Schlagzeilen sind kürzer). */
+export const SENTENCE_TITLE_MAX = 90;
+
+/**
+ * Ist die erste Zeile der Antwort ein Absatz statt einer Schlagzeile? Länger als MAX_TITLE_LINE,
+ * oder es folgen weitere Absätze und die Zeile liest sich wie Fließtext: mehrere Sätze, oder ein
+ * Satz mit Schlusspunkt, der länger als SENTENCE_TITLE_MAX ist. Eine kurze Zeile mit Punkt ist
+ * eine Schlagzeile, der das Modell einen Punkt angehängt hat (cleanTitle entfernt ihn).
+ */
+export function looksLikeParagraph(firstLine, rest) {
+  const t = stripTitleMarkup(firstLine);
+  if (t.length > MAX_TITLE_LINE) return true;
+  if (!String(rest || '').trim()) return false;
+  const terminators = (t.match(/[.!?](?=\s|$)/g) || []).length;
+  return terminators >= 2 || (endsWithSentencePeriod(t) && t.length > SENTENCE_TITLE_MAX);
 }
 
 /**
  * Zerlegt die Modellantwort in Schlagzeile und Text (Protokoll: erste Zeile Schlagzeile, Leerzeile, Text).
- * Entfernt Einleitungs-Floskeln, Labels und Codeblöcke; meldet Abweichungen als warnings.
+ * Entfernt Einleitungs-Floskeln, Labels, Markdown-Reste und Codeblöcke; meldet Abweichungen als warnings.
+ * Sieht die erste Zeile wie ein Absatz aus (looksLikeParagraph), fehlt die Schlagzeile in der Antwort:
+ * Titel bleibt leer, der Text wird vollständig behalten, Warnung „Schlagzeile fehlt in der Antwort“.
  * @param {string} output
  * @param {{hasTitle: boolean, hasText: boolean}} parts  was in der Vorlage vorhanden war
  * @returns {{title: string, text: string, warnings: string[]}}
@@ -112,32 +186,46 @@ export function splitTranslation(output, { hasTitle = true, hasText = true } = {
     out = out.slice(firstBreak + 1).trim();
     warnings.push(`Einleitungs-Floskel entfernt: „${firstLine.slice(0, 60)}“`);
   }
-  // Label auf eigener Zeile („SCHLAGZEILE:“ ↵ Titel) mit der Zeile zusammenziehen
-  out = out.replace(/^(?:schlagzeile|titel|überschrift|headline|title)\s*:\s*\n+/i, '');
+  // Label auf eigener Zeile („SCHLAGZEILE:“, „**Schlagzeile**“, „## Titel:“ ↵ Titel) mit der Zeile
+  // zusammenziehen – ohne Markdown-Hülle nur MIT Doppelpunkt (sonst wäre die Schlagzeile „Titel“ ein Label)
+  out = out.replace(/^(?:(?:\*\*|__)(?:schlagzeile|titel|überschrift|headline|title)\s*:?\s*(?:\*\*|__)|(?:#+\s*)?(?:schlagzeile|titel|überschrift|headline|title)\s*:)[ \t]*\n+/i, '');
 
   let title = '';
   let text = '';
   if (hasTitle && hasText) {
+    // Kandidat für die Schlagzeile (first) und der Rest (rest) nach dem Protokoll
+    let first = '';
+    let rest = '';
+    let gapWarning = '';
     const gap = out.search(/\n[ \t]*\n/);
     if (gap < 0) {
       const nl = out.indexOf('\n');
       if (nl < 0) {
-        title = out;
-        warnings.push('Übersetzung enthält keinen Text (nur eine Zeile erhalten)');
+        first = out;
+        gapWarning = 'Übersetzung enthält keinen Text (nur eine Zeile erhalten)';
       } else {
-        title = out.slice(0, nl);
-        text = out.slice(nl + 1).trim();
-        warnings.push('Schlagzeile und Text waren nicht durch eine Leerzeile getrennt');
+        first = out.slice(0, nl);
+        rest = out.slice(nl + 1).trim();
+        gapWarning = 'Schlagzeile und Text waren nicht durch eine Leerzeile getrennt';
       }
     } else {
-      const first = out.slice(0, gap).trim();
-      text = out.slice(gap).trim();
-      const nl = first.indexOf('\n');
+      const block = out.slice(0, gap).trim();
+      rest = out.slice(gap).trim();
+      const nl = block.indexOf('\n');
       if (nl >= 0) {
-        title = first.slice(0, nl);
-        text = `${first.slice(nl + 1).trim()}\n\n${text}`.trim();
-        warnings.push('Schlagzeile und erster Absatz waren nicht durch eine Leerzeile getrennt');
-      } else title = first;
+        first = block.slice(0, nl);
+        rest = `${block.slice(nl + 1).trim()}\n\n${rest}`.trim();
+        gapWarning = 'Schlagzeile und erster Absatz waren nicht durch eine Leerzeile getrennt';
+      } else first = block;
+    }
+    if (looksLikeParagraph(first, rest)) {
+      // Erste Zeile ist Fließtext, keine Schlagzeile → nichts abschneiden
+      text = out;
+      warnings.push('Schlagzeile fehlt in der Antwort');
+    } else {
+      title = first;
+      text = rest;
+      if (gapWarning) warnings.push(gapWarning);
     }
   } else if (hasTitle) {
     title = out.split('\n')[0] || '';
@@ -152,10 +240,13 @@ export function splitTranslation(output, { hasTitle = true, hasText = true } = {
 
 const splitParagraphs = (s) => String(s || '').split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
 
+/** Toleranz für die Absatzzahl: max(2, 25 % der Absätze der Vorlage) – Listen (jedes <li> ein Absatz) fassen Modelle oft zusammen. */
+export const paragraphTolerance = (count) => Math.max(2, Math.round(count * 0.25));
+
 /**
  * Plausibilitätsprüfung Vorlage ↔ Übersetzung. Liefert Warnungen (leer = unauffällig):
- * Längenverhältnis DE/EN außerhalb 0,7–1,6, Absatzanzahl weicht um mehr als 1 ab, Schlagzeile
- * fehlt/zu lang, Text fehlt, Übersetzer-Anmerkung am Ende.
+ * Längenverhältnis DE/EN außerhalb 0,7–1,6, Absatzanzahl weicht um mehr als paragraphTolerance ab,
+ * Schlagzeile fehlt/zu lang, Text fehlt, Übersetzer-Anmerkung am Ende.
  */
 export function checkTranslation(source, result) {
   const warnings = [];
@@ -176,7 +267,7 @@ export function checkTranslation(source, result) {
     }
     const pSrc = splitParagraphs(srcText).length;
     const pDe = splitParagraphs(deText).length;
-    if (Math.abs(pSrc - pDe) > 1) warnings.push(`Absatzanzahl weicht ab: Vorlage ${pSrc}, Übersetzung ${pDe}`);
+    if (Math.abs(pSrc - pDe) > paragraphTolerance(pSrc)) warnings.push(`Absatzanzahl weicht ab: Vorlage ${pSrc}, Übersetzung ${pDe}`);
     const last = splitParagraphs(deText).slice(-1)[0] || '';
     if (/^(?:anmerkung|hinweis|übersetzerhinweis|note)\s*(?:des übersetzers)?\s*[:(]/i.test(last)) {
       warnings.push('Übersetzung endet mit einer Anmerkung – prüfen, ob sie zum Artikel gehört');

@@ -12,8 +12,12 @@
 //   Oben: Buttons Save | Extract | Summary | Translate
 //
 // Freigabe-Schleife (lib/osdp-driver.js → waitForReview): showOverlay zeigt unten eine Leiste
-// mit „Überspringen“/„Abbrechen“, readOverlay holt die Aktion ab, watchSave liefert pro Tick
-// Toasts + Formularzustand, hideOverlay räumt auf. Gespeichert wird nur vom Nutzer selbst.
+// mit „Überspringen“/„Abbrechen“ und startet einen Beobachter im Tab (500 ms + Klick-Listener auf
+// „Save“), der Erfolgstoast / Duplikat-Toast / Formular-Reset nach Save-Klick / Leisten-Klick per
+// chrome.runtime.sendMessage({ type: 'osdp-helper-review', … }) sofort an die App meldet. Der Driver
+// pollt zusätzlich readOverlay (Aktion) und watchSave (Toasts, Formularzustand, Save-Indizien) als
+// Rückfallebene; hideOverlay räumt auf. Bleibt der Empfänger aus (App-Tab geschlossen), entfernt
+// sich die Leiste nach ca. 10 s selbst. Gespeichert wird nur vom Nutzer selbst.
 //
 // Aufruf: globalThis.__osdpHelper.run('<schritt>', daten)
 
@@ -252,13 +256,16 @@
   const BAR_ID = 'osdp-helper-bar';
   const BAR_STYLE_ID = 'osdp-helper-bar-style';
   let barHost = null; // von dieser Welt erzeugte Leiste
-  let barAction = null; // 'skip' | 'abort' | null – wird von readOverlay abgeholt
+  // 'skip' | 'abort' | null – nur in dieser Closure (isolierte Welt), nie im DOM: Seitenskripte können
+  // die Aktion so nicht vortäuschen. Wird von readOverlay (Driver) oder vom Beobachter abgeholt.
+  let barAction = null;
 
   const BAR_CSS = `
     :host { all: initial; display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647; pointer-events: none; }
     .bar { pointer-events: auto; box-sizing: border-box; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 7px 14px;
       background: #09090b; color: #fafafa; border-top: 1px solid #27272a; box-shadow: 0 -6px 18px rgba(0, 0, 0, .35);
       font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .bar.warn { border-top: 2px solid #d97706; box-shadow: 0 -6px 18px rgba(217, 119, 6, .35); }
     .brand { font-weight: 600; color: #a1a1aa; white-space: nowrap; }
     .dot { color: #52525b; }
     .count { color: #a1a1aa; font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -267,24 +274,28 @@
       font-size: 11px; font-weight: 500; white-space: nowrap; }
     .badge:empty { display: none; }
     .badge.wb { border-color: #b45309; color: #fbbf24; background: #1c1917; }
+    .badge.check { border-color: #d97706; color: #fbbf24; background: #1c1917; font-weight: 600; }
     .hint { color: #a1a1aa; white-space: nowrap; }
     .hint:empty { display: none; }
+    .bar.warn .hint { flex: 2 1 auto; min-width: 0; white-space: normal; color: #fbbf24; }
     button { all: unset; box-sizing: border-box; cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #3f3f46; background: #18181b;
       color: #fafafa; font: inherit; font-weight: 500; line-height: 1.2; white-space: nowrap; }
     button:hover { background: #27272a; }
     button:focus-visible { outline: 2px solid #a1a1aa; outline-offset: 1px; }
     button.danger { border-color: #7f1d1d; color: #fca5a5; }
     button.danger:hover { background: #450a0a; }
-    @media (max-width: 900px) { .hint { display: none; } }
+    @media (max-width: 900px) { .bar:not(.warn) .hint { display: none; } }
   `;
 
   function barElements(host) {
     const r = host.shadowRoot;
     return {
+      bar: r.querySelector('.bar'),
       count: r.querySelector('.count'),
       title: r.querySelector('.title'),
       structure: r.querySelector('.badge.structure'),
       wb: r.querySelector('.badge.wb'),
+      check: r.querySelector('.badge.check'),
       hint: r.querySelector('.hint')
     };
   }
@@ -309,22 +320,22 @@
       if (txt) el.textContent = txt;
       return el;
     };
-    const btnSkip = mk('button', 'skip', 'Überspringen');
-    btnSkip.type = 'button';
-    btnSkip.dataset.action = 'skip';
-    btnSkip.title = 'Diese Meldung nicht eintragen und mit der nächsten weitermachen';
-    const btnAbort = mk('button', 'danger abort', 'Abbrechen');
-    btnAbort.type = 'button';
-    btnAbort.dataset.action = 'abort';
-    btnAbort.title = 'Lauf beenden';
-    for (const b of [btnSkip, btnAbort]) {
+    // Die Aktion steckt als Konstante in der Closure des Handlers (kein data-Attribut, das die Seite ändern könnte)
+    const mkAction = (cls, label, action, tip) => {
+      const b = mk('button', cls, label);
+      b.type = 'button';
+      b.title = tip;
       b.addEventListener('click', (e) => {
         e.stopPropagation();
-        barAction = b.dataset.action;
-        host.dataset.action = barAction;
+        barAction = action;
+        // Sofort melden (ein inzwischen sichtbarer Erfolg/Duplikat gewinnt gegen den Klick)
+        if (observer) observeTick(observer, { fromClick: true });
       });
-    }
-    bar.append(mk('span', 'brand', 'OSDP News Helper'), mk('span', 'dot', '·'), mk('span', 'count'), mk('span', 'dot', '·'), mk('span', 'title'), mk('span', 'badge structure'), mk('span', 'badge wb'), mk('span', 'hint'), btnSkip, btnAbort);
+      return b;
+    };
+    const btnSkip = mkAction('skip', 'Überspringen', 'skip', 'Diese Meldung nicht eintragen und mit der nächsten weitermachen');
+    const btnAbort = mkAction('danger abort', 'Abbrechen', 'abort', 'Lauf beenden');
+    bar.append(mk('span', 'brand', 'OSDP News Helper'), mk('span', 'dot', '·'), mk('span', 'count'), mk('span', 'dot', '·'), mk('span', 'title'), mk('span', 'badge structure'), mk('span', 'badge wb'), mk('span', 'badge check'), mk('span', 'hint'), btnSkip, btnAbort);
     root.append(style, bar);
     (document.body || document.documentElement).append(host);
     // Toasts (ngx-toastr, unten rechts) über die Leiste heben, damit „Item Added!“ sichtbar bleibt
@@ -339,6 +350,7 @@
   }
 
   function removeBar() {
+    stopObserver();
     document.getElementById(BAR_ID)?.remove();
     document.getElementById(BAR_STYLE_ID)?.remove();
     barHost = null;
@@ -352,6 +364,147 @@
     const source = body?.querySelector('input[formcontrolname="article_source"]') || document.querySelector('input[formcontrolname="article_source"]');
     const title = body?.querySelector('input[formcontrolname="article_title"]') || document.querySelector('input[formcontrolname="article_title"]');
     return { source, title };
+  }
+
+  const SAVE_BUTTON = '^\\s*(save|update)\\s*$|speichern';
+
+  /**
+   * Messpunkt der Freigabe (von watchSave und vom Beobachter benutzt): Toasts, Formularzustand, Chips.
+   * Erfolg: Toast „Item Added!“/„Item Updated!“ – verschwindet nach 10 s, deshalb zusätzlich
+   * formReset: expectSource war gesetzt und Quelle + Titel sind jetzt leer (resetArticleForm). Ein
+   * formReset allein beweist keinen Save (der Nutzer kann das Formular von Hand leeren) – dazu dienen
+   * saveClicked (Klick auf „Save“ seit showOverlay) und spinnerSeen (Spinner seit showOverlay gesehen).
+   * ignoreToastIds: Toasts, die schon vor der Freigabe sichtbar waren (zählen nicht als Ergebnis).
+   */
+  function measure({ expectSource = '', ignoreToastIds = [] } = {}) {
+    const all = toasts();
+    const sb = snackbarText();
+    if (sb) all.push({ kind: 'info', title: 'snackbar', message: sb });
+    const ignore = ignoreToastIds instanceof Set ? ignoreToastIds : new Set(ignoreToastIds || []);
+    const fresh = all.filter((t) => !t.id || !ignore.has(t.id));
+    const f = nativeFields();
+    const sourceValue = f.source?.value || '';
+    const titleValue = f.title?.value || '';
+    const hay = (t) => `${t.title} ${t.message}`;
+    const duplicate = fresh.some((t) => /duplicate/i.test(hay(t)));
+    const spinner = spinnerVisible();
+    return {
+      ok: true,
+      session,
+      toasts: all,
+      freshToasts: fresh,
+      success: fresh.some((t) => /Item Added|Item Updated/i.test(hay(t))),
+      duplicate,
+      errorToast: fresh.filter((t) => t.kind === 'error' && !/duplicate/i.test(hay(t))).map((t) => t.message).join(' | '),
+      errorVisible: [...document.querySelectorAll('mat-error, .mat-mdc-form-field-error')].map(text).filter(Boolean),
+      sourceValue,
+      titleValue,
+      fieldsPresent: !!(f.source && f.title),
+      chips: chips(),
+      formReset: !!expectSource && !!(f.source && f.title) && !sourceValue && !titleValue,
+      spinner,
+      saveClicked: !!(observer && observer.saveClickedAt),
+      spinnerSeen: spinner || !!(observer && observer.spinnerSeen),
+      saveDisabled: !!findButton(topBar(), SAVE_BUTTON)?.disabled,
+      url: location.href
+    };
+  }
+
+  // ------------------------------------------- Beobachter der Freigabe ----
+  // Läuft im OSDP-Tab (Vordergrund, nicht gedrosselt) ab showOverlay und meldet Ergebnisse sofort an
+  // die App-Seite (chrome.runtime.sendMessage); der Driver pollt zusätzlich. Antwortet niemand
+  // ({ ack: true } bleibt aus, z. B. App-Tab geschlossen), räumt die Leiste sich nach ~10 s selbst ab.
+  const REVIEW_MESSAGE = 'osdp-helper-review';
+  const OBSERVE_MS = 500;
+  const PING_EVERY = 4; // alle 2 s ein Lebenszeichen
+  const MAX_FAILURES = 5; // ≈ 10 s ohne Empfänger
+  let observer = null;
+
+  const runtimeAvailable = () => typeof chrome !== 'undefined' && !!chrome.runtime?.sendMessage;
+
+  /** Nachricht an die App; true = ein Empfänger hat mit { ack: true } geantwortet. Fehler werden geschluckt. */
+  async function notifyApp(payload) {
+    if (!runtimeAvailable()) return false;
+    try {
+      const resp = await Promise.race([
+        chrome.runtime.sendMessage({ type: REVIEW_MESSAGE, session, ...payload }),
+        sleep(3000).then(() => null)
+      ]);
+      return !!(resp && resp.ack);
+    } catch {
+      return false;
+    }
+  }
+
+  function startObserver({ expectSource = '' } = {}) {
+    stopObserver();
+    const o = {
+      expectSource: expectSource || nativeFields().source?.value || '',
+      ignoreToastIds: new Set(toasts().map((t) => t.id)),
+      saveClickedAt: 0,
+      spinnerSeen: false,
+      lastChips: chips(),
+      sentEvent: null,
+      failures: 0,
+      ticks: 0,
+      busy: false,
+      timer: 0,
+      onClick: null
+    };
+    // Capture-Phase: sieht den Klick auf „Save“, bevor die Angular-App ihn verarbeitet
+    o.onClick = (e) => {
+      const btn = e.target && e.target.closest ? e.target.closest('button, [role="button"]') : null;
+      if (btn && new RegExp(SAVE_BUTTON, 'i').test(text(btn))) o.saveClickedAt = Date.now();
+    };
+    document.addEventListener('click', o.onClick, true);
+    o.timer = setInterval(() => observeTick(o), OBSERVE_MS);
+    observer = o;
+    return o;
+  }
+
+  function stopObserver() {
+    if (!observer) return;
+    clearInterval(observer.timer);
+    document.removeEventListener('click', observer.onClick, true);
+    observer = null;
+  }
+
+  async function observeTick(o, { fromClick = false } = {}) {
+    if (observer !== o || o.busy) return;
+    o.busy = true;
+    try {
+      o.ticks++;
+      if (spinnerVisible()) o.spinnerSeen = true;
+      const w = measure({ expectSource: o.expectSource, ignoreToastIds: o.ignoreToastIds });
+      if (w.chips.length) o.lastChips = w.chips;
+      // Reihenfolge wie im Driver: ein erkannter Save/Duplikat gewinnt gegen Überspringen/Abbrechen
+      let event = null;
+      let reason = '';
+      if (w.success) {
+        event = 'saved';
+        reason = 'toast';
+      } else if (w.duplicate) {
+        event = 'duplicate';
+        reason = 'toast';
+      } else if (w.formReset && (o.saveClickedAt || o.spinnerSeen) && !w.errorToast && !w.errorVisible.length && !w.spinner) {
+        event = 'saved';
+        reason = 'formReset';
+      } else if (barAction === 'skip' || barAction === 'abort') {
+        event = barAction;
+        reason = 'overlay';
+      }
+      let acked = null;
+      if (event && o.sentEvent !== event) {
+        acked = await notifyApp({ event, reason, chips: o.lastChips, toasts: w.freshToasts });
+        if (acked) o.sentEvent = event;
+      } else if (!fromClick && o.ticks % PING_EVERY === 0) {
+        acked = await notifyApp({ event: 'ping' });
+      }
+      if (acked === true) o.failures = 0;
+      else if (acked === false && ++o.failures >= MAX_FAILURES) removeBar(); // niemand hört mehr zu
+    } finally {
+      o.busy = false;
+    }
   }
 
   // ----------------------------------------------------------- Steps ----
@@ -391,11 +544,15 @@
         r.source = await fillControl(body, 'article_source', url, { settleMs: 900 });
         r.sourceValue = body.querySelector('input[formcontrolname="article_source"]')?.value || '';
         if (r.sourceValue !== url) {
-          // Falls die Duplikatprüfung das Feld zurückgesetzt hat: noch einmal setzen (ohne blur)
-          await fillControl(body, 'article_source', url);
-          await sleep(300);
+          // Die Duplikatprüfung (focusout) hat den alten Store-Wert zurückgeschrieben: noch einmal setzen –
+          // wieder mit Wartezeit vor dem blur, sonst wiederholt sich die Race mit dem 250-ms-Debounce.
+          await fillControl(body, 'article_source', url, { settleMs: 900 });
           r.sourceValue = body.querySelector('input[formcontrolname="article_source"]')?.value || '';
           r.sourceRetried = true;
+          if (r.sourceValue !== url) {
+            r.ok = false;
+            r.error = `Quellfeld übernimmt die URL nicht (steht auf „${r.sourceValue.slice(0, 80)}“)`;
+          }
         }
         r.toasts = toasts();
       }
@@ -580,10 +737,13 @@
     },
 
     /**
-     * Freigabe-Leiste unten im OSDP-Tab anzeigen bzw. aktualisieren (Shadow DOM, eigene Styles).
-     * Ein erneuter Aufruf ändert nur die Texte; die Angular-App bleibt unberührt.
+     * Freigabe-Leiste unten im OSDP-Tab anzeigen bzw. aktualisieren (Shadow DOM, eigene Styles) und den
+     * Beobachter (neu) starten; eine liegengebliebene Aktion aus einer früheren Freigabe wird verworfen.
+     * hint: Text in der Leiste; beginnt er mit „⚠“, wird die Leiste als Warnung gestylt (Rahmen, Badge
+     * „Bitte prüfen“, Hinweis auch auf schmalen Fenstern sichtbar). expectSource: erwartete Quell-URL im
+     * Formular (Standard: aktueller Feldwert) für die Erkennung des Formular-Resets.
      */
-    showOverlay({ title = '', index = 0, total = 0, structure = '', wb = '', hint } = {}) {
+    showOverlay({ title = '', index = 0, total = 0, structure = '', wb = '', hint, expectSource = '' } = {}) {
       const host = ensureBar();
       const el = barElements(host);
       el.count.textContent = total ? `${index}/${total}` : index ? String(index) : '';
@@ -591,16 +751,21 @@
       el.title.title = title || '';
       el.structure.textContent = structure || '';
       el.wb.textContent = wb || '';
-      el.hint.textContent = hint === undefined ? 'Prüfen und in OSDP auf „Save“ klicken' : hint || '';
-      return { ok: true, session };
+      const hintText = hint === undefined ? 'Prüfen und in OSDP auf „Save“ klicken' : hint || '';
+      const warn = /^\s*⚠/.test(hintText);
+      el.hint.textContent = hintText;
+      el.bar.classList.toggle('warn', warn);
+      el.check.textContent = warn ? 'Bitte prüfen' : '';
+      barAction = null;
+      startObserver({ expectSource });
+      return { ok: true, session, warn };
     },
 
     /** Vom Nutzer in der Leiste gewählte Aktion abholen (und zurücksetzen). */
     readOverlay() {
       const host = document.getElementById(BAR_ID);
-      const action = barAction || host?.dataset.action || null;
+      const action = barAction;
       barAction = null;
-      if (host) delete host.dataset.action;
       return { ok: true, action: action === 'skip' || action === 'abort' ? action : null, visible: !!host, session };
     },
 
@@ -610,40 +775,11 @@
     },
 
     /**
-     * Ein Messpunkt für die Freigabe-Schleife (der Driver pollt): Toasts, Formularzustand, Chips.
-     * Erfolg: Toast „Item Added!“/„Item Updated!“ – verschwindet nach 10 s, deshalb zusätzlich
-     * formReset: expectSource war gesetzt und Quelle + Titel sind jetzt leer (resetArticleForm).
-     * ignoreToastIds: Toasts, die schon vor der Freigabe sichtbar waren (zählen nicht als Ergebnis).
+     * Ein Messpunkt für die Freigabe-Schleife (der Driver pollt als Rückfallebene zum Beobachter):
+     * Toasts, Formularzustand, Chips sowie die Save-Indizien saveClicked/spinnerSeen seit showOverlay.
      */
     watchSave({ expectSource = '', ignoreToastIds = [] } = {}) {
-      const all = toasts();
-      const sb = snackbarText();
-      if (sb) all.push({ kind: 'info', title: 'snackbar', message: sb });
-      const ignore = new Set(ignoreToastIds || []);
-      const fresh = all.filter((t) => !t.id || !ignore.has(t.id));
-      const f = nativeFields();
-      const sourceValue = f.source?.value || '';
-      const titleValue = f.title?.value || '';
-      const hay = (t) => `${t.title} ${t.message}`;
-      const duplicate = fresh.some((t) => /duplicate/i.test(hay(t)));
-      return {
-        ok: true,
-        session,
-        toasts: all,
-        freshToasts: fresh,
-        success: fresh.some((t) => /Item Added|Item Updated/i.test(hay(t))),
-        duplicate,
-        errorToast: fresh.filter((t) => t.kind === 'error' && !/duplicate/i.test(hay(t))).map((t) => t.message).join(' | '),
-        errorVisible: [...document.querySelectorAll('mat-error, .mat-mdc-form-field-error')].map(text).filter(Boolean),
-        sourceValue,
-        titleValue,
-        fieldsPresent: !!(f.source && f.title),
-        chips: chips(),
-        formReset: !!expectSource && !!(f.source && f.title) && !sourceValue && !titleValue,
-        spinner: spinnerVisible(),
-        saveDisabled: !!findButton(topBar(), '^\\s*(save|update)\\s*$|speichern')?.disabled,
-        url: location.href
-      };
+      return measure({ expectSource, ignoreToastIds });
     },
 
     /**
@@ -654,7 +790,7 @@
      *           „Duplicate, URL already in the database!“, „Not logged in!“
      */
     async save({ timeoutMs = 25000 } = {}) {
-      const btn = findButton(topBar(), '^\\s*(save|update)\\s*$|speichern');
+      const btn = findButton(topBar(), SAVE_BUTTON);
       if (!btn) return { ok: false, error: 'Button „Save“ nicht gefunden' };
       if (btn.disabled) return { ok: false, error: 'Button „Save“ ist deaktiviert (Duplikat oder laufender Vorgang?)' };
       const urlBefore = location.href;

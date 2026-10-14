@@ -220,6 +220,32 @@ console.log('\n# Regeln: CRUD + Prompt-Block');
   const b2 = rulesPromptBlock(many, 'tagging', { maxRules: 100, maxChars: 800 });
   check(b2.length <= 800 && b2.split('\n').length > 5 && b2.split('\n').length < 60, `maxChars 800 eingehalten: ${b2.length} Zeichen, ${b2.split('\n').length} Zeilen`);
   check(rulesPromptBlock(many, 'tagging', { maxRules: 3 }).split('\n').length === 4, 'maxRules 3');
+
+  // rulesBlockWithIds: ids genau der Regeln, die im (abgeschnittenen) Block stehen
+  const { rulesBlockWithIds } = rules;
+  const w = rulesBlockWithIds(many, 'tagging', { maxRules: 100, maxChars: 800 });
+  check(w.text === b2 && w.ids.length === b2.split('\n').length - 1 && w.ids.length < 60 && w.ids[0] === many[59].id && w.ids.every((id, i) => many.find((r) => r.id === id).text.startsWith(`Regel Nummer ${60 - i} `)), `rulesBlockWithIds: ${w.ids.length} ids = Zeilen des Blocks, älteste zuerst`);
+  const w3 = rulesBlockWithIds(many, 'tagging', { maxRules: 3 });
+  check(w3.ids.length === 3 && w3.text === rulesPromptBlock(many, 'tagging', { maxRules: 3 }), 'rulesBlockWithIds maxRules 3, rulesPromptBlock liefert denselben Text');
+  const w0 = rulesBlockWithIds(many.filter((r) => r.scope === 'relevance'), 'tagging');
+  check(w0.text === '' && Array.isArray(w0.ids) && w0.ids.length === 0 && rulesBlockWithIds([], 'relevance').ids.length === 0, 'rulesBlockWithIds ohne passende Regeln → { text: "", ids: [] }');
+
+  // Warteschlange: gleichzeitige Read-Modify-Write auf 'rules' verlieren nichts
+  const keep = await loadRules();
+  await chrome.storage.local.remove('rules');
+  const base = await addRule({ text: 'Basisregel.' });
+  const [, par] = await Promise.all([recordRuleHits([base.id]), addRule({ text: 'Parallel angelegte Regel.' })]);
+  let now = await loadRules();
+  check(now.length === 2 && now.find((r) => r.id === base.id)?.hits === 1 && now.some((r) => r.id === par.id), 'Mutex: recordRuleHits ‖ addRule – Treffer und neue Regel bleiben erhalten');
+  const [third] = await Promise.all([addRule({ text: 'Dritte Regel.' }), recordRuleHits([base.id, par.id]), updateRule(par.id, { text: 'Parallel geändert.' })]);
+  now = await loadRules();
+  check(now.length === 3 && now.find((r) => r.id === base.id)?.hits === 2 && now.find((r) => r.id === par.id)?.hits === 1 && now.find((r) => r.id === par.id)?.text === 'Parallel geändert.' && now.some((r) => r.id === third.id), 'Mutex: addRule ‖ recordRuleHits ‖ updateRule – alles angekommen: ' + JSON.stringify(now.map((r) => [r.text, r.hits])));
+  const results = await Promise.allSettled([updateRule('gibtsnicht', { text: '' }), addRule({ text: '' }), removeRule(par.id), recordRuleHits([base.id])]);
+  now = await loadRules();
+  check(results[0].value === null && results[1].status === 'rejected' && results[2].value === true && now.length === 2 && now.find((r) => r.id === base.id)?.hits === 3, 'Mutex: Fehler in der Warteschlange blockieren die nächsten Schreibzugriffe nicht');
+  check((await recordRuleHits([])) === undefined && (await recordRuleHits(null)) === undefined, 'recordRuleHits ohne ids ist ein No-op');
+  await rules.withRulesLock(() => rules.saveRules(keep));
+  check((await loadRules()).length === 3, 'Regeln für die folgenden Abschnitte wiederhergestellt');
 }
 
 // ------------------------------------------------ Korrekturen mit Katalog ----
@@ -269,7 +295,11 @@ console.log('\n# Regeln: correctionFromChips / draftRuleFromCorrection / distill
   const rule = await distillRule({ removed: [], added: ['Newsinfo → geographische Lokationen → Kontinente und Staaten → Europa → Österreich'], reason: 'Österreichischer Bezug fehlte' }, article, { llmProvider: 'local', localLlmUrl: 'http://127.0.0.1:1/v1', localLlmModel: 'm' });
   const req = JSON.parse(fetchLog[fetchLog.length - 1].init.body);
   check(rule === 'Bei reinen Cyber-Vorfällen in Österreich zusätzlich „Österreich“ als Ort vergeben.' && fetchLog.length === before + 1, 'distillRule: eine Anfrage, Anführungszeichen entfernt: ' + rule);
-  check(req.messages[1].content.includes('Österreichischer Bezug fehlte') && req.messages[1].content.includes('Österreich') && req.max_tokens === 200, 'distillRule-Prompt enthält Begründung und Tags, kurze Ausgabe');
+  check(req.messages[1].content.includes('Österreichischer Bezug fehlte') && req.messages[1].content.includes('Österreich') && req.max_tokens === 1500 && !/Bisher vergebene/.test(req.messages[1].content), 'distillRule-Prompt enthält Begründung und Tags; max_tokens 1500 (Thinking zählt mit)');
+  // Aus dem Verlauf: vorhandene Tags nur als Referenz, nicht als „entfernt“
+  await distillRule({ removed: [], added: [], reason: 'Ort fehlte' }, { ...article, tags: ['Struktur → [S]1 Cyber', 'Newsinfo → Dokumententyp → News'] }, { llmProvider: 'local', localLlmUrl: 'http://127.0.0.1:1/v1', localLlmModel: 'm' });
+  const req2 = JSON.parse(fetchLog[fetchLog.length - 1].init.body).messages[1].content;
+  check(/Bisher vergebene Tags[^\n]*\[S\]1 Cyber; News/.test(req2) && !/entfernt/.test(req2) && /Ort fehlte/.test(req2), 'distillRule: Verlaufs-Tags als „bisher vergeben“, nichts als entfernt: ' + req2.replace(/\n/g, ' | '));
   await throwsDe(() => distillRule({ removed: [], added: [] }, article, {}), /Keine Korrektur/, 'distillRule ohne Korrektur wirft');
 }
 
@@ -295,10 +325,12 @@ console.log('\n# exportAllData / importAllData');
   });
   await rules.addRule({ text: 'Regel A.' });
   await history.addHistoryEntry({ url: 'https://q1.org/a', title: 'A', structure: 'Cyber' });
-  const full = await transfer.exportAllData();
+  const full = await transfer.exportAllData({ includeSecrets: true });
   check(full.version === 1 && typeof full.exportedAt === 'string' && full.settings.anthropicApiKey === 'geheim' && !('sources' in full.settings) && full.sources.length === 1 && full.sources[0].id === 'q1' && full.rules.length === 1 && full.history.length === 1 && Object.keys(full.processed).length === 1, 'exportAllData vollständig (mit Keys): ' + JSON.stringify(Object.keys(full)));
   const noSecrets = await transfer.exportAllData({ includeSecrets: false });
   check(!('anthropicApiKey' in noSecrets.settings) && !('deeplApiKey' in noSecrets.settings) && noSecrets.settings.minScore === 7 && noSecrets.includeSecrets === false, 'includeSecrets=false entfernt API-Keys');
+  const byDefault = await transfer.exportAllData();
+  check(!('anthropicApiKey' in byDefault.settings) && !('deeplApiKey' in byDefault.settings) && byDefault.includeSecrets === false, 'exportAllData ohne Angabe: ohne API-Keys (Standard)');
   check(JSON.parse(JSON.stringify(full)).history[0].id === full.history[0].id, 'Export ist JSON-serialisierbar');
 
   await chrome.storage.local.clear();
@@ -319,6 +351,119 @@ console.log('\n# exportAllData / importAllData');
   await throwsDe(() => transfer.importAllData({ foo: 1 }), /keine bekannten Daten/, 'Import: keine Abschnitte');
   await throwsDe(() => transfer.importAllData({ history: 'x' }), /„history“ muss eine Liste/, 'Import: Typprüfung');
   check(transfer.validateImport(JSON.stringify({ rules: [] })).rules.length === 0, 'validateImport akzeptiert JSON-String');
+  await throwsDe(() => transfer.importAllData('x'.repeat(transfer.MAX_IMPORT_BYTES + 1)), /zu groß/, 'Import: Größenlimit 20 MB');
+}
+
+// ------------------------------------------ Import: Whitelist, atomar, merge ----
+console.log('\n# importAllData: Einstellungs-Whitelist, kein Teil-Import, Vereinigung mit Standardquellen');
+{
+  const { validateUrlPattern, sanitizeSettings, DEFAULT_SETTINGS } = settingsMod;
+  // validateUrlPattern
+  const ok = ['', 'https://osdp.zentdok.at/*', 'http://localhost:4300/*', 'file:///*', 'file:///C:/osdp/index.html', 'https://osdp.zentdok.at/#/news', 'https://*.zentdok.at/*', 'HTTP://Osdp.Example:8080/app/*'];
+  check(ok.every((p) => validateUrlPattern(p) === ''), 'validateUrlPattern akzeptiert gültige Muster: ' + ok.map((p) => `${p}→${JSON.stringify(validateUrlPattern(p))}`).join(' '));
+  const bad = { 'osdp.zentdok.at': /beginnen.*https:\/\/osdp\.zentdok\.at\/\*/, 'https://*/*': /konkreten OSDP-Rechner/, '*://*/*': /beginnen/, '<all_urls>': /beginnen/, 'http://localhost:4300': /„\/\*“.*http:\/\/localhost:4300\/\*/, 'file://*': /file:\/\/\//, 'https://osdp.zentdok.at /*': /Leerzeichen/, 'https://os*dp.at/*': /Platzhalter/, 'https:///*': /Rechnername/, 'ftp://osdp.at/*': /beginnen/ };
+  for (const [p, re] of Object.entries(bad)) check(re.test(validateUrlPattern(p)), `validateUrlPattern lehnt „${p}“ ab: ${validateUrlPattern(p)}`);
+
+  // sanitizeSettings: nur Schlüssel aus DEFAULT_SETTINGS, Werte geprüft
+  const hostile = JSON.parse('{"__proto__": {"polluted": true}, "constructor": "x"}');
+  const { settings: san, skipped } = sanitizeSettings({ ...hostile, minScore: '8', maxItemsPerRun: 999, localLlmTimeoutSec: 5, autoTags: 'yes', fillEnglishTab: false, llmProvider: 'openai', translator: 'deepl', osdpUrlPattern: '*://*/*', localLlmUrl: 'javascript:alert(1)', autoRunTime: '8:00', anthropicModel: 'claude-x', sources: [{}], sourcesText: 'x', lastArea: 'cyber', evil: 1, deeplApiKey: null });
+  const skippedKeys = skipped.map((s) => s.key).sort().join(',');
+  check(san.minScore === 8 && san.maxItemsPerRun === 200 && san.localLlmTimeoutSec === 30 && !('autoTags' in san) && san.fillEnglishTab === false && !('llmProvider' in san) && san.translator === 'deepl' && !('osdpUrlPattern' in san) && !('localLlmUrl' in san) && san.autoRunTime === '8:00' && san.anthropicModel === 'claude-x', 'sanitizeSettings: Zahlen begrenzt, Enums/URLs geprüft: ' + JSON.stringify(san));
+  const own = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  check(!own(san, 'sources') && !own(san, 'sourcesText') && !own(san, 'lastArea') && !own(san, 'evil') && !own(san, '__proto__') && !own(san, 'constructor') && !own(san, 'deeplApiKey') && ({}).polluted === undefined && Object.keys(san).every((k) => own(DEFAULT_SETTINGS, k)), 'sanitizeSettings: unbekannte Schlüssel, Quellen und __proto__/constructor verworfen: ' + Object.keys(san).join(','));
+  check(skippedKeys === '__proto__,autoTags,constructor,deeplApiKey,evil,lastArea,llmProvider,localLlmUrl,osdpUrlPattern,sources,sourcesText' && skipped.every((s) => s.reason), 'sanitizeSettings nennt verworfene Schlüssel mit Grund: ' + skippedKeys);
+
+  // Import: Whitelist wirkt, eigenes URL-Muster bleibt, Bericht nennt Übersprungenes
+  await chrome.storage.local.clear();
+  await chrome.storage.local.set({ settings: { anthropicApiKey: 'eigen', osdpUrlPattern: 'https://osdp.zentdok.at/*', minScore: 6, lastArea: 'krimisi' } });
+  const repW = await transfer.importAllData({ settings: { osdpUrlPattern: 'https://*/*', localLlmUrl: 'javascript:alert(1)', llmProvider: 'local', anthropicApiKey: 'fremd', deeplApiKey: '', unknownKey: 1, minScore: 4 } });
+  const stW = (await chrome.storage.local.get('settings')).settings;
+  check(stW.osdpUrlPattern === 'https://osdp.zentdok.at/*' && !('localLlmUrl' in stW) && stW.llmProvider === 'local' && stW.anthropicApiKey === 'fremd' && !('deeplApiKey' in stW) && !('unknownKey' in stW) && stW.minScore === 4 && stW.lastArea === 'krimisi', 'Import übernimmt nur gültige bekannte Einstellungen, eigenes URL-Muster bleibt: ' + JSON.stringify(stW));
+  check(repW.settings.applied === 3 && repW.settings.skipped.map((s) => s.key).sort().join(',') === 'localLlmUrl,osdpUrlPattern,unknownKey', 'Import-Bericht: ' + JSON.stringify(repW.settings));
+
+  // Kein Teil-Import: scheitert ein Abschnitt (hier eine ungültig gespeicherte Quelle), wird nichts geschrieben
+  await chrome.storage.local.clear();
+  await chrome.storage.local.set({ settings: { minScore: 6, sources: [{ id: 'kaputt', name: 'Kaputt', url: 'nix' }] }, processed: { 'https://alt.example/1': { at: 1, title: 'alt', status: 'saved' } } });
+  await rules.addRule({ text: 'Bleibt.' });
+  await throwsDe(() => transfer.importAllData({ settings: { minScore: 9 }, sources: [{ name: 'Neu', url: 'https://neu.org' }], rules: [{ text: 'Neu.' }], history: [{ url: 'https://neu.org/a', title: 'A' }], processed: { 'https://neu.org/a': { at: 2, status: 'saved' } } }), /Ungültige URL/, 'Import bricht ab, wenn eine Quelle nicht validiert');
+  const stA = await chrome.storage.local.get(null);
+  check(stA.settings.minScore === 6 && stA.rules.length === 1 && stA.rules[0].text === 'Bleibt.' && !stA.history && Object.keys(stA.processed).length === 1, 'kein Teil-Import: Einstellungen, Regeln, Verlauf, erledigt unverändert');
+
+  // merge: Basis ist die wirksame Liste (Standardquellen), nicht der leere Rohwert
+  await chrome.storage.local.clear();
+  await chrome.storage.local.set({ settings: { minScore: 6 } });
+  const repM = await transfer.importAllData({ sources: [{ name: 'Eigene', url: 'https://eigene.org/feed' }, { name: 'BBC Kopie', url: DEFAULT_SOURCES[9].url }] }, { merge: true });
+  const stM = (await chrome.storage.local.get('settings')).settings;
+  check(repM.sources.added === 1 && repM.sources.skipped === 1 && stM.sources.length === DEFAULT_SOURCES.length + 1 && stM.sources[0].id === 'bleepingcomputer' && stM.sources.at(-1).id === 'eigene' && stM.minScore === 6, 'merge-Import vereinigt mit den Standardquellen: ' + JSON.stringify(repM.sources));
+  const repM2 = await transfer.importAllData({ sources: [{ name: 'Einzige', url: 'https://einzige.org/feed' }] }, { merge: false });
+  check(repM2.sources.total === 1 && (await loadSourceList()).length === 1, 'Import ohne merge ersetzt die Quellen');
+
+  // erledigt: nur URL-Schlüssel mit Objektwerten, Felder bereinigt
+  const repP = await transfer.importAllData({ processed: { 'https://ok.example/a': { at: '2026-01-01T00:00:00Z', title: 'A', status: 'saved', extra: 1 }, '__proto__': { at: 1 }, 'kein-url': { at: 1 }, 'https://ok.example/b': 'kaputt' } });
+  const stP = (await chrome.storage.local.get('processed')).processed;
+  check(repP.processed === 1 && Object.keys(stP).length === 1 && stP['https://ok.example/a'].at === Date.parse('2026-01-01T00:00:00Z') && !('extra' in stP['https://ok.example/a']) && ({}).at === undefined, 'erledigt-Import: nur URL-Schlüssel, Felder bereinigt: ' + JSON.stringify(stP));
+}
+
+// ------------------------------------------------- Verlauf: Import-Zählung ----
+console.log('\n# importHistory: Zählung nach dem Kürzen, Zeitstempel, bereinigte Felder');
+{
+  await history.clearHistory();
+  const now = Date.now();
+  const big = Array.from({ length: 2990 }, (_, i) => ({ id: 'alt-' + i, at: now - (i + 1) * 60000, url: `https://alt.example/${i}`, title: 'Alt ' + i }));
+  await chrome.storage.local.set({ history: big });
+  const newer = Array.from({ length: 10 }, (_, i) => ({ id: 'neu-' + i, at: now + i, url: `https://neu.example/${i}`, title: 'Neu ' + i }));
+  const ancient = Array.from({ length: 10 }, (_, i) => ({ id: 'uralt-' + i, at: 1000 + i, url: `https://uralt.example/${i}`, title: 'Uralt ' + i }));
+  const rep = await history.importHistory([...newer, ...ancient]);
+  const stored = await history.loadHistory();
+  check(rep.total === 3000 && rep.dropped === 10 && rep.added === 10 && rep.skipped === 0, 'importHistory: 20 neu, 10 älteste über dem Limit verworfen → added 10, dropped 10: ' + JSON.stringify(rep));
+  check(stored.length === 3000 && stored[0].id === 'neu-9' && !stored.some((e) => e.id.startsWith('uralt')) && stored.at(-1).id === 'alt-2989', 'gekürzte Liste behält die neuesten Einträge (10 neue + 2990 alte, 10 uralte weg)');
+  const rep2 = await history.importHistory(Array.from({ length: 5 }, (_, i) => ({ id: 'uralt2-' + i, at: 2000 + i, url: `https://u2.example/${i}`, title: 'U2' })));
+  check(rep2.added === 0 && rep2.dropped === 5 && rep2.total === 3000, 'nur uralte Einträge → added 0 (alle weggekürzt): ' + JSON.stringify(rep2));
+
+  await history.clearHistory();
+  const before = Date.now();
+  await history.importHistory([
+    { id: 'iso', url: 'https://a.example/iso', title: 'ISO', at: '2026-01-02T03:04:05Z' },
+    { id: 'ohne', url: 'https://a.example/ohne', title: 'Ohne Zeit' },
+    { id: 'ziffern', url: 'https://a.example/z', title: 'Ziffern', at: '1700000000000' },
+    { id: 'murks', url: 'https://a.example/m', title: 'Murks', at: 'gestern' }
+  ]);
+  const byId = Object.fromEntries((await history.loadHistory()).map((e) => [e.id, e]));
+  check(byId.iso.at === Date.parse('2026-01-02T03:04:05Z') && byId.ziffern.at === 1700000000000 && byId.ohne.at >= before && byId.murks.at >= before && byId.ohne.at === byId.murks.at, 'at: ISO-Text und Ziffernfolge werden gelesen, fehlend/unlesbar = Import-Zeitpunkt');
+
+  const rep3 = await history.importHistory([
+    { id: 'x', url: 'chrome://settings', title: 'Nur Titel', tags: ['A', 5, {}, null], summary: { o: 1 }, fremd: 'weg', saved: 'ja', ki: 1, problems: 'keine Liste', structure: 'Cyber' },
+    { id: 'y', url: 'javascript:alert(1)' },
+    { id: 'z', url: 'https://z.example/', title: 'Z', tags: Array.from({ length: 150 }, (_, i) => 't' + i) }
+  ]);
+  const x = (await history.loadHistory()).find((e) => e.id === 'x');
+  const z = (await history.loadHistory()).find((e) => e.id === 'z');
+  check(rep3.added === 2 && rep3.skipped === 1 && !('url' in x) && x.title === 'Nur Titel' && x.tags.length === 2 && x.tags[1] === '5' && !('summary' in x) && !('fremd' in x) && !('saved' in x) && x.ki === true && !('problems' in x) && x.structure === 'Cyber' && z.tags.length === 100, 'Verlaufseinträge auf bekannte Felder reduziert, nur http(s)-URLs: ' + JSON.stringify(x));
+  check(history.historyToMarkdown([x]).startsWith('# Eingetragene Meldungen') && history.sanitizeEntry({ title: 'T', at: 5 }).at === 5 && history.sanitizeEntry(null) === null && history.sanitizeEntry({ url: 'chrome://x' }) === null, 'historyToMarkdown-Titel, sanitizeEntry Randfälle');
+  await history.clearHistory();
+}
+
+// ------------------------------------------------- Quellen: Text, Migration ----
+console.log('\n# Quellen: sourcesToText-Escaping, führendes #, Migration mit verworfenen Zeilen, Standardliste');
+{
+  const { sourcesToText, parseSourcesText, usesDefaultSources } = sourcesStore;
+  const txt = sourcesToText([{ name: 'Heise | Security', url: 'https://heise.example/feed', category: 'cyber', type: 'rss', enabled: true }, { name: '#Hash', url: 'https://hash.example/', enabled: false }, { name: '', url: 'https://leer.example/' }]);
+  const back = parseSourcesText(txt);
+  check(back.length === 3 && back[0].name === 'Heise / Security' && back[0].url === 'https://heise.example/feed' && back[0].category === 'cyber' && back[1].enabled === false && back[1].name === 'Hash' && back[2].name === 'Quelle', 'sourcesToText ersetzt „|“ im Namen und entfernt führendes „#“, Zeilen überleben das Zurücklesen: ' + txt.replace(/\n/g, ' ‖ '));
+  check(normalizeSource({ name: '# Kommentar', url: 'https://k.example' }).name === 'Kommentar' && normalizeSource({ name: '##Doppelt', url: 'https://k.example' }).id === 'doppelt', 'normalizeSource entfernt führendes „#“');
+  await throwsDe(() => normalizeSource({ name: '#', url: 'https://k.example' }), /Name der Quelle fehlt/, 'nur „#“ ist kein Name');
+
+  await chrome.storage.local.set({ settings: { sourcesText: 'Gut | https://gut.org/feed\nKaputt | nix\nMuster | https://m.org/ | both | html | reuters\\.com/(world\n' } });
+  const mig = await migrateSources();
+  check(mig.migrated && mig.dropped === 2 && mig.droppedNames.length === 1 && mig.droppedNames[0] === 'Muster' && mig.sources.length === 1 && mig.sources[0].id === 'gut', 'Migration zählt verworfene Zeilen (ohne URL, kaputtes Muster): ' + JSON.stringify({ dropped: mig.dropped, names: mig.droppedNames }));
+  const mig2 = await migrateSources();
+  check(mig2.migrated === false && mig2.dropped === 0 && Array.isArray(mig2.droppedNames), 'No-op-Migration liefert dropped 0');
+
+  check(usesDefaultSources({}) && usesDefaultSources({ sources: [] }) && usesDefaultSources({ sources: [], sourcesText: 'nur kommentar' }) && !usesDefaultSources({ sources: [{ name: 'A', url: 'https://a.org' }] }) && !usesDefaultSources({ sourcesText: 'A | https://a.org' }), 'usesDefaultSources: nur ohne eigene Liste');
+  await resetSources();
+  check(usesDefaultSources((await chrome.storage.local.get('settings')).settings), 'nach resetSources gilt die Standardliste');
+  const t = await testSource({ name: 'X', url: 'https://x.org/feed' });
+  check(t.empty === false && t.ok === false, 'testSource: Ladefehler ist nicht „leer“ (empty=false)');
 }
 
 console.log(failures ? `\n${failures} Test(s) fehlgeschlagen` : '\nAlle Store-Tests bestanden');

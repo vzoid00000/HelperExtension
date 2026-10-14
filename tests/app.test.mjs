@@ -5,7 +5,14 @@
 //   4) Regeln: Regel anlegen → Tabelle, rulesPromptBlock enthält sie
 //   5) Verlauf: zwei Einträge mit gleicher URL → Duplikat-Badge + KPI, Suche filtert
 //   6) Lauf: Meldung per URL (lokaler Artikel-Server) mit Mock-LLM gegen die OSDP-Fixture (file://):
-//      „Ausgewählte eintragen“ → Freigabe-Card → Überspringen → erneut → „Als gespeichert markieren“ → Verlauf
+//      „Ausgewählte eintragen“ (Duplikat-Vorabprüfung läuft durch) → Freigabe-Card, Warn-Hinweis in der Leiste,
+//      transienter Status wird nicht persistiert → Überspringen → erneut (Übersetzung/Tags wiederverwendet,
+//      Rückfrage zum begonnenen Formular) → „Als gespeichert markieren“ (Rückfrage) → Verlauf
+//   7) Scan mit lokalem Feed: Titel-Treffer im Verlauf → „bereits eingetragen“, aber auswählbar;
+//      Verlauf geleert → „neu“; gleiche URL → „gleiche URL“; Sidebar-Zähler folgt der Auswahl
+//   8) Zustand laden: 'processing'/'waiting' zurückgesetzt, alte Meldungen/erledigt-Einträge entfernt, Filter-Zuordnung
+//   9) Zeitplan: ?autorun=1 startet Scan + Relevanzprüfung für den zuletzt gewählten Bereich, Query wird entfernt,
+//      Neuladen startet nichts; Alarm des Hintergrunds benachrichtigt den offenen Tab (kein Neuladen)
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -22,20 +29,28 @@ const check = (cond, msg) => { console.log((cond ? 'PASS ' : 'FAIL ') + msg); if
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const pad = (n) => String(n).padStart(2, '0');
 
-// --- Artikel-Server: liefert die Fixture mit dem heutigen Datum (Datumsregel „ab letztem Freitag“)
+// --- Artikel-Server: liefert die Fixture mit dem heutigen Datum (Datumsregel „ab letztem Freitag“) und einen RSS-Feed
 const today = new Date();
 const todayIso = `${today.getFullYear()}-${pad(today.getMonth() + 1)}-${pad(today.getDate())}`;
 const articleHtml = fs.readFileSync(path.join(FIX, 'article.html'), 'utf8').replace(/2026-10-1[01]/g, todayIso).replace('October 10, 2026', todayIso);
+const FEED_TITLE = 'Ransomware gang claims attack on port of Hamburg';
+let feedItemUrl = '';
 const articleServer = http.createServer((req, res) => {
   if (req.url.startsWith('/2026/10/10/defence-contractor-breach')) {
     res.setHeader('content-type', 'text/html; charset=utf-8');
     return res.end(articleHtml);
+  }
+  if (req.url.startsWith('/feed.xml')) {
+    res.setHeader('content-type', 'application/rss+xml; charset=utf-8');
+    return res.end(`<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0"><channel><title>Lokaler Feed</title>\n<item><title>${FEED_TITLE}</title><link>${feedItemUrl}</link><pubDate>${new Date().toUTCString()}</pubDate><description>Attackers encrypted terminal systems of the port operator.</description></item>\n</channel></rss>`);
   }
   res.statusCode = 404;
   res.end('not found');
 });
 await new Promise((r) => articleServer.listen(0, '127.0.0.1', r));
 const articleUrl = `http://127.0.0.1:${articleServer.address().port}/2026/10/10/defence-contractor-breach`;
+const feedUrl = `http://127.0.0.1:${articleServer.address().port}/feed.xml`;
+feedItemUrl = `http://127.0.0.1:${articleServer.address().port}/2026/10/12/port-hamburg`;
 
 // --- Mock eines OpenAI-kompatiblen Servers: Klassifikation (JSON), Übersetzung (Text), Tagging (JSON)
 const llmCalls = [];
@@ -87,6 +102,15 @@ page.on('pageerror', (e) => errors.push(String(e)));
 page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
 const visible = (sel) => page.locator(sel).isVisible();
 const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-status').textContent();
+const logText = () => page.textContent('#log');
+const filterCount = (f) => page.locator(`#itemsFilter [data-filter="${f}"] [data-count]`).textContent();
+const navCount = () => page.textContent('#navRunCount');
+// Echtes Neuladen der App-Seite: page.goto mit nur geändertem Hash wäre eine Navigation im selben Dokument
+const reopen = async (hash = '#lauf') => {
+  await page.goto('about:blank');
+  await page.goto(`${APP}${hash}`);
+  await page.waitForTimeout(600);
+};
 
 // 1) Seite ohne Fehler, Navigation per Klick und Hash
 {
@@ -135,6 +159,10 @@ const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-s
   await page.reload();
   await page.waitForTimeout(500);
   check((await page.inputValue('#anthropicModel')) === 'claude-custom-9', 'Eigene Modell-ID bleibt in der Auswahl erhalten');
+  const hints = await page.evaluate(() => [...document.querySelectorAll('#view-settings .hint')].map((h) => h.textContent).join('\n'));
+  check(/Quellen, Regeln, Verlauf und erledigte URLs werden ergänzt/.test(hints) && !/vorhandene Daten ersetzt/.test(hints), 'Hinweis zum Import beschreibt das Zusammenführen');
+  check(/zuletzt gewählten Bereich/.test(hints) && /Eingetragen wird erst/.test(hints) && !/startet die Automatik/.test(hints), 'Hinweis zum Zeitplan: nur Scan + Relevanzprüfung, Bereich = zuletzt gewählt');
+  check(/OSDP verlangt den Reiter beim Speichern/.test(hints), 'Hinweis am Schalter „English Translated“');
 }
 
 // 3) Quellen: Dialog, Validierung, anlegen, Switch, löschen
@@ -185,6 +213,8 @@ const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-s
   await page.waitForTimeout(400);
   await page.click('#btnAddRule');
   check(await page.locator('#ruleDialog').evaluate((d) => d.open), 'Regel-Dialog geöffnet');
+  const placeholder = await page.getAttribute('#ruleText', 'placeholder');
+  check(/Cyber > Cyberangriff > DoS bzw\. DDoS/.test(placeholder) && (await page.textContent('label[for="ruleScope"]')).trim() === 'Gilt für', 'Regel-Dialog: Platzhalter mit echtem Katalogtag, Feld „Gilt für“');
   await page.click('#btnRuleSave');
   await page.waitForTimeout(200);
   check(await page.locator('#ruleDialog').evaluate((d) => d.open) && (await page.getAttribute('#ruleText', 'aria-invalid')) === 'true', 'Leere Regel wird abgewiesen');
@@ -259,6 +289,8 @@ const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-s
 
 // 6) Lauf: manuelle URL → Eintragen mit Freigabe gegen die OSDP-Fixture
 {
+  const dialogs = [];
+  page.on('dialog', (d) => { dialogs.push(d.message()); d.accept(); });
   const osdp = await context.newPage();
   await osdp.goto(FIXTURE_URL);
   await page.evaluate(async (s) => {
@@ -270,19 +302,22 @@ const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-s
   await page.waitForTimeout(500);
   await page.bringToFront();
   check(/lokales Modell/.test(await page.textContent('#modelInfo')), 'Modellzeile zeigt lokales Modell');
+  const api = await page.evaluate(() => { const r = window.__app.ctx.views.run; return { isRunning: typeof r.isRunning, stopRun: typeof r.stopRun, running: r.isRunning() }; });
+  check(api.isRunning === 'function' && api.stopRun === 'function' && api.running === false, 'Lauf-Ansicht exportiert isRunning() und stopRun()');
 
   await page.fill('#addUrl', articleUrl);
   await page.click('#btnAddUrl');
   await page.waitForSelector('#itemsTable tbody tr');
   const firstRow = page.locator('#itemsTable tbody tr').first();
   check((await firstRow.locator('input.checkbox').isChecked()) && /neu/.test(await statusText()), 'Manuelle Meldung angelegt, ausgewählt, Status „neu“');
-  check((await page.locator('#itemsFilter [data-filter="selected"] [data-count]').textContent()) === '1', 'Filter-Zähler „Ausgewählt“ = 1');
+  check((await filterCount('selected')) === '1' && (await navCount()) === '1', 'Filter-Zähler „Ausgewählt“ = 1, Sidebar-Zähler 1');
 
   // a) Eintragen → Freigabe-Card → Überspringen
   await page.click('#btnProcess');
   await page.waitForSelector('#reviewCard:not([hidden])', { timeout: 90000 });
   check(/^Hackers breach European defence contractor/.test((await page.textContent('#reviewTitle')).trim()), 'Freigabe-Card mit Artikeltitel: ' + (await page.textContent('#reviewTitle')).trim());
   check(/wartet auf Freigabe/.test(await statusText()) && (await page.isDisabled('#btnProcess')) && !(await page.isDisabled('#btnStop')), 'Status „wartet auf Freigabe“, Knöpfe gesperrt, Stopp aktiv');
+  check(await page.locator('#areaSelect [data-area="krimisi"]').isDisabled() && (await page.evaluate(() => window.__app.ctx.views.run.isRunning())), 'Bereichswahl während des Laufs gesperrt, isRunning() = true');
   const chips = await page.locator('#reviewTags .chip').allTextContents();
   check(chips.includes('[S]1 Cyber') && chips.includes('News') && chips.includes('Deutschland') && chips.includes('Schadsoftware') && chips.includes('Hackergruppe'), 'Tag-Vorschlag in der Card: ' + chips.join(', '));
   check(/Cyber/.test(await page.textContent('#reviewMeta')) && /Sergiu Example/.test(await page.textContent('#reviewMeta')), 'Badges: Struktur und Autor');
@@ -291,42 +326,184 @@ const statusText = () => page.locator('#itemsTable tbody tr:first-child td.col-s
   const form = await osdp.evaluate(() => ({ source: document.querySelector('input[formcontrolname="article_source"]').value, title: document.querySelector('input[formcontrolname="article_title"]').value, de: document.querySelector('input[formcontrolname="article_title_translatedde"]').value, content: document.querySelector('#mat-tab-content-2-0 .ck-editor__editable').textContent.slice(0, 40), deContent: document.querySelector('#mat-tab-content-2-2 .ck-editor__editable').textContent.slice(0, 30), events: window.__events.map((e) => e[0]) }));
   check(form.source === articleUrl && /^Hackers breach/.test(form.title) && /^Hacker dringen/.test(form.de) && /defence contractor/.test(form.content) && /Deutscher Absatz 1/.test(form.deContent), 'OSDP-Formular ausgefüllt (Quelle, Titel EN/DE, Inhalte): ' + JSON.stringify({ title: form.title, de: form.de }));
   check(!form.events.includes('save'), 'Nichts automatisch gespeichert (kein Save-Event in der Fixture)');
+  // Die Fixture kann keinen Tag-Baum aufklappen → Probleme beim Ausfüllen → Warn-Hinweis in der Leiste
+  const barHint = await bar.evaluate((h) => ({ hint: h.shadowRoot?.querySelector('.hint')?.textContent || '', warn: !!h.shadowRoot?.querySelector('.bar.warn') }));
+  check(/^⚠ \d+ Problem/.test(barHint.hint) && /Tags/.test(barHint.hint), `Leiste zeigt die Probleme als Warnung: ${barHint.hint.slice(0, 60)}… (warn-Stil: ${barHint.warn})`);
+  const problems = await page.locator('#reviewWarnings li').allTextContents();
+  check(problems.some((p) => /^OSDP: /.test(p)), 'Freigabe-Card listet die OSDP-Probleme');
   const callsA = llmCalls.map((c) => c.kind).join(',');
-  check(callsA === 'translate,tag', 'Modellaufrufe: eine Übersetzung (Titel+Text), ein Tagging: ' + callsA);
+  check(callsA === 'translate,tag', 'Modellaufrufe: eine Übersetzung (Titel+Text), ein Tagging (Duplikat-Vorabprüfung ohne Modell): ' + callsA);
   check(llmCalls[1].system <= 40000, `Tagging-System-Prompt kompakt (${llmCalls[1].system} Zeichen)`);
+  // Transienter Status wird nie persistiert: eine Nutzeraktion schreibt den Zustand während der Freigabe
+  await page.click('#btnClearSelection');
+  await page.waitForTimeout(300);
+  const persisted = await page.evaluate(async () => Object.values((await chrome.storage.local.get('autoState')).autoState.items).map((it) => it.status));
+  check(persisted.length === 1 && persisted[0] === 'new' && /wartet auf Freigabe/.test(await statusText()), `Status „wartet auf Freigabe“ nur im Speicher, in chrome.storage: ${persisted[0]}`);
+  check((await navCount()) === '', 'Sidebar-Zähler nach „Auswahl aufheben“ leer');
   await page.click('#btnReviewSkip');
   await page.waitForFunction(() => /übersprungen/.test(document.querySelector('#itemsTable tbody tr td.col-status')?.textContent || ''), null, { timeout: 15000 });
   await page.waitForFunction(() => !document.getElementById('btnProcess').disabled, null, { timeout: 15000 });
   check(await page.locator('#reviewCard').evaluate((c) => c.hidden) && (await bar.count()) === 0, 'Nach „Überspringen“: Status übersprungen, Card und Leiste weg');
+  check(!(await page.locator('#areaSelect [data-area="krimisi"]').isDisabled()), 'Bereichswahl nach dem Lauf wieder frei');
   const hist0 = await page.evaluate(async () => ((await chrome.storage.local.get('history')).history || []).length);
   check(hist0 === 0, 'Übersprungene Meldung nicht im Verlauf');
+  check((await filterCount('relevant')) === '1', 'Übersprungene Meldung im Reiter „Relevant“');
 
-  // b) Erneut eintragen → „Als gespeichert markieren“ → Verlauf
+  // b) Erneut eintragen → Übersetzung/Tags werden wiederverwendet → „Als gespeichert markieren“ → Verlauf
   await firstRow.locator('input.checkbox').click();
+  check((await navCount()) === '1', 'Sidebar-Zähler nach dem Anhaken 1');
   llmCalls.length = 0;
+  dialogs.length = 0;
   await page.click('#btnProcess');
   await page.waitForSelector('#reviewCard:not([hidden])', { timeout: 90000 });
   check(/^Hackers breach/.test((await page.textContent('#reviewTitle')).trim()), 'Zweiter Durchlauf: Freigabe-Card erneut sichtbar');
+  const foreign = dialogs.filter((m) => /begonnenes Formular/.test(m));
+  check(foreign.length <= 1, `Rückfrage zum begonnenen Formular im OSDP-Tab (Rest der übersprungenen Meldung): ${foreign.length} Dialog(e)`);
+  check(llmCalls.length === 0 && /wiederverwendet/.test(await logText()), `Übersetzung und Tags aus dem vorigen Versuch wiederverwendet (${llmCalls.length} Modellaufrufe)`);
   await bar.waitFor({ timeout: 5000 });
   await page.click('#btnReviewMarkSaved');
   await page.waitForFunction(() => /eingetragen/.test(document.querySelector('#itemsTable tbody tr td.col-status')?.textContent || ''), null, { timeout: 15000 });
   await page.waitForFunction(() => !document.getElementById('btnProcess').disabled, null, { timeout: 15000 });
+  check(dialogs.some((m) => /Als gespeichert|Save/.test(m) && /nichts in OSDP gespeichert/.test(m)), '„Als gespeichert markieren“ fragt nach (speichert nichts in OSDP)');
+  check(/Gespeichert \(manuell bestätigt/.test(await logText()), 'Protokoll: manuell bestätigt');
   const hist = await page.evaluate(async () => (await chrome.storage.local.get('history')).history || []);
   check(hist.length === 1 && hist[0].url === articleUrl && hist[0].saved === true && hist[0].structure === 'Cyber' && /^Hacker dringen/.test(hist[0].titleDe) && hist[0].tags.includes('Struktur → [S]1 Cyber') && hist[0].confirmedBy === 'app', 'Verlauf hat 1 Eintrag: ' + JSON.stringify({ title: hist[0]?.title, structure: hist[0]?.structure, tags: hist[0]?.tags?.length }));
   const processed = await page.evaluate(async () => (await chrome.storage.local.get('processed')).processed || {});
   check(Object.values(processed).some((p) => p.status === 'saved'), 'URL als erledigt gemerkt');
-  check((await page.locator('#itemsFilter [data-filter="done"] [data-count]').textContent()) === '1' && (await firstRow.locator('input.checkbox').isDisabled()), 'Filter „Eingetragen“ = 1, Zeile gesperrt');
+  check((await filterCount('done')) === '1' && (await firstRow.locator('input.checkbox').isDisabled()), 'Filter „Eingetragen“ = 1, Zeile gesperrt');
   await page.click('.nav-link[data-view="history"]');
   await page.waitForTimeout(200);
   const histRows = await page.locator('#historyTable tbody tr').count();
   const histCyber = (await page.textContent('#statCyber')).trim();
   check(histRows === 1 && histCyber === '1' && (await visible('#view-history')), `Verlauf-Ansicht zeigt den Eintrag (${histRows} Zeilen, Cyber ${histCyber}, sichtbar ${await visible('#view-history')}, Hash ${page.url().split('#')[1]})`);
   // Zustand überlebt ein Neuladen der Seite
-  await page.goto(`${APP}#lauf`);
-  await page.waitForTimeout(500);
-  check(/eingetragen/.test(await statusText()), 'Meldungsliste nach Neuladen erhalten');
+  await reopen('#lauf');
+  await page.click('#itemsFilter [data-filter="done"]');
+  check(/^eingetragen$/.test((await statusText()).trim()) && (await filterCount('done')) === '1', 'Meldungsliste nach Neuladen erhalten (Status „eingetragen“)');
   if (await page.locator('#correctionDialog').evaluate((d) => d.open)) await page.click('#btnCorrectionDismiss');
   await osdp.close();
+}
+
+// 7) Scan mit lokalem Feed: Titel-Treffer im Verlauf → „bereits eingetragen“, aber auswählbar
+{
+  const now = Date.now();
+  await page.evaluate(async ({ feedUrl, now, title }) => {
+    const cur = (await chrome.storage.local.get('settings')).settings || {};
+    await chrome.storage.local.set({
+      settings: { ...cur, lastArea: 'cyber', sources: [{ id: 'lokaler-feed', name: 'Lokaler Feed', url: feedUrl, category: 'cyber', type: 'rss', pattern: '', enabled: true, addedAt: now }] },
+      history: [{ id: 'hx', at: now - 3600000, url: 'https://other.example/port-hamburg', title, structure: 'Cyber', wb: '', tags: [], sourceName: 'Other', saved: true }],
+      processed: {}
+    });
+    await chrome.storage.local.remove('autoState');
+  }, { feedUrl, now, title: FEED_TITLE });
+  await reopen('#lauf');
+  check((await page.locator('#itemsTable tbody tr').count()) === 0, 'Meldungsliste nach Entfernen des Zustands leer');
+  await page.click('#btnScan');
+  await page.waitForFunction(() => /Scan fertig/.test(document.getElementById('log').textContent), null, { timeout: 20000 });
+  check(/Scan fertig: 0 neue Meldungen, 1 bereits im Verlauf/.test(await logText()), 'Scan: 1 Meldung bereits im Verlauf');
+  await page.click('#itemsFilter [data-filter="all"]');
+  const row = page.locator('#itemsTable tbody tr').first();
+  check(/bereits eingetragen/.test(await statusText()) && /gleicher Titel/.test(await statusText()), 'Status „bereits eingetragen“ mit Hinweis „gleicher Titel“: ' + (await statusText()));
+  check(!(await row.locator('input.checkbox').isDisabled()), 'Checkbox trotz Verlaufstreffer aktiv');
+  check((await filterCount('done')) === '1' && (await filterCount('relevant')) === '', `Filter: Verlaufstreffer unter „Eingetragen“ (${await filterCount('done')}), nicht unter „Relevant“ (${await filterCount('relevant')})`);
+  await row.locator('input.checkbox').click();
+  await page.waitForTimeout(200);
+  check((await navCount()) === '1' && (await filterCount('selected')) === '1', `Verlaufstreffer lässt sich anhaken: Sidebar-Zähler ${await navCount()}, Filter „Ausgewählt“ ${await filterCount('selected')}`);
+  // Verlauf geleert → Status „neu“ (ohne Scan)
+  await page.evaluate(() => chrome.storage.local.set({ history: [] }));
+  await page.waitForFunction(() => /^neu$/.test((document.querySelector('#itemsTable tbody tr td.col-status')?.textContent || '').trim()), null, { timeout: 5000 });
+  check(true, 'Verlauf geleert → Meldung wieder „neu“');
+  // Verlaufseintrag mit gleicher URL → „gleiche URL“
+  await page.evaluate(async (url) => chrome.storage.local.set({ history: [{ id: 'hy', at: Date.now() - 1000, url, title: 'Ein ganz anderer Titel der Meldung', structure: 'Cyber', tags: [], saved: true }] }), feedItemUrl);
+  await page.waitForFunction(() => /gleiche URL/.test(document.querySelector('#itemsTable tbody tr td.col-status')?.textContent || ''), null, { timeout: 5000 });
+  check(/bereits eingetragen/.test(await statusText()), 'Gleiche URL im Verlauf → „bereits eingetragen (gleiche URL)“');
+  // Erneuter Scan bestimmt den Status neu und zählt die Meldung als bekannt
+  await page.click('#btnScan');
+  await page.waitForFunction(() => (document.getElementById('log').textContent.match(/Scan fertig/g) || []).length >= 2, null, { timeout: 20000 });
+  check(/gleiche URL/.test(await statusText()) && (await page.locator('#itemsTable tbody tr').count()) === 1, `Zweiter Scan: Markierung bleibt, keine doppelte Meldung (${await page.locator('#itemsTable tbody tr').count()} Zeilen, Status „${await statusText()}“)`);
+  await page.click('#btnClearSelection');
+  check((await navCount()) === '', 'Sidebar-Zähler nach „Auswahl aufheben“ leer');
+}
+
+// 8) Zustand laden: transiente Status zurückgesetzt, Altes entfernt, Filter-Zuordnung
+{
+  const now = Date.now();
+  const mk = (key, extra) => ({ key, url: `https://t.example/${key}`, title: `Testmeldung ${key} mit genug Zeichen`, sourceName: 'Test', sourceCategory: 'cyber', selected: false, wbChoice: 'auto', addedAt: now, ...extra });
+  const items = {
+    k1: mk('k1', { status: 'waiting', category: 'cyber', score: 8, selected: true }),
+    k2: mk('k2', { status: 'processing' }),
+    k3: mk('k3', { status: 'too_old' }),
+    k4: mk('k4', { status: 'error', error: 'x' }),
+    k5: mk('k5', { status: 'duplicate' }),
+    k6: mk('k6', { status: 'in_history', historyId: 'h6' }),
+    k7: mk('k7', { status: 'skipped' }),
+    k8: mk('k8', { status: 'saved' }),
+    k9: mk('k9', { status: 'relevant', category: 'cyber', score: 7 }),
+    k10: mk('k10', { status: 'new' }),
+    k11: mk('k11', { status: 'irrelevant', category: 'none' }),
+    k12: mk('k12', { status: 'relevant', category: 'cyber', addedAt: now - 15 * 86400000 })
+  };
+  await page.evaluate(async ({ items, now }) => {
+    const cur = (await chrome.storage.local.get('settings')).settings || {};
+    await chrome.storage.local.set({
+      settings: { ...cur, lastArea: 'cyber' },
+      autoState: { items, order: Object.keys(items), sources: {}, lastScan: now },
+      processed: { 'https://t.example/old': { at: now - 61 * 86400000, status: 'saved' }, 'https://t.example/fresh': { at: now - 1000, status: 'saved' } },
+      history: [{ id: 'h6', at: now - 5000, url: 'https://t.example/k6', title: 'Testmeldung k6 mit genug Zeichen', structure: 'Cyber', tags: [], saved: true }]
+    });
+  }, { items, now });
+  await reopen('#lauf');
+  const st = await page.evaluate(() => Object.fromEntries(Object.values(window.__app.ctx.state.items).map((it) => [it.key, it.status])));
+  check(st.k1 === 'relevant' && st.k2 === 'new' && st.k6 === 'in_history' && st.k10 === 'new' && !('k12' in st), 'Beim Laden: waiting → relevant, processing → neu, 15 Tage alte Meldung entfernt: ' + JSON.stringify(st));
+  check(/2 Meldungen aus einem unterbrochenen Lauf zurückgesetzt/.test(await logText()) && /Aufgeräumt: 1 alte Meldung, 1 alter „erledigt“-Eintrag/.test(await logText()), 'Protokoll nennt Zurücksetzen und Aufräumen: ' + (await logText()).replace(/\n/g, ' | ').slice(0, 200));
+  check((await filterCount('relevant')) === '3' && (await filterCount('done')) === '3' && (await filterCount('error')) === '2' && (await filterCount('all')) === '11' && (await filterCount('selected')) === '1', `Filter: Relevant ${await filterCount('relevant')} (relevant/skipped/zurückgesetzt), Eingetragen ${await filterCount('done')} (saved/in_history/duplicate), Fehler ${await filterCount('error')} (error/too_old), Alle ${await filterCount('all')}`);
+  await page.click('#itemsFilter [data-filter="selected"]');
+  const r = page.locator('#itemsTable tbody tr').first();
+  check((await r.locator('input.checkbox').isChecked()) && !(await r.locator('input.checkbox').isDisabled()) && (await navCount()) === '1', 'Zurückgesetzte Meldung bleibt ausgewählt und anhakbar, Sidebar-Zähler 1');
+  const stored = await page.evaluate(async () => chrome.storage.local.get(['processed', 'autoState']));
+  check(!stored.processed['https://t.example/old'] && !!stored.processed['https://t.example/fresh'] && stored.autoState.items.k1.status === 'relevant' && !stored.autoState.items.k12, 'Bereinigter Zustand gespeichert (erledigt-Eintrag > 60 Tage weg, kein transienter Status)');
+}
+
+// 9) Zeitplan: ?autorun=1 → Scan + Relevanzprüfung für den zuletzt gewählten Bereich, Query entfernt; Alarm → Nachricht
+{
+  await page.evaluate(async () => {
+    const cur = (await chrome.storage.local.get('settings')).settings || {};
+    await chrome.storage.local.set({ settings: { ...cur, lastArea: 'both' }, history: [], processed: {} });
+    await chrome.storage.local.remove('autoState');
+  });
+  llmCalls.length = 0;
+  await page.goto('about:blank');
+  await page.goto(`${APP}?autorun=1#lauf`);
+  await page.waitForFunction(() => /Relevanzprüfung fertig|Keine neuen Meldungen/.test(document.getElementById('log').textContent), null, { timeout: 30000 });
+  check(!/autorun/.test(page.url()) && page.url().endsWith('#lauf'), 'Query ?autorun=1 nach dem Start entfernt: ' + page.url());
+  check(/Automatischer Start \(Zeitplan\): Scan und Relevanzprüfung für beide Bereiche/.test(await logText()), 'Autorun nutzt den zuletzt gewählten Bereich (beide)');
+  check(llmCalls.map((c) => c.kind).join(',') === 'classify' && /relevant/.test(await statusText()), 'Autorun: Scan + Relevanzprüfung (ein Klassifikationsaufruf), Meldung relevant');
+  check(!(await page.isDisabled('#btnProcess')), 'Autorun trägt nichts ein – „Ausgewählte eintragen“ steht bereit');
+  // Neuladen startet keinen neuen Scan
+  llmCalls.length = 0;
+  await page.reload();
+  await page.waitForTimeout(1500);
+  check(!/Automatischer Start/.test(await logText()) && llmCalls.length === 0 && !/autorun/.test(page.url()), 'Neuladen (F5) startet keinen weiteren Autorun');
+  // Alarm des Hintergrunds: offener App-Tab bekommt eine Nachricht, wird nicht neu geladen
+  await page.evaluate(() => { window.__marker = 'nicht neu geladen'; return chrome.alarms.create('osdp-autorun', { when: Date.now() + 300 }); });
+  let viaAlarm = true;
+  try {
+    await page.waitForFunction(() => /Automatischer Start/.test(document.getElementById('log').textContent), null, { timeout: 15000 });
+  } catch {
+    viaAlarm = false;
+  }
+  if (!viaAlarm) {
+    // Alarme feuern in dieser Umgebung nicht zeitnah: Nachricht direkt wie der Hintergrund schicken
+    await sw.evaluate(async () => {
+      const tabs = await chrome.tabs.query({ url: chrome.runtime.getURL('src/app/app.html') + '*' });
+      await chrome.tabs.sendMessage(tabs[0].id, { type: 'osdp-helper-autorun' });
+    });
+    await page.waitForFunction(() => /Automatischer Start/.test(document.getElementById('log').textContent), null, { timeout: 15000 });
+  }
+  await page.waitForFunction(() => /Keine neuen Meldungen|Relevanzprüfung fertig/.test(document.getElementById('log').textContent), null, { timeout: 30000 });
+  const marker = await page.evaluate(() => window.__marker);
+  check(marker === 'nicht neu geladen' && /Automatischer Start/.test(await logText()), `Zeitplan-Nachricht startet den Autorun im offenen Tab ohne Neuladen (per ${viaAlarm ? 'Alarm' : 'Nachricht'})`);
+  check((await page.locator('#itemsTable tbody tr').count()) === 1 && /Keine neuen Meldungen/.test(await logText()), 'Zweiter Autorun: Meldung bekannt, keine erneute Relevanzprüfung');
 }
 
 check(errors.length === 0, `Keine Konsolenfehler während der Tests ${errors.length ? JSON.stringify(errors.slice(0, 5)) : ''}`);

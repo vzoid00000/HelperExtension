@@ -34,6 +34,12 @@ in der Fixture gefüllt, Freigabe-Card und Leiste sichtbar, kein Save-Event → 
 erledigt gemerkt, Meldungsliste überlebt ein Neuladen. Dabei wird gezählt, dass genau eine
 Übersetzungs- und eine Tagging-Anfrage gestellt wurden (Titel + Text in einer Anfrage).
 
+Weitere Blöcke prüfen die Korrekturen aus der Code-Review: Hinweistexte, Platzhalter mit echten
+Katalogtags, `isRunning()`/`stopRun()`, die Bereichssperre während eines Laufs, den Warn-Hinweis in
+der Leiste bei Problemen beim Ausfüllen, die Duplikat-Vorabprüfung vor Übersetzung und Tagging,
+dass transiente Status (`processing`/`waiting`) nach einem Neuladen zurückgesetzt sind und dass
+`?autorun=1` aus der Adresse entfernt wird.
+
 Hinweis: In der Fixture lässt sich der Tag-Baum nicht aufklappen (nur drei Wurzelknoten ohne Kinder),
 deshalb melden die Tag-Schritte „nicht gefunden“ als Problem – der Lauf läuft wie in OSDP weiter und
 zeigt die Hinweise in der Freigabe-Card; die Chip-Liste bleibt leer, sodass keine Korrektur erkannt wird

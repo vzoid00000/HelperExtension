@@ -1,6 +1,6 @@
 // Node-Tests für tag-catalog.js (reine Logik, ohne Browser)
 import fs from 'node:fs';
-import { TagCatalog, buildSelection, selectionToText } from '../src/lib/tag-catalog.js';
+import { TagCatalog, buildSelection, selectionToText, nameAliases, normalizePath, hasPathSeparator, PATH_GEO, GEO_LIST_SEP } from '../src/lib/tag-catalog.js';
 
 let failures = 0;
 const check = (cond, msg) => { console.log((cond ? 'PASS ' : 'FAIL ') + msg); if (!cond) failures++; };
@@ -25,6 +25,31 @@ const r5 = cat.resolve('NATO');
 check(r5?.path === 'Allgemeine Tags → Akteur → Internationale Organisation → NATO', 'NATO aufgelöst: ' + r5?.path);
 const r6 = cat.resolve('Resilienz', 'Cyber');
 check(r6?.path.startsWith('Cyber → Cyber Security'), 'Doppelname Resilienz innerhalb Cyber: ' + r6?.path);
+
+// Befund 36: vollständiger Pfad außerhalb von `within` → null (kein Rückfall auf den Blattnamen)
+const fullRes = 'Allgemeine Tags > Politik > Sicherheitspolitik > Resilienz';
+check(cat.resolve(fullRes, 'Cyber') === null, 'Pfad außerhalb von within=Cyber → null');
+check(cat.resolve(fullRes, 'Allgemeine Tags')?.path === 'Allgemeine Tags → Politik → Sicherheitspolitik → Resilienz' && cat.resolve(fullRes)?.path === 'Allgemeine Tags → Politik → Sicherheitspolitik → Resilienz', 'Pfad innerhalb von within bzw. ohne within aufgelöst');
+check(cat.resolve('Politik > Resilienz')?.path === 'Allgemeine Tags → Politik → Sicherheitspolitik → Resilienz' && cat.resolve('Cyber Security > Resilienz')?.path === 'Cyber → Cyber Security → Resilienz', 'Teilpfad engt Doppelnamen über die Vorsegmente ein');
+check(cat.resolve('Cyber Security', 'Cyber')?.path === 'Cyber → Cyber Security' && cat.resolve('Cyber Security', 'CyberX') === null, 'within gilt für Pfadsegmente, nicht für Zeichenpräfixe');
+check(normalizePath('Cyber / Cyberangriff › Ransomware') === 'Cyber → Cyberangriff → Ransomware' && hasPathSeparator('A > B') && !hasPathSeparator('Ransomware'), 'normalizePath/hasPathSeparator');
+const selRes = buildSelection(cat, { structure: 'KriMiSi', sourceType: 'Nachrichtenseite', locations: ['Österreich'], topics: [fullRes, 'Cyber > Cyber Security > Resilienz'], ki: false, wb: 'none' });
+check(selRes.topics[0] === 'Allgemeine Tags → Politik → Sicherheitspolitik → Resilienz' && selRes.topics[1] === 'Cyber → Cyber Security → Resilienz' && selRes.warnings.length === 0, 'buildSelection: beide Resilienz-Pfade landen beim richtigen Tag: ' + JSON.stringify(selRes.topics));
+
+// Befund 37: Geo-Aliasse – Kurzform vor der Klammer und Klammerinhalt, Komma-Umstellung; keine 3-Buchstaben-Codes
+const geo = (n) => cat.resolve(n, PATH_GEO)?.path.split(' → ').pop() ?? null;
+check(geo('Belarus') === 'Belarus (Weißrussland)' && geo('Weißrussland') === 'Belarus (Weißrussland)' && geo('weissrussland') === null, 'Alias Belarus/Weißrussland (Umlaute wie gehabt)');
+check(geo('Myanmar') === 'Myanmar (Burma)' && geo('Burma') === 'Myanmar (Burma)' && geo('Hongkong') === 'Hongkong (CHN)' && geo('Grönland') === 'Grönland (DNK)' && geo('Ostsee') === 'Baltisches Meer (Ostsee)' && geo('Elfenbeinküste') === 'Cote d\'Ivoire (Elfenbeinküste)' && geo('Donbass') === 'Donezk und Lugansk (Donbass)', 'Aliasse Myanmar/Burma, Hongkong, Grönland, Ostsee, Elfenbeinküste, Donbass');
+check(geo('Hongkong (China)') === 'Hongkong (CHN)' && geo('Belarus (Weißrussland)') === 'Belarus (Weißrussland)', 'Eingabe mit eigenem Klammerzusatz wird ohne Klammer aufgelöst');
+check(geo('GBR') === null && geo('CHN') === null && geo('USA') === 'USA', '3-Buchstaben-Ländercodes sind keine Aliasse, „USA“ bleibt ein echter Name');
+check(geo('Demokratische Republik Kongo') === 'Kongo, Demokratische Republik' && geo('Republik der Kongo') === 'Kongo, Republik der' && geo('Kongo, Demokratische Republik') === 'Kongo, Demokratische Republik' && geo('Kongo') === null, 'Komma-Umstellung („Demokratische Republik Kongo“); bloßes „Kongo“ bleibt mehrdeutig → null');
+check(JSON.stringify(nameAliases('Kongo, Demokratische Republik')) === '["demokratische republik kongo"]' && JSON.stringify(nameAliases('Anguilla (GBR)')) === '["anguilla"]' && nameAliases('USA').length === 0, 'nameAliases');
+const selGeo = buildSelection(cat, { structure: 'Cyber', sourceType: 'Nachrichtenseite', locations: ['Belarus', 'Ostsee'], topics: [], ki: false, wb: 'none' });
+check(selGeo.locations.length === 2 && selGeo.locations[0].endsWith('Belarus (Weißrussland)') && selGeo.locations[1].endsWith('Baltisches Meer (Ostsee)') && !selGeo.warnings.some((w) => /Ort/.test(w)), 'buildSelection: Kurzformen werden ohne Warnung zu Orten');
+
+// Befund 38: geoText trennt mit "; "
+const geoLines = cat.geoText();
+check(GEO_LIST_SEP === '; ' && /^Afrika: .*; Kongo, Demokratische Republik; Kongo, Republik der; /m.test(geoLines) && !/^Afrika: .*Ägypten, Algerien/m.test(geoLines), 'geoText: Kongo-Namen bleiben je ein Eintrag');
 
 const sel = buildSelection(cat, {
   structure: 'Cyber',

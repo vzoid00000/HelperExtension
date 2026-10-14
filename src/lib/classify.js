@@ -40,6 +40,26 @@ const SCHEMA = {
   additionalProperties: false
 };
 
+/** Erlaubte Kategorien (Enum des Schemas). Der lokale Pfad prüft die Antwort nicht gegen das Schema. */
+export const CATEGORIES = ['cyber', 'krimisi', 'none'];
+const clampScore = (s) => Math.max(0, Math.min(10, Math.round(Number(s) || 0)));
+
+/**
+ * Ein Modell-Ergebnis auf das Schema normalisieren: category kleingeschrieben und auf das Enum
+ * geprüft (sonst 'none' mit Hinweis in reason), score auf 0–10 geklemmt, reason als String.
+ */
+export function normalizeResult(r) {
+  const rawCategory = String(r?.category ?? '').trim();
+  const category = rawCategory.toLowerCase();
+  const valid = CATEGORIES.includes(category);
+  const reason = String(r?.reason || '');
+  return {
+    category: valid ? category : 'none',
+    score: clampScore(r?.score),
+    reason: valid ? reason : `ungültige Kategorie „${rawCategory.slice(0, 40)}“${reason ? ' – ' + reason : ''}`
+  };
+}
+
 const oneLine = (s) => String(s || '').replace(/\s+/g, ' ').trim();
 const shorten = (s, max) => {
   const t = oneLine(s);
@@ -74,12 +94,13 @@ export async function classifyItems(items, settings, onProgress = () => {}, opts
     onProgress(`Relevanzprüfung ${Math.min(i + BATCH_SIZE, items.length)}/${items.length} …`);
     const user = `${batch.length} Meldungen (Format "#id|Quelle|Schwerpunkt der Quelle: Titel — Teaser"):\n${batch.map(classifyLine).join('\n')}`;
     const data = await llmJson(settings, system, user, SCHEMA, { maxTokens: 8000, effort: 'medium' });
-    for (const r of data.results || []) {
-      result.set(r.id, {
-        category: r.category,
-        score: Math.max(0, Math.min(10, Math.round(Number(r.score) || 0))),
-        reason: String(r.reason || '')
-      });
+    // Nur ids des aktuellen Batches übernehmen – eine fremde id würde sonst das Ergebnis eines
+    // anderen Batches überschreiben; Kategorie/Score auf das Schema normalisieren (lokaler Pfad).
+    const batchIds = new Set(batch.map((it) => it.id));
+    for (const r of (Array.isArray(data?.results) ? data.results : [])) {
+      const id = Number(r?.id);
+      if (!batchIds.has(id)) continue;
+      result.set(id, normalizeResult(r));
     }
     for (const it of batch) {
       if (!result.has(it.id)) result.set(it.id, { category: 'none', score: 0, reason: 'keine Bewertung erhalten' });

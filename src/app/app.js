@@ -5,6 +5,11 @@
 // sprechen sich über ctx.views.<name> an (z. B. öffnet der Verlauf den Regel-Dialog). Der Hash
 // spiegelt die Ansicht (#lauf, #quellen, #verlauf, #regeln, #einstellungen). Gespeichert wird in
 // OSDP nie automatisch – siehe views/run.js.
+//
+// Zeitplan: Der Hintergrund-Alarm schickt einem offenen App-Tab die Nachricht
+// { type: 'osdp-helper-autorun' } (kein Neuladen); nur ohne App-Tab wird app.html?autorun=1 geöffnet.
+// Der Query-Parameter wird nach dem Start sofort entfernt, damit ein Neuladen (F5) keinen neuen
+// Scan auslöst. Ein laufender Durchlauf wird vom Autorun nicht unterbrochen.
 
 import { loadSettings, llmMissing, DEFAULT_SETTINGS } from '../lib/settings.js';
 import { migrateSources, getSources } from '../lib/sources-store.js';
@@ -20,6 +25,8 @@ import * as settingsView from './views/settings.js';
 
 const VIEW_HASH = { run: 'lauf', sources: 'quellen', history: 'verlauf', rules: 'regeln', settings: 'einstellungen' };
 const VIEWS = Object.keys(VIEW_HASH);
+// Nachricht des Hintergrund-Alarms an einen offenen App-Tab (siehe src/background.js)
+export const AUTORUN_MESSAGE = 'osdp-helper-autorun';
 
 /** Gemeinsamer Zustand aller Ansichten. */
 export const ctx = {
@@ -70,6 +77,8 @@ export const ctx = {
     const stored = await chrome.storage.local.get(['autoState', 'processed']);
     if (stored.autoState) ctx.state = { ...ctx.state, ...stored.autoState };
     ctx.processed = stored.processed || {};
+    // Unterbrochene Läufe zurücksetzen, Altes entfernen, Verlaufs-Abgleich auffrischen
+    ctx.views.run?.onStateLoaded?.();
     renderAll();
   },
 
@@ -137,11 +146,34 @@ function bindStorage() {
     if (changes.history) {
       ctx.history = changes.history.newValue || [];
       ctx.views.history?.render();
+      // Meldungen „bereits eingetragen“ neu bestimmen (Verlauf gelöscht/ergänzt)
+      ctx.views.run?.onHistoryChanged?.();
     }
     if (changes.rules) {
       ctx.rules = changes.rules.newValue || [];
       ctx.views.rules?.render();
     }
+  });
+}
+
+// ------------------------------------------------------------- Autorun ----
+
+/** Zeitplan-Start (Scan + Relevanzprüfung) – nur, wenn gerade kein Lauf aktiv ist. */
+function startAutorunIfIdle() {
+  const run = ctx.views.run;
+  if (!run) return;
+  if (run.isRunning()) {
+    run.log('Zeitplan: Es läuft bereits ein Durchlauf – der automatische Start wurde übersprungen.', 'warn');
+    return;
+  }
+  run.startAutorun();
+}
+
+function bindMessages() {
+  if (!chrome.runtime?.onMessage) return;
+  chrome.runtime.onMessage.addListener((msg) => {
+    if (!msg || msg.type !== AUTORUN_MESSAGE) return;
+    startAutorunIfIdle();
   });
 }
 
@@ -167,9 +199,11 @@ async function init() {
 
   ctx.settings = await loadSettings();
   let migrated = false;
+  let migrationDropped = 0;
   try {
     const m = await migrateSources(ctx.settings);
     migrated = m.migrated;
+    migrationDropped = Number(m.dropped) || 0;
     ctx.sources = m.sources;
   } catch (e) {
     console.error(e);
@@ -189,15 +223,19 @@ async function init() {
 
   bindNavigation();
   bindStorage();
+  bindMessages();
   showView(viewFromHash(location.hash) || 'run');
   ctx.setAppStatus('Bereit', 'off');
-  if (migrated) toastOk('Quellen übernommen', `${ctx.sources.length} Quellen aus der alten Textliste in die Quellen-Verwaltung übernommen.`);
+  if (migrated) toastOk('Quellen übernommen', `${ctx.sources.length} Quellen aus der alten Textliste in die Quellen-Verwaltung übernommen.${migrationDropped ? ` ${migrationDropped} ungültige Zeile(n) wurden verworfen – bitte in der Quellen-Ansicht prüfen.` : ''}`);
 
   // Für Tests und Fehlersuche in der Konsole erreichbar
   globalThis.__app = { ctx };
 
-  const params = new URLSearchParams(location.search);
-  if (params.get('autorun') === '1') ctx.views.run.startAutorun();
+  // ?autorun=1 (Zeitplan ohne offenen App-Tab): Parameter sofort aus der URL entfernen, damit ein
+  // Neuladen (F5, Sitzungswiederherstellung) keinen weiteren Scan samt Relevanzprüfung auslöst
+  const autorun = new URLSearchParams(location.search).get('autorun') === '1';
+  if (location.search) window.history.replaceState(null, '', location.pathname + location.hash);
+  if (autorun) startAutorunIfIdle();
 }
 
 init().catch((e) => {

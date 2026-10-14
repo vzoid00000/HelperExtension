@@ -1,6 +1,8 @@
 // End-to-End gegen den OSDP-Nachbau (echte Angular-App aus dem HAR) mit geladener Extension:
-// Driver.fillArticle (ohne Save) → Freigabe-Leiste → „Save“ wird im OSDP-Tab geklickt (wie der Nutzer)
-// → waitForReview liefert 'saved' → POST /api/news prüfen → Formular leer.
+// Driver.precheckDuplicate (Quelle + Titel, Duplikat-Toast abwarten) → fillArticle({ editorPrepared: true })
+// ohne Save → Freigabe-Leiste → „Save“ wird im OSDP-Tab geklickt (wie der Nutzer) → waitForReview liefert
+// 'saved' per Nachricht des Beobachters → POST /api/news prüfen → Formular leer. Zum Schluss wird der
+// Nachbau mit overrides.json neu gestartet (checkURLDuplicates → 409) und precheckDuplicate meldet duplicate.
 // Läuft standalone: baut mock-osdp/ bei Bedarf aus site-dump/osdp.redacted.har und startet den
 // Nachbau-Server selbst (Port aus mock-osdp/api.json, sonst MOCK_PORT bzw. 4300).
 import fs from 'node:fs';
@@ -37,15 +39,31 @@ const BASE = `http://localhost:${port}`;
 const serverUp = async () => { try { return (await fetch(`${BASE}/__mock/log`)).ok; } catch { return false; } };
 let srv = null;
 let srvOut = '';
-if (!(await serverUp())) {
+const startServer = async () => {
   srv = spawn('node', [path.join(EXT, 'tools/mock-osdp-server.mjs'), '--dir', MOCK_DIR, '--port', String(port)], { stdio: ['ignore', 'pipe', 'pipe'] });
   srv.stdout.on('data', (d) => (srvOut += d));
   srv.stderr.on('data', (d) => (srvOut += d));
   for (let i = 0; i < 50 && !(await serverUp()); i++) await sleep(100);
+};
+const stopServer = async () => {
+  if (!srv) return;
+  srv.kill();
+  for (let i = 0; i < 50 && (await serverUp()); i++) await sleep(100);
+  srv = null;
+};
+// overrides.json wird nur beim Start des Nachbaus gelesen – eine vorhandene Datei bleibt erhalten
+const overridesFile = path.join(MOCK_DIR, 'overrides.json');
+const overridesBefore = fs.existsSync(overridesFile) ? fs.readFileSync(overridesFile, 'utf8') : null;
+const restoreOverrides = () => { if (overridesBefore === null) fs.rmSync(overridesFile, { force: true }); else fs.writeFileSync(overridesFile, overridesBefore); };
+let ownServer = false;
+if (!(await serverUp())) {
+  await startServer();
+  ownServer = true;
 }
 check(await serverUp(), `Nachbau-Server erreichbar: ${BASE}`);
 if (!(await serverUp())) { console.log(srvOut); srv?.kill(); process.exit(1); }
 const logStart = (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).length;
+const mockLog = async () => (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).slice(logStart);
 
 const catalog = JSON.parse(fs.readFileSync(`${EXT}/src/config/osdp-tags.json`, 'utf8'));
 const uidByPath = new Map();
@@ -76,7 +94,9 @@ const extId = new URL(sw.url()).host;
 
 const osdp = await context.newPage();
 const pageErrors = [];
+let loads = 0;
 osdp.on('pageerror', (e) => pageErrors.push(String(e).slice(0, 200)));
+osdp.on('load', () => loads++);
 await osdp.goto(`${BASE}/#/news`, { waitUntil: 'domcontentloaded' });
 await osdp.waitForTimeout(2000);
 
@@ -91,7 +111,8 @@ await app.evaluate(async (base) => {
   );
 }, BASE);
 
-// 4) Artikel komplett eintragen (ohne Save): Felder, CKEditor in drei Reitern, Metadata, Tags über Angular
+// 4) Vorab-Duplikatprüfung wie in der App (vor Übersetzung und Tagging): leerer Editor, Quelle + Titel,
+//    das Verlassen des Quellfelds löst POST /api/news/checkURLDuplicates aus; der Nachbau antwortet 200 → kein Duplikat
 const article = {
   url: 'https://news.example.com/2026/10/10/defence-contractor-breach',
   titleEn: 'Hackers breach European defence contractor',
@@ -100,11 +121,21 @@ const article = {
   textDe: 'Erster Absatz.\n\nZweiter Absatz.',
   author: 'Sergiu Example', authorUnknown: false, category: 'cyber', tagPaths: paths, tagUids: uids
 };
+const pre = await app.evaluate((a) => window.__driver.precheckDuplicate({ url: a.url, title: a.titleEn }), article);
+check(pre.ok && pre.duplicate === false && pre.prepared === true && pre.sourceValue === article.url && pre.titleValue === article.titleEn, 'precheckDuplicate ohne Treffer → prepared: ' + JSON.stringify({ ok: pre.ok, duplicate: pre.duplicate, prepared: pre.prepared, sourceValue: pre.sourceValue, error: pre.error }));
+const dupChecks = (await mockLog()).filter((l) => l.method === 'POST' && l.path === '/api/news/checkURLDuplicates');
+check(dupChecks.length >= 1 && dupChecks.some((l) => (l.body || '').includes(article.url)), `OSDP hat checkURLDuplicates für die Quelle aufgerufen (${dupChecks.length}×)`);
+const stateAfterPre = await app.evaluate(() => window.__driver.formState());
+check(stateAfterPre.hasContent && stateAfterPre.ours === true && stateAfterPre.sourceValue === article.url, 'formState nach precheck: Inhalt von uns: ' + JSON.stringify(stateAfterPre));
+
+// 5) Artikel im vorbereiteten Editor komplett eintragen (ohne Save, ohne Reload): Felder, CKEditor in drei Reitern, Metadata, Tags über Angular
+const loadsBefore = loads;
 const report = await app.evaluate(async (a) => {
-  const r = await window.__driver.fillArticle({ ...a, date: new Date(Date.UTC(2026, 9, 10, 12)) }, { save: false });
+  const r = await window.__driver.fillArticle({ ...a, date: new Date(Date.UTC(2026, 9, 10, 12)) }, { save: false, editorPrepared: true });
   return { ...r, steps: Object.fromEntries(Object.entries(r.steps).map(([k, v]) => [k, { ...v, structure: undefined }])) };
 }, article);
-check(report.ok && report.problems.length === 0, 'fillArticle ohne Save: ' + JSON.stringify(report.problems) + ' | Log: ' + JSON.stringify(await app.evaluate(() => window.__log)));
+check(report.ok && report.problems.length === 0, 'fillArticle(editorPrepared) ohne Save: ' + JSON.stringify(report.problems) + ' | Log: ' + JSON.stringify(await app.evaluate(() => window.__log)));
+check(loads === loadsBefore, `Editor wurde dabei nicht neu geladen (${loads - loadsBefore} Reload)`);
 check(report.steps.native?.ok && report.steps.native.sourceValue === article.url, 'Native: ' + JSON.stringify(report.steps.native));
 check(report.steps.nativeContent?.ok && report.steps.enContent?.ok && report.steps.deContent?.ok, 'CKEditor in Native/English/German gesetzt');
 check(report.steps.en?.ok && report.steps.de?.ok, 'Übersetzte Titel gesetzt');
@@ -115,29 +146,34 @@ check(report.saved === undefined && !report.duplicate, 'Nicht gespeichert (kein 
 const wbChildChecked = await osdp.evaluate(() => [...document.querySelectorAll('mat-tree-node')].filter((n) => /\[WB-C\]/.test(n.textContent)).map((n) => n.querySelector('input')?.checked));
 check(wbChildChecked.every((c) => !c), 'WB-Cyber-Untertags nicht ausgewählt (' + wbChildChecked.length + ' sichtbar)');
 
-// 5) Zusätzlicher Tag per DOM-Klick (Fallback gegen den echten Baum) – wie eine Nachkorrektur
+// 6) Zusätzlicher Tag per DOM-Klick (Fallback gegen den echten Baum) – wie eine Nachkorrektur
 const domRes = await app.evaluate(() => window.__driver.applyTags({ paths: ['KriMiSi → Militär → Cyberstreitkräfte'] }));
 check(domRes.ok && domRes.method === 'dom' && domRes.chips.includes('Cyberstreitkräfte'), 'applyTags per DOM ' + JSON.stringify({ method: domRes.method, applied: domRes.applied, failed: domRes.failed }));
 await app.evaluate(() => window.__driver.exec('selectTab', { group: 'native', tab: '^\\s*native\\s*$' }));
-const noPost = (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).slice(logStart).some((l) => l.method === 'POST' && l.path === '/api/news');
+const noPost = (await mockLog()).some((l) => l.method === 'POST' && l.path === '/api/news');
 check(!noPost, 'Bis hierher kein POST /api/news (nichts automatisch gespeichert)');
 
-// 6) Freigabe: Leiste sichtbar, dann „Save“ im OSDP-Tab klicken wie der Nutzer → waitForReview = saved
-const pending = app.evaluate(() => window.__driver.waitForReview({ index: 1, total: 1, title: 'Hackers breach European defence contractor', structure: 'Cyber', wb: 'WB-Cyber', pollMs: 300, timeoutMs: 30000 }));
+// 7) Freigabe: Leiste sichtbar, dann „Save“ im OSDP-Tab klicken wie der Nutzer → waitForReview = saved.
+//    pollMs 5000: das Ergebnis muss über die Nachricht des Beobachters kommen, nicht über das Polling.
+//    Der OSDP-Tab kommt wie in der App in den Vordergrund (Chrome drosselt Timer in Hintergrund-Tabs).
+await app.evaluate(() => window.__driver.focusTab());
+const pending = app.evaluate(() => window.__driver.waitForReview({ index: 1, total: 1, title: 'Hackers breach European defence contractor', structure: 'Cyber', wb: 'WB-Cyber', pollMs: 5000, timeoutMs: 30000 }));
 const bar = osdp.locator('#osdp-helper-bar');
 await bar.waitFor({ timeout: 5000 });
 const barText = await bar.evaluate((h) => [...h.shadowRoot.querySelector('.bar').children].map((c) => c.textContent.trim()).filter(Boolean).join(' '));
 check(/OSDP News Helper · 1\/1 · Hackers breach European defence contractor Cyber WB-Cyber/.test(barText), 'Freigabe-Leiste im OSDP-Tab: "' + barText + '"');
 await osdp.waitForTimeout(800);
+const clickedAt = Date.now();
 await osdp.getByRole('button', { name: /^\s*save\s*$/i }).first().click();
 const review = await pending;
-check(review.outcome === 'saved', 'waitForReview nach Save-Klick: ' + JSON.stringify({ outcome: review.outcome, reason: review.reason, tookMs: review.tookMs, toasts: review.toasts.map((t) => t.message) }));
+const sinceClick = Date.now() - clickedAt;
+check(review.outcome === 'saved' && review.via === 'message' && sinceClick < 4000, `waitForReview nach Save-Klick (${sinceClick} ms nach dem Klick): ` + JSON.stringify({ outcome: review.outcome, reason: review.reason, via: review.via, tookMs: review.tookMs, toasts: review.toasts.map((t) => t.message) }));
 check(review.chips.includes('Cyberstreitkräfte') && review.chips.includes('[S]1 Cyber') && review.chips.includes('WB-Cyber'), 'Chips vor dem Reset erfasst (inkl. Nachkorrektur): ' + review.chips.join(', '));
 check(review.toasts.some((t) => t.message === 'Item Added!'), 'Toast „Item Added!“ gesehen');
 check((await bar.count()) === 0, 'Leiste nach der Freigabe entfernt');
 
-// 7) POST /api/news im Mock prüfen
-const log = (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).slice(logStart);
+// 8) POST /api/news im Mock prüfen
+const log = await mockLog();
 const post = log.filter((l) => l.method === 'POST' && l.path === '/api/news').pop();
 check(!!post, 'POST /api/news aufgezeichnet');
 if (post) {
@@ -152,9 +188,31 @@ if (post) {
   check(body.article_source === article.url, 'Payload Quelle');
 }
 
-// 8) Nach dem Speichern: Formular leer, freshEditor braucht keinen Reload
+// 9) Nach dem Speichern: Formular leer, freshEditor braucht keinen Reload
 const after = await app.evaluate(async () => ({ probe: await window.__driver.probe(), dirty: window.__driver.formDirty }));
 check(after.probe && !after.probe.sourceValue && !after.probe.titleValue && !(after.probe.chips || []).length && after.dirty === false, 'Formular nach Save geleert (sourceValue="' + after.probe?.sourceValue + '", chips=' + (after.probe?.chips || []).length + ')');
+
+// 10) Duplikat: Nachbau mit overrides.json neu starten – POST /api/news/checkURLDuplicates antwortet 409 wie OSDP
+//     bei einer bekannten URL (Frontend: catchError → duplicateURLError → Toast „Duplicate, URL already in the database!“).
+//     Die Angular-App bleibt dabei geladen; nur die API-Antworten kommen vom neuen Server.
+if (ownServer) {
+  try {
+    await stopServer();
+    fs.writeFileSync(overridesFile, JSON.stringify({ 'POST /api/news/checkURLDuplicates': { status: 409, body: { error: 'Duplicate' } } }, null, 1));
+    await startServer();
+    check(await serverUp(), 'Nachbau mit Duplicate-Override neu gestartet');
+    const dupBefore = loads;
+    const dup = await app.evaluate(() => window.__driver.precheckDuplicate({ url: 'https://news.example.com/2026/10/11/already-in-osdp', title: 'Already in OSDP' }));
+    check(dup.ok && dup.duplicate === true && dup.prepared === false && dup.toasts.some((t) => t.kind === 'error' && /Duplicate, URL already/i.test(t.message)), 'precheckDuplicate bei 409 → duplicate, nicht prepared: ' + JSON.stringify({ duplicate: dup.duplicate, prepared: dup.prepared, toasts: dup.toasts.map((t) => t.message) }));
+    check(loads === dupBefore && (await app.evaluate(() => window.__driver.formDirty)) === true, 'Leerer Editor nach dem Save ohne Reload genutzt, danach formDirty (nächste Meldung lädt neu)');
+    const dupLog = (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).filter((l) => l.method === 'POST' && l.path === '/api/news/checkURLDuplicates');
+    check(dupLog.length >= 1 && dupLog.every((l) => l.what === 'override'), `Override hat geantwortet (${dupLog.length}× checkURLDuplicates)`);
+  } finally {
+    restoreOverrides();
+  }
+} else {
+  console.log('SKIP Duplicate-Override: der Nachbau-Server lief schon vor dem Test (overrides.json wird nur beim Start gelesen)');
+}
 console.log('Seitenfehler:', pageErrors.slice(0, 5));
 await osdp.screenshot({ path: path.join(os.tmpdir(), 'osdp-test.png') }).catch(() => {});
 

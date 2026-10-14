@@ -110,7 +110,7 @@
                 <button type="button" class="btn btn-outline" id="btnClassify">Relevanz prüfen</button>
                 <button type="button" class="btn btn-outline" id="btnProcess">Ausgewählte eintragen</button>
                 <span class="spacer"></span>
-                <button type="button" class="btn btn-outline btn-destructive" id="btnStop" disabled><svg class="icon"><use href="#i-stop"/></svg>Stopp</button>
+                <button type="button" class="btn btn-outline btn-destructive" id="btnStop" disabled title="Beendet den Lauf nach dem laufenden Schritt. Während der Freigabe wie „Abbrechen“: Die Meldung bleibt ausgewählt, das ausgefüllte Formular wird beim nächsten Lauf verworfen."><svg class="icon"><use href="#i-stop"/></svg>Stopp</button>
               </div>
               <div class="url-row">
                 <input type="url" class="input" id="addUrl" placeholder="Artikel-URL manuell hinzufügen" autocomplete="off" spellcheck="false">
@@ -137,13 +137,13 @@
                   <div class="review-actions">
                     <button type="button" class="btn btn-primary" id="btnReviewFocus"><svg class="icon"><use href="#i-external"/></svg>OSDP-Tab anzeigen</button>
                     <button type="button" class="btn btn-secondary" id="btnReviewSkip"><svg class="icon"><use href="#i-skip"/></svg>Überspringen</button>
-                    <button type="button" class="btn btn-outline" id="btnReviewMarkSaved"><svg class="icon"><use href="#i-check"/></svg>Als gespeichert markieren</button>
-                    <button type="button" class="btn btn-destructive" id="btnReviewAbort"><svg class="icon"><use href="#i-x"/></svg>Abbrechen</button>
+                    <button type="button" class="btn btn-outline" id="btnReviewMarkSaved" title="Nur, wenn du in OSDP schon auf Save geklickt hast und die Extension es nicht erkannt hat. Speichert nichts in OSDP, trägt die Meldung aber als eingetragen in den Verlauf ein."><svg class="icon"><use href="#i-check"/></svg>Als gespeichert markieren</button>
+                    <button type="button" class="btn btn-destructive" id="btnReviewAbort" title="Lauf beenden. Die Meldung bleibt ausgewählt, das ausgefüllte Formular wird beim nächsten Lauf verworfen."><svg class="icon"><use href="#i-x"/></svg>Abbrechen</button>
                   </div>
                 </div>
                 <div class="alert alert-info">
                   <svg class="icon"><use href="#i-info"/></svg>
-                  <div>Prüfe das Formular im OSDP-Tab und klicke dort auf Save – die Extension erkennt das Speichern und macht mit der nächsten Meldung weiter.</div>
+                  <div>Prüfe das Formular im OSDP-Tab und klicke dort auf Save – die Extension erkennt das Speichern und macht mit der nächsten Meldung weiter. „Als gespeichert markieren“ nur, wenn OSDP schon gespeichert hat und die Extension es nicht erkannt hat: Es speichert nichts in OSDP, trägt die Meldung aber in den Verlauf ein.</div>
                 </div>
               </div>
             </div>
@@ -164,18 +164,18 @@
             </div>
             <div class="card-content stack">
               <nav class="tabs" id="itemsFilter" aria-label="Filter">
-                <button type="button" class="tab active" data-filter="relevant">Relevant <span class="tab-count" data-count></span></button>
-                <button type="button" class="tab" data-filter="all">Alle <span class="tab-count" data-count></span></button>
-                <button type="button" class="tab" data-filter="selected">Ausgewählt <span class="tab-count" data-count></span></button>
-                <button type="button" class="tab" data-filter="done">Eingetragen <span class="tab-count" data-count></span></button>
-                <button type="button" class="tab" data-filter="error">Fehler <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab active" data-filter="relevant" title="Relevante, laufende, wartende und übersprungene Meldungen">Relevant <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="all" title="Alle Meldungen des Bereichs">Alle <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="selected" title="Angehakte Meldungen">Ausgewählt <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="done" title="Eingetragen, bereits im Verlauf oder Duplikat in OSDP">Eingetragen <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="error" title="Fehler und zu alte Artikel">Fehler <span class="tab-count" data-count></span></button>
               </nav>
               <div class="table-wrap">
                 <table class="table" id="itemsTable">
                   <thead>
                     <tr>
                       <th class="col-check"><input type="checkbox" class="checkbox" id="itemsSelectAll" aria-label="Alle sichtbaren auswählen"></th>
-                      <th class="col-area">Bereich</th>
+                      <th class="col-area" title="Cyber oder KriMiSi – aus der Relevanzprüfung, sonst Schwerpunkt der Quelle">Bereich</th>
                       <th class="col-score num">Score</th>
                       <th class="col-wb">WB</th>
                       <th class="col-date">Datum</th>
@@ -382,7 +382,7 @@
                   <thead>
                     <tr>
                       <th class="col-time">Zeit</th>
-                      <th class="col-structure">Struktur</th>
+                      <th class="col-structure" title="Struktur-Tag in OSDP (Cyber / KriMiSi / InnoTech) – entspricht dem Bereich">Struktur</th>
                       <th class="col-wb">WB</th>
                       <th>Titel</th>
                       <th class="col-source">Quelle</th>
@@ -431,7 +431,7 @@
                   <thead>
                     <tr>
                       <th class="col-switch">Aktiv</th>
-                      <th>Bereich</th>
+                      <th title="Gilt für: in welchem Prompt die Regel mitgegeben wird (Tagging, Relevanz oder Übersetzung) – nicht Cyber/KriMiSi">Bereich</th>
                       <th class="col-rule">Regel</th>
                       <th class="col-reason">Begründung</th>
                       <th class="col-example">Beispiel</th>
@@ -459,7 +459,7 @@
               </div>
               <div class="dialog-body">
                 <div class="field">
-                  <label class="label" for="ruleScope">Bereich</label>
+                  <label class="label" for="ruleScope">Gilt für</label>
                   <select class="select" id="ruleScope">
                     <option value="tagging">Tagging</option>
                     <option value="relevance">Relevanz</option>
@@ -468,7 +468,8 @@
                 </div>
                 <div class="field">
                   <label class="label" for="ruleText">Regel</label>
-                  <textarea class="textarea" id="ruleText" rows="3" placeholder="z. B. Meldungen über DDoS-Angriffe auf Behörden immer mit „Cyberangriff → DDoS“ taggen, nicht nur mit „Behörde“."></textarea>
+                  <textarea class="textarea" id="ruleText" rows="3" placeholder="z. B. Bei DDoS-Angriffen auf Behörden immer „Cyber > Cyberangriff > DoS bzw. DDoS“ vergeben, nicht nur den Übertag „Cyberangriff“."></textarea>
+                  <div class="hint">Tags genau so schreiben wie im OSDP-Tag-Baum, z. B. „Cyber > Cyberangriff > Schadsoftware > Ransomware“.</div>
                 </div>
                 <div class="field">
                   <label class="label" for="ruleReason">Begründung <span class="muted">(optional)</span></label>
@@ -623,7 +624,7 @@
                     <div class="field span-2">
                       <label class="label" for="autoRunTime">Täglicher Start (Mo–Fr)</label>
                       <input type="time" class="input" id="autoRunTime">
-                      <div class="hint">Leer = kein Zeitplan. Chrome muss zu dieser Zeit laufen; die App öffnet sich und startet die Automatik für den Bereich Cyber.</div>
+                      <div class="hint">Leer = kein Zeitplan. Chrome muss zu dieser Zeit laufen; die App öffnet sich (ein offener App-Tab wird weiterverwendet), scannt die Quellen und prüft die Relevanz für den zuletzt gewählten Bereich. Eingetragen wird erst, wenn du „Ausgewählte eintragen“ klickst.</div>
                     </div>
                   </div>
                   <div class="switch-row">
@@ -698,7 +699,7 @@
                   <div class="switch-row">
                     <div>
                       <div class="label">Reiter „English Translated“ befüllen</div>
-                      <div class="hint">Mit dem englischen Original.</div>
+                      <div class="hint">Mit dem englischen Original. OSDP verlangt den Reiter beim Speichern – nur ausschalten, wenn du ihn selbst befüllst.</div>
                     </div>
                     <input type="checkbox" class="switch" id="fillEnglishTab">
                   </div>
@@ -742,7 +743,7 @@
                     <button type="button" class="btn btn-outline btn-sm" id="btnImportData"><svg class="icon"><use href="#i-upload"/></svg>Daten importieren</button>
                     <input type="file" id="fileImport" accept="application/json,.json" hidden>
                   </div>
-                  <div class="hint">Der Export enthält auch API-Keys – Datei nicht weitergeben. Beim Import werden vorhandene Daten ersetzt.</div>
+                  <div class="hint">Enthält der Export API-Keys, die Datei nicht weitergeben. Beim Import werden die Einstellungen überschrieben; Quellen, Regeln, Verlauf und erledigte URLs werden ergänzt – vorhandene Einträge bleiben erhalten, gleiche werden übersprungen, gelöscht wird nichts. Leere API-Keys in der Datei überschreiben vorhandene nicht.</div>
                 </div>
               </div>
             </div>
