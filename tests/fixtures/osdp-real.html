@@ -131,17 +131,38 @@
     if (cb.checked) { const c = document.createElement('mat-chip'); c.textContent = label; chips.append(c); }
     window.__events.push(['tag', label, cb.checked]);
   }));
-  // Save → Spinner, Snackbar, Formular leeren
+  // Toast wie ngx-toastr (#toast-container, Klassen toast-success/toast-error); verschwindet nach ttlMs (OSDP: 10 s)
+  window.__showToast = (kind, title, message, ttlMs = 4000) => {
+    let tc = document.getElementById('toast-container');
+    if (!tc) { tc = document.createElement('div'); tc.id = 'toast-container'; tc.className = 'toast-bottom-right'; document.body.append(tc); }
+    const toast = document.createElement('div'); toast.className = 'ngx-toastr toast-' + kind;
+    const t = document.createElement('div'); t.className = 'toast-title'; t.textContent = title;
+    const m = document.createElement('div'); m.className = 'toast-message'; m.textContent = message;
+    toast.append(t, m); tc.append(toast);
+    setTimeout(() => toast.remove(), ttlMs);
+    return toast;
+  };
+  // Formular leeren wie OSDPs resetArticleForm: Felder, Editoren, Tags/Chips, erster Reiter aktiv
+  window.__resetForm = () => {
+    document.querySelectorAll('input[formcontrolname]').forEach((el) => (el.value = ''));
+    document.querySelectorAll('.ck-editor__editable').forEach((ed) => (ed.innerHTML = '<p><br></p>'));
+    document.querySelectorAll('mat-tree-node input[type=checkbox]').forEach((cb) => (cb.checked = false));
+    document.querySelector('.mdc-evolution-chip-set__chips').innerHTML = '';
+    window.__formValues = {};
+    document.querySelectorAll('mat-tab-group').forEach((group) => {
+      const tabs = [...group.querySelectorAll('.mat-mdc-tab')].filter((t) => t.closest('mat-tab-group') === group);
+      const bodies = [...group.querySelectorAll('mat-tab-body')].filter((b) => b.closest('mat-tab-group') === group);
+      tabs.forEach((t, i) => { t.classList.toggle('mdc-tab--active', i === 0); t.setAttribute('aria-selected', String(i === 0)); bodies[i].classList.toggle('mat-mdc-tab-body-active', i === 0); });
+    });
+  };
+  // Save → Spinner, Erfolgs-Toast „Item Added!“, Formular leeren (wie OSDP nach POST /api/news)
   document.getElementById('btnSave').addEventListener('click', () => {
     window.__events.push(['save', JSON.stringify(window.__formValues)]);
     const ov = document.querySelector('.ngx-spinner-overlay'); ov.style.display = 'block';
     setTimeout(() => {
       ov.style.display = 'none';
-      // wie OSDP (ngx-toastr): Erfolgs-Toast „Item Added!“
-      let tc = document.getElementById('toast-container');
-      if (!tc) { tc = document.createElement('div'); tc.id = 'toast-container'; document.body.append(tc); }
-      const toast = document.createElement('div'); toast.className = 'ngx-toastr toast-success'; toast.innerHTML = '<div class="toast-title">Success</div><div class="toast-message">Item Added!</div>'; tc.append(toast);
-      document.querySelectorAll('input[formcontrolname]').forEach((el) => (el.value = ''));
+      window.__showToast('success', 'Success', 'Item Added!');
+      window.__resetForm();
     }, 600);
   });
   // Extract → Titel + Inhalt füllen

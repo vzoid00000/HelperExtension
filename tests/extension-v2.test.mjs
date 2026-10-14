@@ -21,8 +21,9 @@ if (!sw) sw = await context.waitForEvent('serviceworker', { timeout: 15000 });
 const extId = new URL(sw.url()).host;
 check(!!extId, 'Extension geladen: ' + extId);
 
-// 1) Extension-Seiten ohne Konsolenfehler
-for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'src/auto/auto.html']) {
+// 1) App-Seite (v0.6: eine Seite für alle Ansichten) ohne Konsolenfehler
+const APP = `chrome-extension://${extId}/src/app/app.html`;
+for (const p of ['src/app/app.html']) {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
@@ -30,17 +31,15 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
   await page.goto(`chrome-extension://${extId}/${p}`);
   await page.waitForTimeout(900);
   check(errors.length === 0, `${p} ohne Fehler ${errors.length ? JSON.stringify(errors) : ''}`);
-  if (p.includes('auto')) {
-    const rows = await page.locator('#sourcesTable tbody tr').count();
-    check(rows >= 20, `Automatik-Seite zeigt ${rows} Quellen`);
-  }
+  const rows = await page.locator('#sourcesManageTable tbody tr').count();
+  check(rows >= 20, `App-Seite zeigt ${rows} Quellen in der Quellen-Verwaltung`);
   await page.close();
 }
 
 // 2) Feed-Parsing + Link-Harvesting innerhalb der Extension-Seite (Module importierbar)
 {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/src/auto/auto.html`);
+  await page.goto(APP);
   const r = await page.evaluate(async () => {
     const { parseFeed } = await import('../lib/feeds.js');
     const rss = `<?xml version="1.0"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/"><channel><title>T</title>
@@ -70,7 +69,7 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
 // 3) Extractor auf DOMParser-Dokument (ohne Layout)
 {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/src/auto/auto.html`);
+  await page.goto(APP);
   const html = fs.readFileSync(path.join(FIX, 'article.html'), 'utf8');
   const r = await page.evaluate((h) => {
     const doc = new DOMParser().parseFromString(h, 'text/html');
@@ -138,7 +137,7 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
 // 5) Zeitplan-Berechnung
 {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/src/auto/auto.html`);
+  await page.goto(APP);
   const r = await page.evaluate(async () => {
     const { nextWeekdayRun } = await import('../background.js');
     const fri = new Date(2026, 9, 9, 9, 0); // Fr 09:00

@@ -1,6 +1,10 @@
 // Zentrale Defaults und Zugriff auf die Einstellungen (chrome.storage.local).
+//
+// Die Quellen-Liste liegt seit v0.6 als Array `settings.sources` vor (Verwaltung in
+// lib/sources-store.js). `sourcesText` bleibt nur für die einmalige Migration alter
+// Einstellungen erhalten; `autoSave` gibt es nicht mehr (die Extension speichert nie selbst).
 
-import { DEFAULT_SOURCES, parseSourcesText } from './sources.js';
+export { getSources } from './sources-store.js';
 
 export const DEFAULT_SETTINGS = {
   // Sprachmodell für Relevanzprüfung und Tagging: 'claude' | 'local'
@@ -31,9 +35,9 @@ export const DEFAULT_SETTINGS = {
   autoTags: true,               // Tags per Modell nach dem Tagging-Handbuch vergeben
 
   // Automatik
-  sourcesText: '',              // leer = Standardquellen (lib/sources.js)
+  sources: [],                  // Quellen-Objekte (leer = Standardquellen aus lib/sources.js)
+  sourcesText: '',              // veraltet: nur noch für die Migration alter Einstellungen
   minScore: 6,                  // Relevanz-Schwelle 0–10
-  autoSave: true,               // nach dem Ausfüllen automatisch „Save“ klicken
   maxItemsPerRun: 25,
   autoRunTime: ''               // z. B. "08:00" → Mo–Fr automatisch starten; leer = aus
 };
@@ -45,12 +49,6 @@ export async function loadSettings() {
 
 export async function saveSettings(settings) {
   await chrome.storage.local.set({ settings });
-}
-
-/** Aktive Quellen-Liste (aus den Einstellungen oder Defaults). */
-export function getSources(settings) {
-  const custom = settings.sourcesText ? parseSourcesText(settings.sourcesText) : [];
-  return custom.length ? custom : DEFAULT_SOURCES;
 }
 
 /** Ist das Sprachmodell für Relevanzprüfung/Tagging konfiguriert? Liefert '' oder eine Fehlermeldung. */

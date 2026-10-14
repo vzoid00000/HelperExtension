@@ -1,30 +1,22 @@
 // Relevanzprüfung von Schlagzeilen: Welche Meldungen gehören in
 // „Cyber“ bzw. „KriMiSi“ und sind wichtig genug?
+// Token-sparsam: kompakte Eingabezeilen (Teaser ≤ 160 Zeichen), 50 Meldungen je Anfrage,
+// Begründung ≤ 12 Wörter. Das Regelwerk des Bearbeiters (rulesText) wird an den System-Prompt angehängt.
 
 import { llmJson } from './llm.js';
 
-const BATCH_SIZE = 40;
+export const BATCH_SIZE = 50;
+export const SUMMARY_MAX = 160;
 
-const SYSTEM = `Du bist Analyst in einer österreichischen Behörde und sichtest englischsprachige Nachrichten für ein Dokumentationssystem mit zwei Bereichen.
+const SYSTEM = `Du sichtest für eine österreichische Behörde englische Schlagzeilen für ein Dokumentationssystem mit zwei Bereichen.
 
-BEREICH "cyber":
-- Cyberangriffe mit internationaler, europäischer oder österreichischer Relevanz: Angriffe auf Staaten, Behörden, kritische Infrastruktur, Militär, große Unternehmen, Lieferketten; Ransomware mit großer Wirkung; staatlich gesteuerte Hackergruppen (APT); Spionage; große Datenlecks
-- Aktiv ausgenutzte, weit verbreitete Schwachstellen und Notfall-Warnungen (z. B. CISA, ENISA, BSI)
-- Aufstockung, Aufbau oder Verbesserung von Cyberabwehr-Systemen: neue Cyber-Einheiten, Strategien, Gesetze, große Investitionen, internationale Cyber-Kooperationen
+"cyber": Cyberangriffe mit internationaler, europäischer oder österreichischer Relevanz (auf Staaten, Behörden, kritische Infrastruktur, Militär, große Unternehmen, Lieferketten; Ransomware mit großer Wirkung; staatliche Hackergruppen/APT; Spionage; große Datenlecks); aktiv ausgenutzte, weit verbreitete Schwachstellen und Notfall-Warnungen (CISA, ENISA, BSI); Aufbau oder Ausbau von Cyberabwehr (neue Einheiten, Strategien, Gesetze, große Investitionen, internationale Cyber-Kooperation).
 
-BEREICH "krimisi" (Krisen, Militär, Sicherheit):
-- Kriege, Kampfhandlungen, militärische Operationen, Waffenlieferungen, Truppenverlegungen, Rüstung, Verteidigungsbudgets, Übungen/Manöver
-- Anschläge und Terror mit internationaler Bedeutung, Putsche, schwere Krisen und Unruhen, Sanktionen im Sicherheitskontext
-- Wichtige diplomatische Treffen, Gipfel, Verhandlungen, Abkommen und Waffenstillstände (NATO, EU, UNO, OSZE, bilaterale Treffen von Staats-/Regierungschefs, Außen- und Verteidigungsministern)
+"krimisi" (Krisen, Militär, Sicherheit): Kriege, Kampfhandlungen, Militäroperationen, Waffenlieferungen, Truppenverlegungen, Rüstung, Verteidigungsbudgets, Übungen; Anschläge und Terror von internationaler Bedeutung, Putsche, schwere Krisen und Unruhen, Sanktionen im Sicherheitskontext; wichtige Treffen, Gipfel, Verhandlungen, Abkommen und Waffenstillstände (NATO, EU, UNO, OSZE, Staats-/Regierungschefs, Außen-/Verteidigungsminister).
 
-NICHT relevant ("none"): Sport, Unterhaltung, Lokalkriminalität ohne internationale Bedeutung, Wirtschaft ohne Sicherheitsbezug, Produkttests, reine Meinungsbeiträge, Lifestyle, Wetter, Klatsch, allgemeine Technik-News ohne Sicherheitsbezug.
+"none": Sport, Unterhaltung, Lokalkriminalität, Wirtschaft oder Technik ohne Sicherheitsbezug, Produkttests, reine Meinung, Lifestyle, Wetter, Klatsch.
 
-Bewerte jede Meldung:
-- category: "cyber", "krimisi" oder "none"
-- score: Wichtigkeit 0–10 (10 = muss unbedingt dokumentiert werden, 6 = relevant, 3 = Randnotiz, 0 = irrelevant)
-- reason: eine kurze deutsche Begründung (max. 15 Wörter)
-
-Dieselbe Meldung von mehreren Quellen ist ausdrücklich erwünscht – bewerte jede Zeile für sich.`;
+Je Meldung: category ("cyber" | "krimisi" | "none"), score 0–10 (10 = unbedingt dokumentieren, 6 = relevant, 3 = Randnotiz, 0 = irrelevant), reason (deutsch, max. 12 Wörter). Jede Zeile für sich bewerten, auch wenn dieselbe Meldung mehrfach vorkommt. Genau ein Ergebnis je id.`;
 
 const SCHEMA = {
   type: 'object',
@@ -48,24 +40,40 @@ const SCHEMA = {
   additionalProperties: false
 };
 
+const oneLine = (s) => String(s || '').replace(/\s+/g, ' ').trim();
+const shorten = (s, max) => {
+  const t = oneLine(s);
+  return t.length > max ? t.slice(0, max - 1).replace(/\s\S*$/, '') + '…' : t;
+};
+
+/** System-Prompt der Relevanzprüfung inkl. optionalem Regelwerk-Block. */
+export function buildClassifySystem(rulesText = '') {
+  const rules = String(rulesText || '').trim();
+  return rules ? `${SYSTEM}\n\n${rules}` : SYSTEM;
+}
+
+/** Eine kompakte Eingabezeile: "#id|Quelle|Schwerpunkt: Titel — Teaser". */
+export function classifyLine(it) {
+  const focus = it.sourceCategory && it.sourceCategory !== 'both' ? `|${it.sourceCategory}` : '';
+  const summary = it.summary ? ` — ${shorten(it.summary, SUMMARY_MAX)}` : '';
+  return `#${it.id}|${oneLine(it.sourceName)}${focus}: ${oneLine(it.title)}${summary}`;
+}
+
 /**
  * @param {Array<{id: number, title: string, summary: string, sourceName: string, sourceCategory: string}>} items
  * @param {object} settings
  * @param {(msg: string) => void} [onProgress]
+ * @param {{rulesText?: string}} [opts]  rulesText = Regelwerk-Block aus der App
  * @returns {Promise<Map<number, {category: string, score: number, reason: string}>>}
  */
-export async function classifyItems(items, settings, onProgress = () => {}) {
+export async function classifyItems(items, settings, onProgress = () => {}, opts = {}) {
   const result = new Map();
+  const system = buildClassifySystem(opts.rulesText || '');
   for (let i = 0; i < items.length; i += BATCH_SIZE) {
     const batch = items.slice(i, i + BATCH_SIZE);
     onProgress(`Relevanzprüfung ${Math.min(i + BATCH_SIZE, items.length)}/${items.length} …`);
-    const lines = batch.map((it) => {
-      const hint = it.sourceCategory && it.sourceCategory !== 'both' ? ` [Quelle-Schwerpunkt: ${it.sourceCategory}]` : '';
-      const summary = it.summary ? ` — ${it.summary.slice(0, 220)}` : '';
-      return `#${it.id} (${it.sourceName}${hint}): ${it.title}${summary}`;
-    });
-    const user = `Bewerte die folgenden ${batch.length} Meldungen. Gib für JEDE id genau ein Ergebnis zurück.\n\n${lines.join('\n')}`;
-    const data = await llmJson(settings, SYSTEM, user, SCHEMA, { maxTokens: 16000, effort: 'medium' });
+    const user = `${batch.length} Meldungen (Format "#id|Quelle|Schwerpunkt der Quelle: Titel — Teaser"):\n${batch.map(classifyLine).join('\n')}`;
+    const data = await llmJson(settings, system, user, SCHEMA, { maxTokens: 8000, effort: 'medium' });
     for (const r of data.results || []) {
       result.set(r.id, {
         category: r.category,

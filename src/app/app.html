@@ -1,0 +1,768 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OSDP News Helper</title>
+  <link rel="stylesheet" href="ui.css">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <!-- Inline-SVG-Symbole (lucide-Stil), per <use href="#i-…"> referenziert -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-news" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-4 0v-9a2 2 0 0 1 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></symbol>
+      <symbol id="i-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></symbol>
+      <symbol id="i-rss" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1"/></symbol>
+      <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+      <symbol id="i-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="21" x2="14" y1="4" y2="4"/><line x1="10" x2="3" y1="4" y2="4"/><line x1="21" x2="12" y1="12" y2="12"/><line x1="8" x2="3" y1="12" y2="12"/><line x1="21" x2="16" y1="20" y2="20"/><line x1="12" x2="3" y1="20" y2="20"/><line x1="14" x2="14" y1="2" y2="6"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="16" x2="16" y1="18" y2="22"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-stop" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="1.5"/></symbol>
+      <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v6h-6"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></symbol>
+      <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+      <symbol id="i-skip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" x2="19" y1="5" y2="19"/></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></symbol>
+      <symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></symbol>
+      <symbol id="i-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/></symbol>
+      <symbol id="i-info" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></symbol>
+      <symbol id="i-inbox" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></symbol>
+      <symbol id="i-eraser" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></symbol>
+      <symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></symbol>
+      <symbol id="i-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6.1H3"/><path d="M21 12.1H3"/><path d="M15.1 18H3"/></symbol>
+      <symbol id="i-wand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4V2"/><path d="M15 16v-2"/><path d="M8 9h2"/><path d="M20 9h2"/><path d="M17.8 11.8 19 13"/><path d="M15 9h.01"/><path d="M17.8 6.2 19 5"/><path d="m3 21 9-9"/><path d="M12.2 6.2 11 5"/></symbol>
+    </defs>
+  </svg>
+
+  <div class="app">
+    <!-- ================================================== Navigation ====== -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-logo"><svg class="icon"><use href="#i-news"/></svg></div>
+        <div class="brand-text">
+          <span class="brand-name">OSDP News Helper</span>
+          <span class="brand-sub">Cyber · KriMiSi</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Hauptnavigation">
+        <a href="#run" class="nav-link active" data-view="run" title="Lauf">
+          <svg class="icon"><use href="#i-play"/></svg><span class="nav-text">Lauf</span>
+          <span class="badge badge-secondary badge-sm nav-count" id="navRunCount"></span>
+        </a>
+        <a href="#sources" class="nav-link" data-view="sources" title="Quellen">
+          <svg class="icon"><use href="#i-rss"/></svg><span class="nav-text">Quellen</span>
+        </a>
+        <a href="#history" class="nav-link" data-view="history" title="Verlauf">
+          <svg class="icon"><use href="#i-history"/></svg><span class="nav-text">Verlauf</span>
+        </a>
+        <a href="#rules" class="nav-link" data-view="rules" title="Regeln">
+          <svg class="icon"><use href="#i-book"/></svg><span class="nav-text">Regeln</span>
+          <span class="badge badge-secondary badge-sm nav-count" id="navRulesCount"></span>
+        </a>
+        <a href="#settings" class="nav-link" data-view="settings" title="Einstellungen">
+          <svg class="icon"><use href="#i-sliders"/></svg><span class="nav-text">Einstellungen</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="footer-line"><span class="status-dot status-dot-off" id="appStatusDot"></span><span class="footer-text" id="appStatus">Bereit</span></div>
+        <div class="footer-line"><span class="footer-text" id="appVersion">v0.6</span></div>
+      </div>
+    </aside>
+
+    <!-- ================================================ Hauptbereich ====== -->
+    <main class="main">
+      <div class="main-inner">
+
+        <!-- ============================================ Ansicht: Lauf ===== -->
+        <section class="view" id="view-run">
+          <header class="page-header">
+            <div>
+              <h1 class="page-title">OSDP News Helper</h1>
+              <div class="page-sub">
+                <span>Erlaubt ab <strong id="earliestDate">–</strong> (letzter Freitag)</span>
+                <span class="sep-dot">·</span>
+                <span id="modelInfo">Modell: –</span>
+              </div>
+            </div>
+          </header>
+
+          <!-- Aktionsleiste -->
+          <div class="card">
+            <div class="card-content actionbar">
+              <div class="actionbar-row">
+                <div class="segmented" id="areaSelect" role="group" aria-label="Bereich">
+                  <button type="button" class="segment active" data-area="cyber">Cyber</button>
+                  <button type="button" class="segment" data-area="krimisi">KriMiSi</button>
+                  <button type="button" class="segment" data-area="both">Beide</button>
+                </div>
+                <button type="button" class="btn btn-primary" id="btnRunAll"><svg class="icon"><use href="#i-play"/></svg>Automatik starten</button>
+                <span class="sep"></span>
+                <button type="button" class="btn btn-outline" id="btnScan">Quellen scannen</button>
+                <button type="button" class="btn btn-outline" id="btnClassify">Relevanz prüfen</button>
+                <button type="button" class="btn btn-outline" id="btnProcess">Ausgewählte eintragen</button>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn-outline btn-destructive" id="btnStop" disabled><svg class="icon"><use href="#i-stop"/></svg>Stopp</button>
+              </div>
+              <div class="url-row">
+                <input type="url" class="input" id="addUrl" placeholder="Artikel-URL manuell hinzufügen" autocomplete="off" spellcheck="false">
+                <button type="button" class="btn btn-secondary" id="btnAddUrl"><svg class="icon"><use href="#i-plus"/></svg>Hinzufügen</button>
+              </div>
+              <div class="status" id="status" hidden></div>
+              <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+            </div>
+          </div>
+
+          <!-- Freigabe -->
+          <div class="card review-card" id="reviewCard" hidden>
+            <div class="card-header">
+              <h2 class="card-title"><span class="status-dot"></span>Wartet auf deine Freigabe</h2>
+              <p class="card-description">Das OSDP-Formular ist ausgefüllt. Nichts wird ohne dich gespeichert.</p>
+            </div>
+            <div class="card-content">
+              <div class="review-grid">
+                <div class="stack">
+                  <div class="review-title" id="reviewTitle">–</div>
+                  <div class="badges" id="reviewMeta"></div>
+                  <div class="chips" id="reviewTags"></div>
+                  <ul class="review-warnings" id="reviewWarnings"></ul>
+                  <div class="review-actions">
+                    <button type="button" class="btn btn-primary" id="btnReviewFocus"><svg class="icon"><use href="#i-external"/></svg>OSDP-Tab anzeigen</button>
+                    <button type="button" class="btn btn-secondary" id="btnReviewSkip"><svg class="icon"><use href="#i-skip"/></svg>Überspringen</button>
+                    <button type="button" class="btn btn-outline" id="btnReviewMarkSaved"><svg class="icon"><use href="#i-check"/></svg>Als gespeichert markieren</button>
+                    <button type="button" class="btn btn-destructive" id="btnReviewAbort"><svg class="icon"><use href="#i-x"/></svg>Abbrechen</button>
+                  </div>
+                </div>
+                <div class="alert alert-info">
+                  <svg class="icon"><use href="#i-info"/></svg>
+                  <div>Prüfe das Formular im OSDP-Tab und klicke dort auf Save – die Extension erkennt das Speichern und macht mit der nächsten Meldung weiter.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meldungen -->
+          <div class="card">
+            <div class="card-header card-header-row">
+              <div class="card-heading">
+                <h2 class="card-title">Meldungen</h2>
+                <p class="card-description" id="itemsSummary">Noch kein Scan.</p>
+              </div>
+              <div class="toolbar">
+                <button type="button" class="btn btn-outline btn-sm" id="btnSelectRelevant">Alle relevanten auswählen</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="btnClearSelection">Auswahl aufheben</button>
+                <button type="button" class="btn btn-ghost btn-sm" id="btnForget" title="Meldungsliste leeren (der Verlauf bleibt erhalten)"><svg class="icon"><use href="#i-eraser"/></svg>Liste leeren</button>
+              </div>
+            </div>
+            <div class="card-content stack">
+              <nav class="tabs" id="itemsFilter" aria-label="Filter">
+                <button type="button" class="tab active" data-filter="relevant">Relevant <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="all">Alle <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="selected">Ausgewählt <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="done">Eingetragen <span class="tab-count" data-count></span></button>
+                <button type="button" class="tab" data-filter="error">Fehler <span class="tab-count" data-count></span></button>
+              </nav>
+              <div class="table-wrap">
+                <table class="table" id="itemsTable">
+                  <thead>
+                    <tr>
+                      <th class="col-check"><input type="checkbox" class="checkbox" id="itemsSelectAll" aria-label="Alle sichtbaren auswählen"></th>
+                      <th class="col-area">Bereich</th>
+                      <th class="col-score num">Score</th>
+                      <th class="col-wb">WB</th>
+                      <th class="col-date">Datum</th>
+                      <th class="col-source">Quelle</th>
+                      <th>Titel</th>
+                      <th class="col-status">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="empty" id="itemsEmpty">
+                <svg class="icon"><use href="#i-inbox"/></svg>
+                <div class="empty-title">Keine Meldungen</div>
+                <div>Starte die Automatik oder scanne die Quellen, um Meldungen zu laden.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <!-- Quellen-Status -->
+            <div class="card">
+              <div class="card-header">
+                <h2 class="card-title">Quellen-Status</h2>
+                <p class="card-description" id="sourcesSummary">Noch kein Scan.</p>
+              </div>
+              <div class="card-content">
+                <div class="table-wrap">
+                  <table class="table table-sm" id="sourcesTable">
+                    <thead><tr><th>Quelle</th><th class="col-type">Typ</th><th class="col-state">Status</th></tr></thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Protokoll -->
+            <div class="card">
+              <div class="card-header card-header-row">
+                <div class="card-heading">
+                  <h2 class="card-title">Protokoll</h2>
+                  <p class="card-description">Schritte, Hinweise und Fehler des laufenden Durchlaufs.</p>
+                </div>
+                <div class="toolbar">
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnClearLog"><svg class="icon"><use href="#i-eraser"/></svg>Leeren</button>
+                </div>
+              </div>
+              <div class="card-content">
+                <pre id="log" class="log"></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================= Ansicht: Quellen ===== -->
+        <section class="view" id="view-sources" hidden>
+          <header class="page-header">
+            <div>
+              <h1 class="page-title">Quellen</h1>
+              <div class="page-sub"><span>RSS-Feeds und Übersichtsseiten, die beim Scan gelesen werden.</span></div>
+            </div>
+            <div class="page-actions">
+              <button type="button" class="btn btn-ghost" id="btnSourcesText"><svg class="icon"><use href="#i-text"/></svg>Als Text importieren/exportieren</button>
+              <button type="button" class="btn btn-outline" id="btnResetSources"><svg class="icon"><use href="#i-refresh"/></svg>Standardliste wiederherstellen</button>
+              <button type="button" class="btn btn-primary" id="btnAddSource"><svg class="icon"><use href="#i-plus"/></svg>Quelle hinzufügen</button>
+            </div>
+          </header>
+
+          <div class="card">
+            <div class="card-content stack">
+              <div class="table-wrap">
+                <table class="table" id="sourcesManageTable">
+                  <thead>
+                    <tr>
+                      <th class="col-switch">Aktiv</th>
+                      <th class="col-name">Name</th>
+                      <th class="col-url">URL</th>
+                      <th>Bereich</th>
+                      <th>Typ</th>
+                      <th class="col-pattern">Muster</th>
+                      <th class="col-scan">Letzter Scan</th>
+                      <th class="actions">Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="empty" id="sourcesEmpty" hidden>
+                <svg class="icon"><use href="#i-rss"/></svg>
+                <div class="empty-title">Keine Quellen</div>
+                <div>Füge eine Quelle hinzu oder stelle die Standardliste wieder her.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialog: Quelle anlegen / bearbeiten -->
+          <dialog class="dialog" id="sourceDialog">
+            <form method="dialog">
+              <div class="dialog-header">
+                <h2 class="dialog-title" id="sourceDialogTitle">Quelle</h2>
+                <p class="dialog-description">RSS-Feed oder Übersichtsseite. „Testen“ lädt die Quelle und zeigt, wie viele Meldungen gefunden werden.</p>
+              </div>
+              <div class="dialog-body">
+                <div class="form-grid">
+                  <div class="field span-2">
+                    <label class="label" for="srcName">Name</label>
+                    <input type="text" class="input" id="srcName" placeholder="z. B. BleepingComputer" autocomplete="off">
+                  </div>
+                  <div class="field span-2">
+                    <label class="label" for="srcUrl">URL</label>
+                    <input type="url" class="input" id="srcUrl" placeholder="https://…/feed/" autocomplete="off" spellcheck="false">
+                  </div>
+                  <div class="field">
+                    <label class="label" for="srcCategory">Bereich</label>
+                    <select class="select" id="srcCategory">
+                      <option value="cyber">Cyber</option>
+                      <option value="krimisi">KriMiSi</option>
+                      <option value="both">Beide</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="srcType">Typ</label>
+                    <select class="select" id="srcType">
+                      <option value="rss">RSS / Atom</option>
+                      <option value="html">Übersichtsseite (HTML)</option>
+                    </select>
+                  </div>
+                  <div class="field span-2">
+                    <label class="label" for="srcPattern">URL-Muster <span class="muted">(nur HTML, optional)</span></label>
+                    <input type="text" class="input mono" id="srcPattern" placeholder="z. B. apnews\.com/article/" autocomplete="off" spellcheck="false">
+                    <div class="hint">Regulärer Ausdruck für Artikel-Links auf der Übersichtsseite.</div>
+                  </div>
+                  <div class="field span-2">
+                    <label class="switch-label"><input type="checkbox" class="switch" id="srcEnabled" checked> Quelle beim Scan berücksichtigen</label>
+                  </div>
+                </div>
+                <div class="status" id="sourceTestResult" hidden></div>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn btn-outline" id="btnSourceTest"><svg class="icon"><use href="#i-scan"/></svg>Testen</button>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn-ghost" id="btnSourceCancel">Abbrechen</button>
+                <button type="button" class="btn btn-primary" id="btnSourceSave">Speichern</button>
+              </div>
+            </form>
+          </dialog>
+
+          <!-- Dialog: Quellen als Text -->
+          <dialog class="dialog dialog-lg" id="sourcesTextDialog">
+            <form method="dialog">
+              <div class="dialog-header">
+                <h2 class="dialog-title">Quellen als Text</h2>
+                <p class="dialog-description">Eine Quelle pro Zeile: <code>Name | URL | cyber/krimisi/both | rss/html | URL-Muster</code>. Zeilen mit <code>#</code> am Anfang sind deaktiviert.</p>
+              </div>
+              <div class="dialog-body">
+                <textarea class="textarea mono" id="sourcesTextArea" rows="14" spellcheck="false"></textarea>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn btn-ghost" id="btnSourcesTextCancel">Abbrechen</button>
+                <button type="button" class="btn btn-primary" id="btnSourcesTextApply">Übernehmen</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <!-- ========================================= Ansicht: Verlauf ===== -->
+        <section class="view" id="view-history" hidden>
+          <header class="page-header">
+            <div>
+              <h1 class="page-title">Verlauf</h1>
+              <div class="page-sub"><span>Alle eingetragenen Meldungen – dauerhaft gespeichert, Duplikate werden markiert.</span></div>
+            </div>
+          </header>
+
+          <div class="stats">
+            <div class="stat"><div class="stat-label">Einträge</div><div class="stat-value" id="statTotal">0</div></div>
+            <div class="stat stat-cyber"><div class="stat-label">Cyber</div><div class="stat-value" id="statCyber">0</div></div>
+            <div class="stat stat-krimisi"><div class="stat-label">KriMiSi</div><div class="stat-value" id="statKrimisi">0</div></div>
+            <div class="stat stat-wb"><div class="stat-label">WB-Cyber</div><div class="stat-value" id="statWbCyber">0</div></div>
+            <div class="stat stat-wb"><div class="stat-label">WB-KriMiSi</div><div class="stat-value" id="statWbKrimisi">0</div></div>
+            <div class="stat stat-warning"><div class="stat-label">Duplikate</div><div class="stat-value" id="statDuplicates">0</div></div>
+          </div>
+
+          <div class="card">
+            <div class="card-content stack">
+              <div class="toolbar">
+                <div class="segmented segmented-sm" id="historyRange" role="group" aria-label="Zeitraum">
+                  <button type="button" class="segment active" data-range="today">Heute</button>
+                  <button type="button" class="segment" data-range="week">Woche</button>
+                  <button type="button" class="segment" data-range="month">Monat</button>
+                  <button type="button" class="segment" data-range="all">Alle</button>
+                </div>
+                <div class="input-icon history-search">
+                  <svg class="icon"><use href="#i-search"/></svg>
+                  <input type="search" class="input input-sm" id="historySearch" placeholder="Titel, Quelle, Tag …" autocomplete="off">
+                </div>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn-outline btn-sm" id="btnHistoryMd"><svg class="icon"><use href="#i-copy"/></svg>Markdown kopieren</button>
+                <button type="button" class="btn btn-outline btn-sm" id="btnHistoryCsv"><svg class="icon"><use href="#i-download"/></svg>CSV</button>
+                <button type="button" class="btn btn-ghost btn-destructive btn-sm" id="btnHistoryClear"><svg class="icon"><use href="#i-trash"/></svg>Verlauf löschen</button>
+              </div>
+              <div class="table-wrap">
+                <table class="table" id="historyTable">
+                  <thead>
+                    <tr>
+                      <th class="col-time">Zeit</th>
+                      <th class="col-structure">Struktur</th>
+                      <th class="col-wb">WB</th>
+                      <th>Titel</th>
+                      <th class="col-source">Quelle</th>
+                      <th class="col-summary">Zusammenfassung</th>
+                      <th class="col-tags">Tags</th>
+                      <th class="col-hint">Hinweis</th>
+                      <th class="actions">Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="empty" id="historyEmpty">
+                <svg class="icon"><use href="#i-history"/></svg>
+                <div class="empty-title">Noch keine Einträge</div>
+                <div>Jede in OSDP gespeicherte Meldung erscheint hier.</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========================================== Ansicht: Regeln ===== -->
+        <section class="view" id="view-rules" hidden>
+          <header class="page-header">
+            <div>
+              <h1 class="page-title">Regeln</h1>
+              <div class="page-sub"><span>Lernregeln aus deinen Korrekturen – sie fließen in die Prompts für Tagging, Relevanz und Übersetzung ein.</span></div>
+            </div>
+            <div class="page-actions">
+              <button type="button" class="btn btn-primary" id="btnAddRule"><svg class="icon"><use href="#i-plus"/></svg>Regel hinzufügen</button>
+            </div>
+          </header>
+
+          <div class="alert">
+            <svg class="icon"><use href="#i-book"/></svg>
+            <div>
+              <div class="alert-title">So lernt die KI dazu</div>
+              <div class="muted">Hat das Modell falsch getaggt, korrigiere die Tags im OSDP-Formular vor dem Save – die Differenz wird erkannt und als Regel vorgeschlagen. Oder lege hier selbst eine Regel mit Begründung an. Aktive Regeln werden bei jeder Anfrage mitgegeben; kurze, allgemeine Formulierungen sparen Tokens.</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-content stack">
+              <div class="table-wrap">
+                <table class="table" id="rulesTable">
+                  <thead>
+                    <tr>
+                      <th class="col-switch">Aktiv</th>
+                      <th>Bereich</th>
+                      <th class="col-rule">Regel</th>
+                      <th class="col-reason">Begründung</th>
+                      <th class="col-example">Beispiel</th>
+                      <th class="col-created">Erstellt</th>
+                      <th class="actions">Aktionen</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+              <div class="empty" id="rulesEmpty">
+                <svg class="icon"><use href="#i-book"/></svg>
+                <div class="empty-title">Noch keine Regeln</div>
+                <div>Korrigiere eine Meldung im Verlauf oder lege eine Regel an.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialog: Regel anlegen / bearbeiten -->
+          <dialog class="dialog" id="ruleDialog">
+            <form method="dialog">
+              <div class="dialog-header">
+                <h2 class="dialog-title" id="ruleDialogTitle">Regel</h2>
+                <p class="dialog-description">Formuliere die Regel so, wie du sie einem Kollegen erklären würdest. „Mit KI verallgemeinern“ macht aus einem Einzelfall eine kurze, allgemeine Regel.</p>
+              </div>
+              <div class="dialog-body">
+                <div class="field">
+                  <label class="label" for="ruleScope">Bereich</label>
+                  <select class="select" id="ruleScope">
+                    <option value="tagging">Tagging</option>
+                    <option value="relevance">Relevanz</option>
+                    <option value="translation">Übersetzung</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label class="label" for="ruleText">Regel</label>
+                  <textarea class="textarea" id="ruleText" rows="3" placeholder="z. B. Meldungen über DDoS-Angriffe auf Behörden immer mit „Cyberangriff → DDoS“ taggen, nicht nur mit „Behörde“."></textarea>
+                </div>
+                <div class="field">
+                  <label class="label" for="ruleReason">Begründung <span class="muted">(optional)</span></label>
+                  <textarea class="textarea" id="ruleReason" rows="2" placeholder="Warum war der Vorschlag falsch?"></textarea>
+                </div>
+                <div class="field">
+                  <label class="label" for="ruleExample">Beispiel <span class="muted">(optional)</span></label>
+                  <input type="text" class="input" id="ruleExample" placeholder="Titel oder URL der Meldung, bei der es aufgefallen ist">
+                </div>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn btn-outline" id="btnRuleDistill"><svg class="icon"><use href="#i-wand"/></svg>Mit KI verallgemeinern</button>
+                <span class="spacer"></span>
+                <button type="button" class="btn btn-ghost" id="btnRuleCancel">Abbrechen</button>
+                <button type="button" class="btn btn-primary" id="btnRuleSave">Speichern</button>
+              </div>
+            </form>
+          </dialog>
+
+          <!-- Dialog: Korrektur nach einem Save mit geänderten Tags -->
+          <dialog class="dialog" id="correctionDialog">
+            <form method="dialog">
+              <div class="dialog-header">
+                <h2 class="dialog-title">Tags wurden geändert</h2>
+                <p class="dialog-description">Du hast vor dem Speichern andere Tags gesetzt als vorgeschlagen. Soll die KI daraus lernen?</p>
+              </div>
+              <div class="dialog-body">
+                <div class="review-title" id="correctionTitle">–</div>
+                <div class="form-grid">
+                  <div class="diff-block">
+                    <div class="diff-label">Entfernt</div>
+                    <div class="chips" id="correctionRemoved"></div>
+                  </div>
+                  <div class="diff-block">
+                    <div class="diff-label">Hinzugefügt</div>
+                    <div class="chips" id="correctionAdded"></div>
+                  </div>
+                </div>
+                <div class="field">
+                  <label class="label" for="correctionReason">Begründung</label>
+                  <textarea class="textarea" id="correctionReason" rows="2" placeholder="Warum war der Vorschlag falsch?"></textarea>
+                </div>
+                <div class="field">
+                  <label class="label" for="correctionRuleText">Regel</label>
+                  <textarea class="textarea" id="correctionRuleText" rows="3" placeholder="Allgemeine Regel, die daraus folgt"></textarea>
+                  <div class="hint">Wird als aktive Tagging-Regel gespeichert und ab der nächsten Meldung mitgegeben.</div>
+                </div>
+              </div>
+              <div class="dialog-footer">
+                <button type="button" class="btn btn-ghost" id="btnCorrectionDismiss">Verwerfen</button>
+                <button type="button" class="btn btn-primary" id="btnCorrectionSave"><svg class="icon"><use href="#i-book"/></svg>Als Regel speichern</button>
+              </div>
+            </form>
+          </dialog>
+        </section>
+
+        <!-- =================================== Ansicht: Einstellungen ===== -->
+        <section class="view" id="view-settings" hidden>
+          <header class="page-header">
+            <div>
+              <h1 class="page-title">Einstellungen</h1>
+              <div class="page-sub"><span>Sprachmodell, Übersetzung, Automatik und OSDP. Änderungen gelten nach „Speichern“.</span></div>
+            </div>
+          </header>
+
+          <div class="settings-cols">
+            <div class="stack">
+              <!-- Sprachmodell -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Sprachmodell</h2>
+                  <p class="card-description">Für Relevanzprüfung, Tagging und – je nach Einstellung – Übersetzung.</p>
+                </div>
+                <div class="card-content">
+                  <div class="preset-row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnPresetCheap">Sparmodus: API-Key + Haiku</button>
+                    <div class="hint">Für PCs, auf denen nichts installiert werden darf: Claude API mit Haiku 5.5 (grob 10–40 Cent pro Arbeitstag). Danach API-Key eintragen und speichern.</div>
+                  </div>
+                  <div class="preset-row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnPresetBridge">Claude-Code-Brücke voreinstellen</button>
+                    <div class="hint">Abo-Kontingent statt API-Key; braucht Node.js und Claude Code auf diesem PC (<code>http://localhost:4310/v1</code>, Modell <code>opus</code>).</div>
+                  </div>
+                  <div class="divider"></div>
+                  <div class="field">
+                    <label class="label" for="llmProvider">Anbieter</label>
+                    <select class="select" id="llmProvider">
+                      <option value="claude">Claude API (API-Key, Abrechnung pro Token)</option>
+                      <option value="local">Lokaler Server (Claude-Code-Brücke oder eigenes Modell)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="anthropicApiKey">Claude API-Key</label>
+                    <input type="password" class="input" id="anthropicApiKey" placeholder="sk-ant-…" autocomplete="off">
+                    <div class="hint">Erstellen unter console.anthropic.com → API Keys (Guthaben vorab laden, mindestens 5 $). Wird nur lokal in dieser Extension gespeichert.</div>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="anthropicModel">Claude-Modell</label>
+                    <select class="select" id="anthropicModel">
+                      <option value="claude-haiku-5-5">Haiku 5.5 – am günstigsten, für Übersetzung und Tagging ausreichend</option>
+                      <option value="claude-sonnet-5-5">Sonnet 5.5 – Mittelweg (etwa 3–5× Haiku)</option>
+                      <option value="claude-opus-5-5">Opus 5.5 – beste Qualität, am teuersten (etwa 5–10× Haiku)</option>
+                    </select>
+                    <div class="hint">Grobe Schätzung für rund zehn Meldungen am Tag; der Tag-Katalog wird zwischengespeichert.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Übersetzung -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Übersetzung</h2>
+                  <p class="card-description">Titel und Artikeltext werden wortgetreu EN → DE übersetzt – nichts wird ergänzt oder gekürzt.</p>
+                </div>
+                <div class="card-content">
+                  <div class="field">
+                    <label class="label" for="translator">Anbieter</label>
+                    <select class="select" id="translator">
+                      <option value="claude">Claude API (beste Qualität)</option>
+                      <option value="local">Lokales Modell / Claude-Code-Brücke</option>
+                      <option value="deepl">DeepL API (Free-Key reicht)</option>
+                      <option value="chrome">Chrome integriert (kostenlos, mittlere Qualität, Chrome 138+)</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="label" for="deeplApiKey">DeepL API-Key</label>
+                    <input type="password" class="input" id="deeplApiKey" placeholder="xxxxxxxx-…:fx" autocomplete="off">
+                    <div class="hint">DeepL API Free: 500.000 Zeichen pro Monat kostenlos (Konto auf deepl.com, Kreditkarte nur zur Verifikation). Free-Keys enden auf „:fx“ und nutzen automatisch den Free-Endpunkt.</div>
+                  </div>
+                  <div class="row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnTest"><svg class="icon"><use href="#i-scan"/></svg>Übersetzung testen</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Automatik -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Automatik</h2>
+                  <p class="card-description">Gespeichert wird nie automatisch – jede Meldung wartet auf deine Freigabe im OSDP-Tab.</p>
+                </div>
+                <div class="card-content">
+                  <div class="form-grid">
+                    <div class="field">
+                      <label class="label" for="minScore">Relevanz-Schwelle (0–10)</label>
+                      <input type="number" class="input" id="minScore" min="0" max="10" step="1">
+                      <div class="hint">6 = relevant, 8 = nur wichtige Meldungen.</div>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="maxItemsPerRun">Max. Meldungen pro Durchlauf</label>
+                      <input type="number" class="input" id="maxItemsPerRun" min="1" max="200" step="1">
+                    </div>
+                    <div class="field span-2">
+                      <label class="label" for="autoRunTime">Täglicher Start (Mo–Fr)</label>
+                      <input type="time" class="input" id="autoRunTime">
+                      <div class="hint">Leer = kein Zeitplan. Chrome muss zu dieser Zeit laufen; die App öffnet sich und startet die Automatik für den Bereich Cyber.</div>
+                    </div>
+                  </div>
+                  <div class="switch-row">
+                    <div>
+                      <div class="label">Tags per Modell vergeben</div>
+                      <div class="hint">Nach dem Tagging-Handbuch: Struktur, News, Quellentyp, Orte, Themen, KI, WB. Aus = nur Pflichttags.</div>
+                    </div>
+                    <input type="checkbox" class="switch" id="autoTags">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="stack">
+              <!-- Lokaler Server -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Lokaler Server</h2>
+                  <p class="card-description">Claude-Code-Brücke oder eigenes Modell mit OpenAI-kompatibler Schnittstelle.</p>
+                </div>
+                <div class="card-content">
+                  <div class="field">
+                    <label class="label" for="localLlmUrl">Server-URL</label>
+                    <input type="text" class="input mono" id="localLlmUrl" placeholder="http://localhost:4310/v1" autocomplete="off" spellcheck="false">
+                    <div class="hint">Brücke: <code>http://localhost:4310/v1</code>. Eigenes Modell: Ollama Port 11434, LM Studio 1234, vLLM 8000. <code>/v1</code> wird ergänzt.</div>
+                  </div>
+                  <div class="form-grid">
+                    <div class="field">
+                      <label class="label" for="localLlmModel">Modellname</label>
+                      <input type="text" class="input" id="localLlmModel" placeholder="opus" autocomplete="off">
+                      <div class="hint">Brücke: <code>opus</code>, <code>sonnet</code> oder <code>haiku</code>. Eigenes Modell: z. B. <code>qwen2.5:32b</code>.</div>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="localLlmTimeoutSec">Timeout je Anfrage (s)</label>
+                      <input type="number" class="input" id="localLlmTimeoutSec" min="30" max="3600" step="30">
+                    </div>
+                    <div class="field span-2">
+                      <label class="label" for="localLlmApiKey">API-Key <span class="muted">(optional)</span></label>
+                      <input type="password" class="input" id="localLlmApiKey" autocomplete="off">
+                    </div>
+                  </div>
+                  <div class="row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnTestLocal"><svg class="icon"><use href="#i-scan"/></svg>Verbindung testen</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- OSDP -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">OSDP</h2>
+                  <p class="card-description">Wie das Formular im News-Editor befüllt wird.</p>
+                </div>
+                <div class="card-content">
+                  <div class="form-grid">
+                    <div class="field">
+                      <label class="label" for="osdpDateFormat">Datumsformat</label>
+                      <input type="text" class="input mono" id="osdpDateFormat" placeholder="dd/MM/yyyy" autocomplete="off" spellcheck="false">
+                      <div class="hint">Platzhalter: dd, MM, yyyy, yy.</div>
+                    </div>
+                    <div class="field">
+                      <label class="label" for="authorUnknownText">Text für „Autor ungenannt“</label>
+                      <input type="text" class="input" id="authorUnknownText" placeholder="Autor ungenannt" autocomplete="off">
+                    </div>
+                    <div class="field span-2">
+                      <label class="label" for="osdpUrlPattern">URL-Muster des OSDP-Tabs</label>
+                      <input type="text" class="input mono" id="osdpUrlPattern" placeholder="https://osdp.zentdok.at/*" autocomplete="off" spellcheck="false">
+                      <div class="hint">Für den lokalen Nachbau: <code>http://localhost:4300/*</code>.</div>
+                    </div>
+                  </div>
+                  <div class="switch-row">
+                    <div>
+                      <div class="label">Reiter „English Translated“ befüllen</div>
+                      <div class="hint">Mit dem englischen Original.</div>
+                    </div>
+                    <input type="checkbox" class="switch" id="fillEnglishTab">
+                  </div>
+                  <div class="switch-row">
+                    <div>
+                      <div class="label">OSDP-eigenen „Extract“-Button verwenden</div>
+                      <div class="hint">Experimentell: Quelltext über OSDP laden statt selbst auszulesen.</div>
+                    </div>
+                    <input type="checkbox" class="switch" id="useSiteExtract">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Werkzeuge -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Werkzeuge</h2>
+                  <p class="card-description">Für Analyse und Wartung – ein OSDP-Tab muss offen sein.</p>
+                </div>
+                <div class="card-content">
+                  <div class="preset-row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnInspector"><svg class="icon"><use href="#i-download"/></svg>OSDP-DOM-Dump speichern</button>
+                    <div class="hint">Speichert die Struktur des News-Editors als JSON und HTML (vorher die Reiter öffnen, die analysiert werden sollen).</div>
+                  </div>
+                  <div class="preset-row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnExportTags"><svg class="icon"><use href="#i-download"/></svg>Tag-Baum mit Tooltips exportieren</button>
+                    <div class="hint">Klappt im Reiter „Tags“ alle Knoten auf und speichert alle Tags mit vollständigem Tooltip als JSON.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Daten -->
+              <div class="card settings-card">
+                <div class="card-header">
+                  <h2 class="card-title">Daten</h2>
+                  <p class="card-description">So wandern Einstellungen, Quellen, Regeln und Verlauf zwischen Heim- und Arbeits-PC.</p>
+                </div>
+                <div class="card-content">
+                  <div class="row">
+                    <button type="button" class="btn btn-outline btn-sm" id="btnExportData"><svg class="icon"><use href="#i-download"/></svg>Alle Daten exportieren (JSON)</button>
+                    <button type="button" class="btn btn-outline btn-sm" id="btnImportData"><svg class="icon"><use href="#i-upload"/></svg>Daten importieren</button>
+                    <input type="file" id="fileImport" accept="application/json,.json" hidden>
+                  </div>
+                  <div class="hint">Der Export enthält auch API-Keys – Datei nicht weitergeben. Beim Import werden vorhandene Daten ersetzt.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="savebar">
+            <div class="status" id="settingsStatus"></div>
+            <span class="spacer"></span>
+            <button type="button" class="btn btn-primary" id="btnSave"><svg class="icon"><use href="#i-check"/></svg>Speichern</button>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Toasts -->
+  <div class="toast-stack" id="toasts" aria-live="polite"></div>
+
+  <script src="../content/news-extractor.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

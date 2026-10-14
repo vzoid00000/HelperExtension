@@ -11,10 +11,18 @@
 //           vollständiger Tooltip im Element, auf das aria-describedby zeigt
 //   Oben: Buttons Save | Extract | Summary | Translate
 //
+// Freigabe-Schleife (lib/osdp-driver.js → waitForReview): showOverlay zeigt unten eine Leiste
+// mit „Überspringen“/„Abbrechen“, readOverlay holt die Aktion ab, watchSave liefert pro Tick
+// Toasts + Formularzustand, hideOverlay räumt auf. Gespeichert wird nur vom Nutzer selbst.
+//
 // Aufruf: globalThis.__osdpHelper.run('<schritt>', daten)
 
 (() => {
   if (globalThis.__osdpHelper?.run) return;
+
+  // Kennung dieser Injektion: ändert sich nur, wenn das Dokument neu geladen wurde (neue isolierte
+  // Welt). Der Driver erkennt daran einen Reload während der Freigabe.
+  const session = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const collapse = (s) => (s || '').replace(/\s+/g, ' ').trim();
@@ -147,13 +155,21 @@
   const spinnerVisible = () => [...document.querySelectorAll('ngx-spinner .ngx-spinner-overlay, ngx-spinner div')].some(isVisible);
   const snackbarText = () => text(document.querySelector('mat-snack-bar-container, .mat-mdc-snack-bar-container, simple-snack-bar')) || '';
 
-  /** Toasts (ngx-toastr): OSDP meldet Erfolg/Fehler darüber („Item Added!“, „Duplicate, URL already in the database!“ …). */
+  /**
+   * Toasts (ngx-toastr): OSDP meldet Erfolg/Fehler darüber („Item Added!“, „Duplicate, URL already in the database!“ …).
+   * Jedes Toast-Element bekommt eine stabile id, damit der Driver alte Toasts (10 s Anzeigedauer) von neuen unterscheiden kann.
+   */
+  let toastSeq = 0;
   function toasts() {
-    return [...document.querySelectorAll('#toast-container .ngx-toastr, #toast-container .toast, .toast-container .ngx-toastr')].map((t) => ({
-      kind: /toast-error/.test(t.className) ? 'error' : /toast-success/.test(t.className) ? 'success' : /toast-warning/.test(t.className) ? 'warning' : 'info',
-      title: text(t.querySelector('.toast-title')),
-      message: text(t.querySelector('.toast-message')) || text(t)
-    }));
+    return [...document.querySelectorAll('#toast-container .ngx-toastr, #toast-container .toast, .toast-container .ngx-toastr')].map((t) => {
+      if (!t.dataset.osdpHelperToast) t.dataset.osdpHelperToast = `${session}:${++toastSeq}`;
+      return {
+        id: t.dataset.osdpHelperToast,
+        kind: /toast-error/.test(t.className) ? 'error' : /toast-success/.test(t.className) ? 'success' : /toast-warning/.test(t.className) ? 'warning' : 'info',
+        title: text(t.querySelector('.toast-title')),
+        message: text(t.querySelector('.toast-message')) || text(t)
+      };
+    });
   }
 
   // -------------------------------------------------------- Tag-Baum ----
@@ -231,6 +247,112 @@
     }
     return out;
   };
+
+  // ------------------------------------------------- Freigabe-Leiste ----
+  const BAR_ID = 'osdp-helper-bar';
+  const BAR_STYLE_ID = 'osdp-helper-bar-style';
+  let barHost = null; // von dieser Welt erzeugte Leiste
+  let barAction = null; // 'skip' | 'abort' | null – wird von readOverlay abgeholt
+
+  const BAR_CSS = `
+    :host { all: initial; display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 2147483647; pointer-events: none; }
+    .bar { pointer-events: auto; box-sizing: border-box; display: flex; align-items: center; gap: 10px; min-height: 46px; padding: 7px 14px;
+      background: #09090b; color: #fafafa; border-top: 1px solid #27272a; box-shadow: 0 -6px 18px rgba(0, 0, 0, .35);
+      font: 13px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .brand { font-weight: 600; color: #a1a1aa; white-space: nowrap; }
+    .dot { color: #52525b; }
+    .count { color: #a1a1aa; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .title { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    .badge { display: inline-block; padding: 2px 9px; border-radius: 999px; border: 1px solid #3f3f46; background: #18181b; color: #e4e4e7;
+      font-size: 11px; font-weight: 500; white-space: nowrap; }
+    .badge:empty { display: none; }
+    .badge.wb { border-color: #b45309; color: #fbbf24; background: #1c1917; }
+    .hint { color: #a1a1aa; white-space: nowrap; }
+    .hint:empty { display: none; }
+    button { all: unset; box-sizing: border-box; cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #3f3f46; background: #18181b;
+      color: #fafafa; font: inherit; font-weight: 500; line-height: 1.2; white-space: nowrap; }
+    button:hover { background: #27272a; }
+    button:focus-visible { outline: 2px solid #a1a1aa; outline-offset: 1px; }
+    button.danger { border-color: #7f1d1d; color: #fca5a5; }
+    button.danger:hover { background: #450a0a; }
+    @media (max-width: 900px) { .hint { display: none; } }
+  `;
+
+  function barElements(host) {
+    const r = host.shadowRoot;
+    return {
+      count: r.querySelector('.count'),
+      title: r.querySelector('.title'),
+      structure: r.querySelector('.badge.structure'),
+      wb: r.querySelector('.badge.wb'),
+      hint: r.querySelector('.hint')
+    };
+  }
+
+  /** Leiste anlegen (einmalig pro Welt). Eine Leiste aus einer früheren Welt (Extension neu geladen) wird ersetzt. */
+  function ensureBar() {
+    const existing = document.getElementById(BAR_ID);
+    if (existing && existing === barHost && existing.shadowRoot) return existing;
+    if (existing) existing.remove();
+    const host = document.createElement('div');
+    host.id = BAR_ID;
+    const root = host.attachShadow({ mode: 'open' });
+    const style = document.createElement('style');
+    style.textContent = BAR_CSS;
+    const bar = document.createElement('div');
+    bar.className = 'bar';
+    bar.setAttribute('role', 'region');
+    bar.setAttribute('aria-label', 'OSDP News Helper');
+    const mk = (tag, cls, txt) => {
+      const el = document.createElement(tag);
+      el.className = cls;
+      if (txt) el.textContent = txt;
+      return el;
+    };
+    const btnSkip = mk('button', 'skip', 'Überspringen');
+    btnSkip.type = 'button';
+    btnSkip.dataset.action = 'skip';
+    btnSkip.title = 'Diese Meldung nicht eintragen und mit der nächsten weitermachen';
+    const btnAbort = mk('button', 'danger abort', 'Abbrechen');
+    btnAbort.type = 'button';
+    btnAbort.dataset.action = 'abort';
+    btnAbort.title = 'Lauf beenden';
+    for (const b of [btnSkip, btnAbort]) {
+      b.addEventListener('click', (e) => {
+        e.stopPropagation();
+        barAction = b.dataset.action;
+        host.dataset.action = barAction;
+      });
+    }
+    bar.append(mk('span', 'brand', 'OSDP News Helper'), mk('span', 'dot', '·'), mk('span', 'count'), mk('span', 'dot', '·'), mk('span', 'title'), mk('span', 'badge structure'), mk('span', 'badge wb'), mk('span', 'hint'), btnSkip, btnAbort);
+    root.append(style, bar);
+    (document.body || document.documentElement).append(host);
+    // Toasts (ngx-toastr, unten rechts) über die Leiste heben, damit „Item Added!“ sichtbar bleibt
+    if (!document.getElementById(BAR_STYLE_ID)) {
+      const pageStyle = document.createElement('style');
+      pageStyle.id = BAR_STYLE_ID;
+      pageStyle.textContent = '#toast-container.toast-bottom-right, #toast-container.toast-bottom-left, #toast-container.toast-bottom-center, #toast-container.toast-bottom-full-width { bottom: 58px !important; }';
+      document.head.append(pageStyle);
+    }
+    barHost = host;
+    return host;
+  }
+
+  function removeBar() {
+    document.getElementById(BAR_ID)?.remove();
+    document.getElementById(BAR_STYLE_ID)?.remove();
+    barHost = null;
+    barAction = null;
+  }
+
+  /** Quell- und Titelfeld des Native-Reiters (OSDP hält alle Reiter im DOM: preserveContent). */
+  function nativeFields() {
+    const native = findGroup('native');
+    const body = native ? groupBodies(native)[0] : null;
+    const source = body?.querySelector('input[formcontrolname="article_source"]') || document.querySelector('input[formcontrolname="article_source"]');
+    const title = body?.querySelector('input[formcontrolname="article_title"]') || document.querySelector('input[formcontrolname="article_title"]');
+    return { source, title };
+  }
 
   // ----------------------------------------------------------- Steps ----
   const steps = {
@@ -458,7 +580,75 @@
     },
 
     /**
-     * „Save“ klicken und auf Rückmeldung warten. OSDP meldet per Toast:
+     * Freigabe-Leiste unten im OSDP-Tab anzeigen bzw. aktualisieren (Shadow DOM, eigene Styles).
+     * Ein erneuter Aufruf ändert nur die Texte; die Angular-App bleibt unberührt.
+     */
+    showOverlay({ title = '', index = 0, total = 0, structure = '', wb = '', hint } = {}) {
+      const host = ensureBar();
+      const el = barElements(host);
+      el.count.textContent = total ? `${index}/${total}` : index ? String(index) : '';
+      el.title.textContent = title || '';
+      el.title.title = title || '';
+      el.structure.textContent = structure || '';
+      el.wb.textContent = wb || '';
+      el.hint.textContent = hint === undefined ? 'Prüfen und in OSDP auf „Save“ klicken' : hint || '';
+      return { ok: true, session };
+    },
+
+    /** Vom Nutzer in der Leiste gewählte Aktion abholen (und zurücksetzen). */
+    readOverlay() {
+      const host = document.getElementById(BAR_ID);
+      const action = barAction || host?.dataset.action || null;
+      barAction = null;
+      if (host) delete host.dataset.action;
+      return { ok: true, action: action === 'skip' || action === 'abort' ? action : null, visible: !!host, session };
+    },
+
+    hideOverlay() {
+      removeBar();
+      return { ok: true };
+    },
+
+    /**
+     * Ein Messpunkt für die Freigabe-Schleife (der Driver pollt): Toasts, Formularzustand, Chips.
+     * Erfolg: Toast „Item Added!“/„Item Updated!“ – verschwindet nach 10 s, deshalb zusätzlich
+     * formReset: expectSource war gesetzt und Quelle + Titel sind jetzt leer (resetArticleForm).
+     * ignoreToastIds: Toasts, die schon vor der Freigabe sichtbar waren (zählen nicht als Ergebnis).
+     */
+    watchSave({ expectSource = '', ignoreToastIds = [] } = {}) {
+      const all = toasts();
+      const sb = snackbarText();
+      if (sb) all.push({ kind: 'info', title: 'snackbar', message: sb });
+      const ignore = new Set(ignoreToastIds || []);
+      const fresh = all.filter((t) => !t.id || !ignore.has(t.id));
+      const f = nativeFields();
+      const sourceValue = f.source?.value || '';
+      const titleValue = f.title?.value || '';
+      const hay = (t) => `${t.title} ${t.message}`;
+      const duplicate = fresh.some((t) => /duplicate/i.test(hay(t)));
+      return {
+        ok: true,
+        session,
+        toasts: all,
+        freshToasts: fresh,
+        success: fresh.some((t) => /Item Added|Item Updated/i.test(hay(t))),
+        duplicate,
+        errorToast: fresh.filter((t) => t.kind === 'error' && !/duplicate/i.test(hay(t))).map((t) => t.message).join(' | '),
+        errorVisible: [...document.querySelectorAll('mat-error, .mat-mdc-form-field-error')].map(text).filter(Boolean),
+        sourceValue,
+        titleValue,
+        fieldsPresent: !!(f.source && f.title),
+        chips: chips(),
+        formReset: !!expectSource && !!(f.source && f.title) && !sourceValue && !titleValue,
+        spinner: spinnerVisible(),
+        saveDisabled: !!findButton(topBar(), '^\\s*(save|update)\\s*$|speichern')?.disabled,
+        url: location.href
+      };
+    },
+
+    /**
+     * „Save“ klicken und auf Rückmeldung warten (nur noch für Tests – die App speichert nie selbst,
+     * sondern wartet per watchSave auf den Klick des Nutzers). OSDP meldet per Toast:
      *   Erfolg: „Item Added!“ (und leert das Formular)
      *   Fehler: „… must not be empty“, „Set tags before saving“, „Article date is not allowed …“,
      *           „Duplicate, URL already in the database!“, „Not logged in!“

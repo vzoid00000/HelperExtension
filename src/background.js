@@ -1,13 +1,13 @@
 // Service Worker der Extension.
-// Aufgaben: Side Panel beim Klick auf das Icon öffnen, Defaults anlegen,
-// optionalen Zeitplan (Mo–Fr zu fester Uhrzeit) für die Automatik verwalten.
+// Aufgaben: App-Seite beim Klick auf das Icon öffnen (oder den offenen Tab fokussieren),
+// Defaults anlegen, optionalen Zeitplan (Mo–Fr zu fester Uhrzeit) für Scan + Relevanzprüfung.
 
 import { DEFAULT_SETTINGS } from './lib/settings.js';
 
 const ALARM = 'osdp-autorun';
+const APP_PATH = 'src/app/app.html';
 
 chrome.runtime.onInstalled.addListener(async () => {
-  await chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
   const stored = await chrome.storage.local.get('settings');
   const merged = { ...DEFAULT_SETTINGS, ...(stored.settings || {}) };
   await chrome.storage.local.set({ settings: merged });
@@ -19,7 +19,7 @@ chrome.runtime.onStartup.addListener(async () => {
   await scheduleAutoRun((stored.settings || {}).autoRunTime);
 });
 
-chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true }).catch(() => {});
+chrome.action.onClicked.addListener(() => openApp());
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.settings) {
@@ -30,9 +30,23 @@ chrome.storage.onChanged.addListener((changes, area) => {
 chrome.alarms.onAlarm.addListener(async (alarm) => {
   if (alarm.name !== ALARM) return;
   const stored = await chrome.storage.local.get('settings');
-  await chrome.tabs.create({ url: chrome.runtime.getURL('src/auto/auto.html?autorun=1'), active: true });
+  await openApp('?autorun=1');
   await scheduleAutoRun((stored.settings || {}).autoRunTime);
 });
+
+/** App-Tab öffnen; existiert schon einer, diesen fokussieren (mit Query ggf. neu laden). */
+export async function openApp(query = '') {
+  const url = chrome.runtime.getURL(APP_PATH);
+  const tabs = await chrome.tabs.query({ url: `${url}*` });
+  if (tabs.length) {
+    const tab = tabs[0];
+    if (query) await chrome.tabs.update(tab.id, { url: url + query, active: true });
+    else await chrome.tabs.update(tab.id, { active: true });
+    if (tab.windowId != null) await chrome.windows.update(tab.windowId, { focused: true }).catch(() => {});
+    return tab;
+  }
+  return chrome.tabs.create({ url: url + query, active: true });
+}
 
 /** Nächster Werktag (Mo–Fr) zur angegebenen Uhrzeit "HH:MM", lokale Zeit. */
 export function nextWeekdayRun(timeStr, now = new Date()) {

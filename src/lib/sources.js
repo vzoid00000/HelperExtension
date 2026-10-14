@@ -42,7 +42,13 @@ export const DEFAULT_SOURCES = [
   { name: 'Reuters – Cybersecurity', url: 'https://www.reuters.com/technology/cybersecurity/', category: 'cyber', type: 'html', pattern: 'reuters\\.com/.+-\\d{4}-\\d{2}-\\d{2}', enabled: true }
 ];
 
-/** Quellen-Liste als Text (eine Quelle pro Zeile) für die Einstellungen. */
+/** Gültige Werte für die Quellen-Felder (für Validierung und Auswahlfelder in der UI). */
+export const SOURCE_CATEGORIES = ['cyber', 'krimisi', 'both'];
+export const SOURCE_KINDS = ['rss', 'html'];
+export const CATEGORY_LABELS = { cyber: 'Cyber', krimisi: 'KriMiSi', both: 'Beide' };
+export const KIND_LABELS = { rss: 'RSS/Atom-Feed', html: 'Übersichtsseite' };
+
+/** Quellen-Liste als Text (eine Quelle pro Zeile) für Import/Export. */
 export function sourcesToText(sources) {
   return sources
     .map((s) => [s.enabled === false ? '#' + s.name : s.name, s.url, s.category || 'both', s.type || 'rss', s.pattern || ''].join(' | ').replace(/\s*\|\s*$/, ''))

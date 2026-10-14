@@ -6,7 +6,12 @@
 
 import { claudeRequest, responseText } from './claude.js';
 
-const sysText = (system) => (Array.isArray(system) ? system.map((b) => b.text).join('\n\n') : system);
+// System-Prompt als String: Für 'local' werden Block-Arrays (wie sie die Claude API mit
+// cache_control erwartet) in der gegebenen Reihenfolge zu EINEM String zusammengefügt;
+// leere Blöcke (z. B. kein Regelwerk) werden übersprungen.
+const sysText = (system) => (Array.isArray(system)
+  ? system.filter((b) => b && typeof b.text === 'string' && b.text.trim()).map((b) => b.text).join('\n\n')
+  : String(system || ''));
 
 /** Fehler, bei dem Weiterarbeiten keinen Sinn hat: Nutzungslimit/Rate-Limit erreicht. */
 export class RateLimitError extends Error {

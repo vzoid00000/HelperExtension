@@ -2,21 +2,56 @@
 
 Automatisiert das Eintragen von News in den OSDP News-Editor
 (`https://osdp.zentdok.at/#/newsEditor`) in den Bereichen **Cyber** und **KriMiSi**.
+Gespeichert wird in OSDP **nie automatisch**: Die Extension füllt das Formular aus und wartet,
+bis du es geprüft und selbst auf „Save“ geklickt hast.
 
-## Was die Automatik macht
+## Was die Extension macht
 
-1. **Quellen scannen**: Liest alle konfigurierten Nachrichtenquellen (RSS-Feeds und
-   Übersichtsseiten) und sammelt Meldungen ab dem letzten Freitag.
-2. **Relevanz prüfen**: Das Modell bewertet jede Schlagzeile (Bereich Cyber/KriMiSi/keiner,
-   Wichtigkeit 0–10). Alles ab der Schwelle (Standard 6) wird ausgewählt.
-3. **Eintragen**: Für jede ausgewählte Meldung
-   - Artikel laden; Text, Autor und Datum auslesen (Datum erneut gegen „letzter Freitag“ geprüft)
-   - Autor nur, wenn es eine natürliche Person ist, sonst „Autor ungenannt“
-   - Titel und Text Englisch → Deutsch übersetzen
-   - **Tags nach dem Tagging-Handbuch vergeben** (siehe unten)
-   - OSDP-Editor neu laden und befüllen: Native (URL, Titel, englischer Text), English Translated
-     (dasselbe Englisch), German Translated (deutscher Titel und Text), Metadata (Autor, Datum), Tags
-   - „Save“ klicken (abschaltbar), URL als erledigt merken, Eintrag in den **Verlauf** schreiben
+Eine einzige App-Seite (Klick auf das Extension-Symbol) mit fünf Ansichten:
+
+**Lauf** – der Arbeitsablauf:
+
+1. **Bereich wählen**: Cyber, KriMiSi oder beide. Die Wahl gilt für Scan, Relevanzprüfung,
+   Eintragen und die Meldungsliste (8–9 Uhr Cyber, danach KriMiSi).
+2. **Quellen scannen**: liest die Quellen des Bereichs (RSS-Feeds und Übersichtsseiten) und sammelt
+   Meldungen ab dem letzten Freitag. Meldungen, die schon im Verlauf stehen, werden als „bereits
+   eingetragen“ markiert.
+3. **Relevanz prüfen**: das Modell bewertet jede Schlagzeile (Bereich, Wichtigkeit 0–10). Alles ab
+   der Schwelle (Standard 6) wird ausgewählt; die Liste lässt sich filtern und von Hand anpassen.
+4. **Eintragen**: Für jede ausgewählte Meldung werden Artikeltext, Autor und Datum ausgelesen (Datum
+   erneut gegen „letzter Freitag“ geprüft), Titel und Text wortgetreu EN→DE übersetzt, Tags nach dem
+   Tagging-Handbuch vorgeschlagen und das OSDP-Formular befüllt: Native (URL, Titel, englischer
+   Text), English Translated (dasselbe Englisch), German Translated, Metadata (Autor oder „Autor
+   ungenannt“, Datum), Tags.
+5. **Freigabe**: Unten im OSDP-Tab erscheint eine Leiste „OSDP News Helper · 3/12 · Titel“ mit
+   „Überspringen“ und „Abbrechen“; in der App zeigt die Freigabe-Card Tags, Datum, Autor und
+   Warnungen. Du prüfst das Formular, korrigierst bei Bedarf und klickst in OSDP auf **Save**. Die
+   Extension erkennt das Speichern (Erfolgsmeldung bzw. geleertes Formular), schreibt den Verlauf
+   und macht mit der nächsten Meldung weiter. „Überspringen“ lässt die Meldung aus, „Abbrechen“
+   beendet den Lauf. Meldet OSDP ein Duplikat, wird die Meldung so markiert.
+6. **Lernen**: Hast du vor dem Save Tags im Formular geändert, erkennt die Extension die Differenz
+   und schlägt eine Regel vor (siehe „Regeln“).
+
+„Automatik starten“ führt Scan, Relevanzprüfung und Eintragen für den gewählten Bereich
+nacheinander aus. Eine Artikel-URL lässt sich auch direkt eingeben, ohne Scan.
+
+**Quellen** – Quellen anlegen, bearbeiten, testen (zeigt die ersten Treffer), ein-/ausschalten,
+löschen, Standardliste wiederherstellen; Import/Export als Text.
+
+**Verlauf** – alle eingetragenen Meldungen dauerhaft mit Zeit, Struktur, WB, Titel, Quelle,
+Zusammenfassung, Tags. Zähler je Zeitraum (heute, Woche, Monat, alle): Einträge, Cyber, KriMiSi,
+WB-Cyber, WB-KriMiSi, Duplikate. Duplikate (gleiche URL oder gleicher Titel) sind markiert. Suche,
+WB-Kennzeichnung umschalten, „Korrektur melden“, Export als Markdown oder CSV.
+
+**Regeln** – das Regelwerk aus deinen Korrekturen. Jede Regel hat einen Bereich (Tagging, Relevanz,
+Übersetzung), den Regeltext, eine Begründung und optional ein Beispiel. Aktive Regeln werden den
+Prompts angehängt und machen das Modell mit der Zeit besser. „Mit KI verallgemeinern“ formuliert aus
+einer Korrektur eine allgemeine Regel.
+
+**Einstellungen** – Sprachmodell (Claude-Code-Brücke, eigener Server oder Claude API), Übersetzer,
+Automatik (Schwelle, Zeitplan), OSDP-Felder, **Daten exportieren/importieren** (Einstellungen,
+Quellen, Regeln, Verlauf als JSON – so wandert alles zwischen Heim- und Arbeits-PC; der Export
+enthält auch API-Keys) und Werkzeuge (DOM-Dump, Tag-Baum mit Tooltips exportieren).
 
 Dieselbe Meldung von mehreren Quellen wird jeweils eigenständig eingetragen.
 
@@ -25,8 +60,8 @@ Dieselbe Meldung von mehreren Quellen wird jeweils eigenständig eingetragen.
 Grundlage ist `docs/OSDP_Tagging_Handbuch.md`; der Katalog mit allen 673 Tags liegt als
 `src/config/osdp-tags.json` vor (`node tools/build-tag-catalog.mjs` erzeugt ihn neu aus dem Handbuch).
 
-Für jeden Artikel liest das Modell den vollständigen Text und den Katalog und liefert einen
-Vorschlag. `src/lib/tag-catalog.js` prüft ihn gegen die festen Regeln:
+Für jeden Artikel liest das Modell den Text und den Katalog und liefert einen Vorschlag.
+`src/lib/tag-catalog.js` prüft ihn gegen die festen Regeln:
 
 | Regel | Umsetzung |
 |---|---|
@@ -39,49 +74,39 @@ Vorschlag. `src/lib/tag-catalog.js` prüft ihn gegen die festen Regeln:
 | WB-Tag nur bei besonders wichtigen Meldungen | `WB-Cyber` bzw. `WB-KriMiSi` als Knoten, nie Untertags; Spalte „WB“ erzwingt ja/nein |
 | Nie: zeitlicher Aspekt, Informationsverschmutzung, Social Media Post, andere Auftragstags | gesperrt, auch wenn das Modell sie nennt |
 
-Im OSDP-Tab klappt die Extension den Tag-Baum entlang des Pfads auf und hakt genau die
-Ziel-Checkbox an (`src/content/osdp-filler.js`, Schritt `applyTags`). Fehlt ein Modell, werden nur
-die Pflichttags gesetzt (Struktur, News, Nachrichtenseite, „kein Standort“) und im Protokoll
-darauf hingewiesen.
+Im OSDP-Tab setzt die Extension die Tags direkt über die Angular-Komponente (Eltern vor Kindern),
+notfalls per Klick im Tag-Baum, und kontrolliert das Ergebnis über die Chips. Fehlt ein Modell,
+werden nur die Pflichttags gesetzt (Struktur aus der Quellen-Kategorie, News, Nachrichtenseite,
+„kein Standort“) und im Protokoll darauf hingewiesen.
 
-Die Tooltips im Handbuch sind auf 30 Zeichen gekürzt. Side Panel → Werkzeuge →
-**„Tag-Baum mit Tooltips exportieren“** liest im OSDP-Tab alle vollständigen Tooltips aus und
-speichert `osdp-tags-….json`. Damit lassen sich die Tag-Definitionen in den Prompt übernehmen.
+Der Katalog geht kompakt in den Prompt (unter 30.000 Zeichen statt 46.000: alle Tagnamen,
+Beschreibungen gekürzt und nur wo sie den Namen erklären, Orte als Listen je Kontinent). Über die
+Claude API wird der Katalogblock zwischengespeichert.
 
-## Verlauf und Wochenbericht
+## Übersetzung
 
-Jede gespeicherte News landet im Verlauf (Automatik-Seite, unten): Zeit, Struktur, WB-Kennzeichnung,
-Titel, Quelle, Zusammenfassung, Autor, Tags. Die Kopfzeile zeigt die Zählung für heute und die
-laufende Woche inklusive WB-Cyber / WB-KriMiSi. Export als Markdown (Zwischenablage) oder CSV.
-Die WB-Kennzeichnung lässt sich im Verlauf umschalten, falls sie in OSDP nachträglich geändert wurde.
+Titel und Text gehen in einer Anfrage an das Modell. Die Anweisung verlangt eine wortgetreue,
+vollständige Übersetzung ohne Ergänzungen, Kürzungen oder Zusammenfassung mit gleicher
+Absatzstruktur. Eine Plausibilitätsprüfung (Längenverhältnis, Absatzanzahl, Floskeln) meldet
+Auffälligkeiten als Warnung in der Freigabe-Card. In OSDP landet im Native- und im
+English-Translated-Reiter der ausgelesene Originaltext unverändert.
+
+DeepL bleibt als Option (API-Key nötig; der Gratis-Plan hat 500.000 Zeichen im Monat und verlangt
+eine Kreditkarte zur Verifizierung). Über die Claude-Code-Brücke kostet die Übersetzung nichts extra.
 
 ## Installation
 
 1. Repository klonen oder ZIP entpacken
 2. Chrome: `chrome://extensions` → **Entwicklermodus** → **„Entpackte Erweiterung laden“** → Projektordner
-3. Extension-Icon → Side Panel → ⚙ Einstellungen:
-   - Sprachmodell wählen: **Claude API** (API-Key von console.anthropic.com; Knopf „Sparmodus“ wählt
-     das günstige Haiku 5.5) oder **lokales Modell** (Claude-Code-Brücke oder eigener Server)
+3. Extension-Symbol anklicken → Ansicht „Einstellungen“:
+   - Sprachmodell wählen: **Claude-Code-Brücke** („Claude-Code-Brücke voreinstellen“, siehe unten),
+     **Claude API** (API-Key von console.anthropic.com; „Sparmodus“ wählt das günstige Haiku 5.5)
+     oder **eigener Server**
    - Übersetzer wählen (Claude, lokal, DeepL, Chrome)
    - „Speichern“, dann „Übersetzung testen“ bzw. „Verbindung testen“
 4. In OSDP einloggen (ein Tab mit `osdp.zentdok.at` genügt)
 
 Nach Code-Änderungen in `chrome://extensions` auf „Aktualisieren“ (↻) klicken.
-
-## Bedienung
-
-**Automatik** (Side Panel → „Automatik öffnen“):
-
-- **▶ Alles automatisch**: Scan → Relevanzprüfung → Eintragen in einem Rutsch.
-- Oder Schritt für Schritt: **1 · Quellen scannen**, **2 · Relevanz prüfen**, Auswahl kontrollieren
-  (Haken, Spalte „WB“ auf auto/ja/nein, Zeile anklicken für Begründung und Tags), **3 · Ausgewählte eintragen**.
-- **■ Stopp** beendet nach der laufenden Meldung.
-
-**Einzelner Artikel** (Side Panel): Artikel-Tab öffnen → „Aktuellen Tab auslesen“ → prüfen →
-„Übersetzen“ → „Formular ausfüllen“ (Tags werden dabei ebenfalls vergeben; optional „Save“).
-
-**Zeitplan**: Uhrzeit in den Einstellungen (z. B. 08:00). Mo–Fr öffnet sich die Automatik-Seite
-und startet „Alles automatisch“. Chrome muss laufen.
 
 ### Datumsregel
 
@@ -93,6 +118,12 @@ und startet „Alles automatisch“. Chrome muss laufen.
 | Dienstag–Donnerstag | Freitag der laufenden Vorwoche |
 | Freitag | Freitag der Vorwoche (7 Tage) |
 | Samstag / Sonntag | gestern / vorgestern |
+
+### Zeitplan
+
+Uhrzeit in den Einstellungen (z. B. 07:55). Mo–Fr öffnet sich die App und führt Scan und
+Relevanzprüfung für Cyber aus, damit die Liste fertig ist, wenn du anfängst. Eingetragen wird nur,
+wenn du den Lauf startest. Chrome muss laufen.
 
 ## Claude-Abo statt API-Key: die Claude-Code-Brücke
 
@@ -120,9 +151,14 @@ Die Brücke meldet sich mit `http://localhost:4310/v1`, zeigt den gefundenen Cla
 prüft beim Start die Anmeldung. In den Extension-Einstellungen „Claude-Code-Brücke voreinstellen“
 klicken, speichern, „Verbindung testen“. Das Fenster der Brücke muss offen bleiben, solange die
 Extension arbeitet; jede Anfrage erscheint dort als Zeile.
+Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
+(Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
 
-Ist in der Windows-Umgebung ein `ANTHROPIC_API_KEY` gesetzt, würde Claude Code im Druckmodus
-immer diesen Key verwenden; die Brücke entfernt die Variable deshalb für jeden Aufruf.
+Die Brücke startet das unveränderte Claude Code ohne Werkzeuge und ohne Sitzung
+(`--tools "" --disallowedTools "*" --max-turns 1 --safe-mode --no-session-persistence`), übergibt den
+System-Prompt per Datei und den Artikeltext per stdin und entfernt `ANTHROPIC_API_KEY` aus der
+Umgebung, damit nie über die API abgerechnet wird. Ist in der Windows-Umgebung ein
+`ANTHROPIC_API_KEY` gesetzt, würde Claude Code im Druckmodus sonst immer diesen Key verwenden.
 
 **„claude wird nicht erkannt“ (Windows):** Der native Installer legt `claude.exe` unter
 `%USERPROFILE%\.local\bin` ab und trägt den Ordner in den Benutzer-PATH ein. Ein schon offenes
@@ -137,13 +173,6 @@ dir $env:USERPROFILE\.local\bin
 
 Fehlt die Datei, ist die Installation nicht durchgelaufen: `winget install Anthropic.ClaudeCode`
 oder, da Node.js ohnehin installiert ist, `npm install -g @anthropic-ai/claude-code`.
-Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
-(Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
-
-Die Brücke startet das unveränderte Claude Code ohne Werkzeuge und ohne Sitzung
-(`--tools "" --disallowedTools "*" --max-turns 1 --safe-mode --no-session-persistence`), übergibt den
-System-Prompt per Datei und den Artikeltext per stdin und entfernt `ANTHROPIC_API_KEY` aus der
-Umgebung, damit nie über die API abgerechnet wird.
 
 Hinweis zu den Nutzungsbedingungen: Anthropic erlaubt die Anmeldung mit dem eigenen Abo im
 unveränderten Claude Code für den persönlichen Gebrauch; das Kontingent darf nicht für andere
@@ -151,13 +180,13 @@ Personen oder als Dienst weitergegeben werden. Die Brücke ist deshalb nur für 
 und nimmt nur Verbindungen von `localhost` an.
 
 **Nutzungslimit:** Meldet Claude Code, dass das Abo-Kontingent erschöpft ist, antwortet die Brücke
-mit HTTP 429 und der Zeit, ab der es weitergeht (soweit Claude Code sie nennt). Die Automatik hält
-den Durchlauf an, zeigt „Nutzungslimit erreicht – bitte warten“ und merkt sich die bereits
-erledigten Meldungen; später einfach erneut starten. Bis zur gemeldeten Zeit beantwortet die Brücke
-weitere Anfragen sofort mit 429, ohne Claude Code erneut aufzurufen.
+mit HTTP 429 und der Zeit, ab der es weitergeht (soweit Claude Code sie nennt). Der Lauf hält an,
+zeigt „Nutzungslimit erreicht – bitte warten“ und merkt sich die bereits erledigten Meldungen;
+später einfach erneut starten. Bis zur gemeldeten Zeit beantwortet die Brücke weitere Anfragen
+sofort mit 429, ohne Claude Code erneut aufzurufen.
 
-Verbrauch je Artikel liegt grob bei einem bis drei Claude-Code-Aufrufen (Relevanz wird gebündelt,
-dann Tagging und Übersetzung). Mit `--model sonnet` reicht das Kontingent deutlich länger.
+Verbrauch je Meldung: eine Übersetzungs- und eine Tagging-Anfrage (die Relevanzprüfung bündelt bis
+zu 50 Schlagzeilen je Anfrage). Mit `--model sonnet` reicht das Kontingent deutlich länger.
 
 ## Am Arbeits-PC ohne Installation
 
@@ -172,28 +201,30 @@ Richtlinie gesperrt, läuft auch sie nicht. Sonst bleiben drei Wege:
    Haiku 5.5 reicht für Übersetzung und Tagging; bei rund zehn Meldungen am Tag liegt der
    Verbrauch grob bei 10–40 Cent pro Arbeitstag (der Tag-Katalog wird zwischengespeichert).
    Sonnet 5.5 kostet etwa das 3–5-Fache, Opus 5.5 etwa das 5–10-Fache. Bei einem Rate-Limit
-   (HTTP 429) hält die Automatik an und zeigt an, ab wann es weitergeht.
+   (HTTP 429) hält der Lauf an und zeigt an, ab wann es weitergeht.
 2. **Ohne Modell (kostenlos, halbautomatisch).** Übersetzung auf „Chrome integriert“ stellen
    (Chrome 138+, Sprachpaket wird beim ersten Mal geladen), „Tags per Modell“ ausschalten.
    Die Relevanzprüfung entfällt: „Quellen scannen“, dann die passenden Meldungen per Haken selbst
-   auswählen und „Ausgewählte eintragen“. Gesetzt werden nur die Pflichttags (Struktur aus der
-   Quellen-Kategorie, News, Nachrichtenseite, „kein Standort“); Ort, Themen und WB trägst du in
-   OSDP selbst nach. Einzelne Artikel gehen genauso über das Side Panel.
+   auswählen und „Ausgewählte eintragen“. Gesetzt werden nur die Pflichttags; Ort, Themen und WB
+   trägst du vor dem Save in OSDP selbst nach.
 3. **Brücke am Heim-PC** ist nur im eigenen Netz sinnvoll. Sie über einen Tunnel aus dem Internet
    erreichbar zu machen ist nicht vorgesehen: der Firmen-Proxy blockiert so etwas meist, der
    Heim-PC müsste laufen, und ein offener Zugang zum eigenen Abo-Kontingent ist ein Risiko.
    Erlaubt die IT ein portables Node.js (nur entpacken, kein Installer), läuft die Brücke auch am
    Arbeits-PC.
 
+Einstellungen, Quellen, Regeln und Verlauf lassen sich in den Einstellungen als JSON exportieren
+und auf dem anderen PC importieren.
+
 ## Sprachmodell: Claude oder eigener PC
 
-| | Claude API | Lokales Modell |
+| | Claude API | Lokaler Server |
 |---|---|---|
-| Einrichtung | API-Key | Server-URL + Modellname |
-| Kosten | pro Token (Katalog wird gecacht) | keine |
-| Qualität Tagging/Übersetzung | sehr gut | abhängig vom Modell (ab ca. 27–32B Parametern brauchbar) |
+| Einrichtung | API-Key | Server-URL + Modellname (Brücke: voreingestellt) |
+| Kosten | pro Token (Katalog wird gecacht) | Brücke: Abo-Kontingent; eigenes Modell: keine |
+| Qualität Tagging/Übersetzung | sehr gut | Brücke: wie Claude; eigenes Modell: abhängig vom Modell (ab ca. 27–32B Parametern brauchbar) |
 
-### Lokales Modell einrichten (vorbereitet, noch nicht live)
+### Eigenes Modell einrichten (vorbereitet, noch nicht live)
 
 Die Extension spricht jede **OpenAI-kompatible** Chat-Schnittstelle an (`/v1/chat/completions`).
 
@@ -205,7 +236,7 @@ OLLAMA_HOST=0.0.0.0 OLLAMA_ORIGINS="chrome-extension://*" ollama serve
 ollama pull qwen2.5:32b        # oder gemma3:27b, llama3.3:70b, mistral-large …
 ```
 
-Einstellungen: URL `http://<IP-des-PCs>:11434/v1`, Modell `qwen2.5:32b`, Anbieter „Lokales Modell“,
+Einstellungen: URL `http://<IP-des-PCs>:11434/v1`, Modell `qwen2.5:32b`, Anbieter „Lokaler Server“,
 Übersetzung „Lokales Modell“. `OLLAMA_ORIGINS` ist nötig, weil Ollama Anfragen aus Chrome-Extensions
 sonst ablehnt. `OLLAMA_HOST=0.0.0.0` macht den Server im Netzwerk erreichbar; von außerhalb des
 Heimnetzes braucht es ein VPN (z. B. Tailscale/WireGuard), kein offener Port ins Internet.
@@ -222,38 +253,41 @@ nicht, fällt die Extension automatisch auf `json_object` und zuletzt auf Text m
 Standardliste in `src/lib/sources.js` (BleepingComputer, The Record, The Hacker News, SecurityWeek,
 CyberScoop, Dark Reading, Infosecurity, Krebs, The Register; BBC World, Guardian World, Al Jazeera,
 Defense News, Breaking Defense, The War Zone, Military Times, Politico Europe, DW, Kyiv Independent,
-Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite). Eigene Liste in den
-Einstellungen, eine Quelle pro Zeile:
+Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite). Die Liste wird in der
+Ansicht „Quellen“ gepflegt; eine leere Liste bedeutet Standardquellen. Für den Textimport gilt eine
+Quelle pro Zeile:
 
 ```
 Name | URL | cyber|krimisi|both | rss|html | URL-Muster (nur html, optional)
 ```
 
-Die Feed-URLs konnten aus der Entwicklungsumgebung heraus nicht geprüft werden; fehlerhafte Quellen
-stehen nach dem Scan mit Fehlermeldung in der Quellen-Tabelle.
+Fehlerhafte Quellen stehen nach dem Scan mit Fehlermeldung in der Quellen-Status-Tabelle; „Testen“
+in der Quellen-Ansicht zeigt die ersten Treffer einer Quelle.
 
 ## OSDP-Integration (Stand)
 
 Die Oberfläche ist aus dem HAR-Export vollständig bekannt (Analyse in `docs/OSDP_Analyse.md`) und
 die Extension wurde **End-to-End gegen die echte Angular-App im lokalen Nachbau getestet**
-(`tests/e2e-mock.mjs`): Felder, CKEditor in allen drei Reitern, Datum, Autor, Tags und Speichern
-inklusive geprüftem `POST /api/news`-Payload.
+(`tests/e2e-mock.mjs`): Felder, CKEditor in allen drei Reitern, Datum, Autor, Tags, Freigabe-Leiste
+und Save-Erkennung inklusive geprüftem `POST /api/news`-Payload.
 
 | Bereich im Editor | Umsetzung |
 |---|---|
 | Native / English Translated / German Translated | `formcontrolname`-Felder + CKEditor `setData()` |
 | Metadata | `article_created_at` (Datepicker, `DD/MM/YYYY`), `article_author` + Button „Set to Autor ungenannt“ |
 | Tags | direkt über die Angular-Komponente per UID (Eltern vor Kindern); Fallback: Pfad aufklappen und Checkbox anhaken; Kontrolle über die Chips |
-| Save | Toast „Item Added!“ = Erfolg; „Duplicate, URL already in the database!“ → Meldung wird als Duplikat markiert |
+| Save | klickt der Nutzer; Toast „Item Added!“ oder geleertes Formular = gespeichert; „Duplicate, URL already in the database!“ → Meldung wird als Duplikat markiert |
+| Freigabe-Leiste | eigenes Element mit Shadow DOM am unteren Rand, verändert die Seite sonst nicht |
 | Öffnen des Editors | App laden, dann per Hash navigieren (ein Deep-Link direkt nach dem Laden landet in OSDP auf „keine Berechtigung“) |
 
-Offen bleibt nur der Test gegen den echten Server (Login, echte Antwortzeiten).
+Offen bleibt der Test gegen den echten Server (Login, echte Antwortzeiten).
 
 ## Tests
 
-Siehe `tests/README.md`. Kurzfassung: `node tests/catalog.test.mjs`, `node tests/har-tools.test.mjs`,
-`node tests/extension-v2.test.mjs`, `node tests/extension-v3.test.mjs` (Playwright nötig) und
-`node tests/e2e-mock.mjs` gegen den laufenden Nachbau.
+Siehe `tests/README.md`. Ohne Browser: `node tests/catalog.test.mjs`, `stores.test.mjs`,
+`prompts.test.mjs`, `har-tools.test.mjs`, `bridge.test.mjs`. Mit Playwright: `app.test.mjs`,
+`design.test.mjs`, `review.test.mjs`, `extension-v2.test.mjs`, `extension-v3.test.mjs` und
+`node tests/e2e-mock.mjs` gegen den Nachbau.
 
 ## Lokale Entwicklung mit Nachbau der OSDP-Oberfläche
 
@@ -271,7 +305,7 @@ startet den Server. Dafür müssen `tools/har-to-mock.mjs`, `tools/mock-osdp-ser
 
 Der Server liefert die aufgezeichneten Antworten (Login, Tag-Baum, Extract …), protokolliert
 „Save“-Aufrufe und speichert nichts. In den Extension-Einstellungen das URL-Muster des OSDP-Tabs
-auf `http://localhost:4300/*` stellen, dann laufen Side Panel und Automatik gegen den Nachbau.
+auf `http://localhost:4300/*` stellen, dann läuft die App gegen den Nachbau.
 Was dafür exportiert werden muss, steht in `site-dump/README.md`.
 
 ## Projektstruktur
@@ -279,6 +313,7 @@ Was dafür exportiert werden muss, steht in `site-dump/README.md`.
 ```
 manifest.json                      Manifest V3
 docs/OSDP_Tagging_Handbuch.md      Tagging-Regeln und Tag-Katalog (Quelle)
+docs/DESIGN.md                     Design-System der App (Tokens, Komponenten)
 tools/build-tag-catalog.mjs        Handbuch → src/config/osdp-tags.json
 tools/redact-har.mjs               HAR-Export schwärzen (Cookies, Tokens, Passwörter)
 tools/har-to-mock.mjs              HAR → lokaler Nachbau (mock-osdp/)
@@ -287,25 +322,26 @@ tools/start-mock-osdp.cmd          Windows-Starter für den Nachbau
 tools/claude-bridge.mjs            Claude-Code-Brücke (Abo-Kontingent statt API-Key)
 tools/start-claude-bridge.cmd      Windows-Starter für die Brücke
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
-src/background.js                  Service Worker (Side Panel, Zeitplan)
-src/auto/                          Automatik-Seite (Scan → Relevanz → Eintragen, Verlauf)
-src/sidepanel/                     Side Panel (Einzelartikel, Werkzeuge)
-src/options/                       Einstellungen
+src/background.js                  Service Worker (App-Tab öffnen, Zeitplan)
+src/app/                           App-Seite: app.html, app.js, ui.js, views/ (Lauf, Quellen, Verlauf, Regeln, Einstellungen), ui.css, app.css
 src/lib/llm.js                     Modell-Anbindung (Claude / lokal)
 src/lib/claude.js                  Claude Messages API (raw HTTP)
 src/lib/classify.js                Relevanzprüfung
-src/lib/tagger.js                  Tag-Vorschlag nach Handbuch
+src/lib/tagger.js                  Tag-Vorschlag nach Handbuch (kompakter Katalog, Regelwerk)
 src/lib/tag-catalog.js             Katalog, Regeln, Validierung
-src/lib/translate.js               Übersetzung (Claude / lokal / DeepL / Chrome)
-src/lib/history.js                 Verlauf, Statistik, Export
-src/lib/osdp-driver.js             Steuerung des OSDP-Editors
-src/lib/sources.js, feeds.js       Quellen, RSS/Atom, Link-Sammlung
+src/lib/translate.js               Übersetzung (Claude / lokal / DeepL / Chrome) mit Plausibilitätsprüfung
+src/lib/rules.js                   Lernregeln, Korrekturerkennung
+src/lib/history.js                 Verlauf, Duplikate, Statistik, Export
+src/lib/sources-store.js           Quellenverwaltung
+src/lib/data-transfer.js           Gesamtexport/-import
+src/lib/osdp-driver.js             Steuerung des OSDP-Editors, Freigabe-Schleife
+src/lib/sources.js, feeds.js       Standardquellen, RSS/Atom, Link-Sammlung
 src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
 src/lib/dates.js, author.js        Datumsregel, Autor-Normalisierung
 src/content/news-extractor.js      Artikel auslesen
-src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Save, Export)
+src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Leiste, Save-Erkennung, Export)
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors
-site-dump/                         Ablage für DOM-Dumps
+site-dump/                         HAR-Export (geschwärzt) und DOM-Dumps
 ```
 
 Kein Build-Schritt, keine Abhängigkeiten.

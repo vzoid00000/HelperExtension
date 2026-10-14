@@ -39,8 +39,9 @@ let [sw] = context.serviceWorkers();
 if (!sw) sw = await context.waitForEvent('serviceworker', { timeout: 15000 });
 const extId = new URL(sw.url()).host;
 
-// 1) Seiten ohne Fehler
-for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'src/auto/auto.html']) {
+// 1) App-Seite (v0.6) ohne Fehler
+const APP = `chrome-extension://${extId}/src/app/app.html`;
+for (const p of ['src/app/app.html']) {
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
@@ -54,7 +55,7 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
 // 2) Katalog in der Extension laden + lokaler LLM-Client + Verlauf-Helfer
 {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/src/auto/auto.html`);
+  await page.goto(APP);
   const r = await page.evaluate(async (mockUrl) => {
     const { TagCatalog } = await import('../lib/tag-catalog.js');
     const cat = await TagCatalog.load();
@@ -118,10 +119,10 @@ for (const p of ['src/sidepanel/sidepanel.html', 'src/options/options.html', 'sr
   await page.close();
 }
 
-// 4) Einstellungen: Sparmodus-Voreinstellung, Modellauswahl, effort-Parameter bei Haiku
+// 4) Einstellungen (Ansicht #einstellungen der App-Seite): Sparmodus-Voreinstellung, Modellauswahl, effort-Parameter bei Haiku
 {
   const page = await context.newPage();
-  await page.goto(`chrome-extension://${extId}/src/options/options.html`);
+  await page.goto(`${APP}#einstellungen`);
   await page.waitForTimeout(500);
   await page.click('#btnPresetCheap');
   await page.fill('#anthropicApiKey', 'sk-ant-test');
