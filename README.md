@@ -17,18 +17,24 @@ Eine einzige App-Seite (Klick auf das Extension-Symbol) mit fünf Ansichten:
    Meldungen ab dem letzten Freitag. Meldungen, die schon im Verlauf stehen, werden als „bereits
    eingetragen“ markiert.
 3. **Relevanz prüfen**: das Modell bewertet jede Schlagzeile (Bereich, Wichtigkeit 0–10). Alles ab
-   der Schwelle (Standard 6) wird ausgewählt; die Liste lässt sich filtern und von Hand anpassen.
-4. **Eintragen**: Für jede ausgewählte Meldung werden Artikeltext, Autor und Datum ausgelesen (Datum
-   erneut gegen „letzter Freitag“ geprüft), Titel und Text wortgetreu EN→DE übersetzt, Tags nach dem
-   Tagging-Handbuch vorgeschlagen und das OSDP-Formular befüllt: Native (URL, Titel, englischer
-   Text), English Translated (dasselbe Englisch), German Translated, Metadata (Autor oder „Autor
-   ungenannt“, Datum), Tags.
+   der Schwelle (Standard 6) wird ausgewählt, sofern es zum gewählten Bereich gehört; die Liste
+   lässt sich filtern und von Hand anpassen.
+4. **Eintragen**: Für jede ausgewählte Meldung prüft die Extension zuerst über OSDP, ob die URL schon
+   in der Datenbank ist (Duplikat → übersprungen, ohne Modellkosten). Dann werden Artikeltext, Autor
+   und Datum ausgelesen (Datum erneut gegen „letzter Freitag“ geprüft), Titel und Text wortgetreu
+   EN→DE übersetzt, Tags nach dem Tagging-Handbuch vorgeschlagen und das OSDP-Formular befüllt:
+   Native (URL, Titel, englischer Text), English Translated (dasselbe Englisch), German Translated,
+   Metadata (Autor oder „Autor ungenannt“, Datum), Tags.
 5. **Freigabe**: Unten im OSDP-Tab erscheint eine Leiste „OSDP News Helper · 3/12 · Titel“ mit
    „Überspringen“ und „Abbrechen“; in der App zeigt die Freigabe-Card Tags, Datum, Autor und
    Warnungen. Du prüfst das Formular, korrigierst bei Bedarf und klickst in OSDP auf **Save**. Die
-   Extension erkennt das Speichern (Erfolgsmeldung bzw. geleertes Formular), schreibt den Verlauf
-   und macht mit der nächsten Meldung weiter. „Überspringen“ lässt die Meldung aus, „Abbrechen“
-   beendet den Lauf. Meldet OSDP ein Duplikat, wird die Meldung so markiert.
+   Extension erkennt das Speichern (Erfolgsmeldung bzw. geleertes Formular nach einem Klick auf
+   Save), schreibt den Verlauf und macht mit der nächsten Meldung weiter. „Überspringen“ lässt die
+   Meldung aus, „Abbrechen“ beendet den Lauf; „Stopp“ während der Freigabe wirkt wie „Abbrechen“,
+   das ausgefüllte Formular wird beim nächsten Lauf verworfen. „Als gespeichert markieren“ in der
+   App ist nur für den Fall gedacht, dass OSDP gespeichert hat und die Extension es nicht erkannt
+   hat. Meldet OSDP ein Duplikat, wird die Meldung so markiert. Probleme beim Ausfüllen (etwa ein
+   Tag, der sich nicht setzen ließ) stehen in der Leiste und in der Freigabe-Card.
 6. **Lernen**: Hast du vor dem Save Tags im Formular geändert, erkennt die Extension die Differenz
    und schlägt eine Regel vor (siehe „Regeln“).
 
@@ -36,24 +42,30 @@ Eine einzige App-Seite (Klick auf das Extension-Symbol) mit fünf Ansichten:
 nacheinander aus. Eine Artikel-URL lässt sich auch direkt eingeben, ohne Scan.
 
 **Quellen** – Quellen anlegen, bearbeiten, testen (zeigt die ersten Treffer), ein-/ausschalten,
-löschen, Standardliste wiederherstellen; Import/Export als Text.
+löschen, Standardliste wiederherstellen; Import/Export als Text. Wird die letzte Quelle gelöscht,
+gilt wieder die Standardliste (25 Quellen).
 
 **Verlauf** – alle eingetragenen Meldungen dauerhaft mit Zeit, Struktur, WB, Titel, Quelle,
 Zusammenfassung, Tags. Zähler je Zeitraum (heute, Woche, Monat, alle): Einträge, Cyber, KriMiSi,
-WB-Cyber, WB-KriMiSi, Duplikate. Duplikate (gleiche URL oder gleicher Titel) sind markiert. Suche,
-WB-Kennzeichnung umschalten, „Korrektur melden“, Export als Markdown oder CSV.
+WB-Cyber, WB-KriMiSi, Duplikate. Duplikate (gleiche URL oder gleicher Titel) stehen in der Spalte
+„Hinweis“. Suche, WB-Kennzeichnung umschalten, „Korrektur melden“, Export als Markdown oder CSV,
+„Verlauf löschen“ (zweifache Rückfrage, unwiderruflich).
 
 **Regeln** – das Regelwerk aus deinen Korrekturen. Jede Regel hat einen Bereich (Tagging, Relevanz,
 Übersetzung), den Regeltext, eine Begründung und optional ein Beispiel. Aktive Regeln werden den
-Prompts angehängt und machen das Modell mit der Zeit besser. „Mit KI verallgemeinern“ formuliert aus
-einer Korrektur eine allgemeine Regel.
+Prompts angehängt (höchstens 40 Regeln bzw. 6.000 Zeichen je Prompt, älteste zuerst) und machen das
+Modell mit der Zeit besser. „Mit KI verallgemeinern“ formuliert aus einer Korrektur eine
+allgemeine Regel.
 
 **Einstellungen** – Sprachmodell (Claude-Code-Brücke, eigener Server oder Claude API), Übersetzer,
 Automatik (Schwelle, Zeitplan), OSDP-Felder, **Daten exportieren/importieren** (Einstellungen,
-Quellen, Regeln, Verlauf als JSON – so wandert alles zwischen Heim- und Arbeits-PC; der Export
-enthält auch API-Keys) und Werkzeuge (DOM-Dump, Tag-Baum mit Tooltips exportieren).
+Quellen, Regeln, Verlauf als JSON – so wandert alles zwischen Heim- und Arbeits-PC; beim Export
+wird gefragt, ob API-Keys mitgehen; der Import ergänzt Quellen, Regeln und Verlauf und überschreibt
+Einstellungen, gelöscht wird nichts) und Werkzeuge (DOM-Dump, Tag-Baum mit Tooltips exportieren).
 
-Dieselbe Meldung von mehreren Quellen wird jeweils eigenständig eingetragen.
+Eine Meldung, deren URL oder Titel schon im Verlauf steht, wird beim Scan als „bereits eingetragen“
+markiert und nicht automatisch ausgewählt; sie lässt sich trotzdem anhaken. Dieselbe Nachricht mit
+anderem Titel aus einer zweiten Quelle gilt als neue Meldung.
 
 ## Tagging nach Handbuch
 
@@ -121,9 +133,10 @@ Nach Code-Änderungen in `chrome://extensions` auf „Aktualisieren“ (↻) kli
 
 ### Zeitplan
 
-Uhrzeit in den Einstellungen (z. B. 07:55). Mo–Fr öffnet sich die App und führt Scan und
-Relevanzprüfung für Cyber aus, damit die Liste fertig ist, wenn du anfängst. Eingetragen wird nur,
-wenn du den Lauf startest. Chrome muss laufen.
+Uhrzeit in den Einstellungen (z. B. 07:55). Mo–Fr öffnet sich die App (oder der offene App-Tab
+bekommt den Auftrag) und führt Scan und Relevanzprüfung für den zuletzt gewählten Bereich aus,
+damit die Liste fertig ist, wenn du anfängst. Eingetragen wird nur, wenn du den Lauf startest.
+Chrome muss laufen.
 
 ## Claude-Abo statt API-Key: die Claude-Code-Brücke
 
