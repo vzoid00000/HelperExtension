@@ -1,4 +1,4 @@
-# OSDP News Helper – Morgenstart für den Heim-PC.
+﻿# OSDP News Helper - Morgenstart für den Heim-PC.
 #
 # Startet die Claude-Code-Brücke (mit Zugangs-Token) und den Tunnel nach außen, prüft vorher die
 # Claude-Code-Anmeldung, hält den PC wach, überwacht beide Prozesse und startet sie bei Ausfall neu.
@@ -51,11 +51,11 @@ function Find-Tool([string]$Name, [string[]]$Fallbacks) {
 }
 
 # --------------------------------------------------------------------- 0) Voraussetzungen ----
-Say 'OSDP News Helper – Morgenstart' 'Cyan'
+Say 'OSDP News Helper - Morgenstart' 'Cyan'
 $Node = Find-Tool 'node' @()
-if (-not $Node) { Fail 'Node.js nicht gefunden – von nodejs.org installieren (LTS), danach neues Fenster.' }
+if (-not $Node) { Fail 'Node.js nicht gefunden - von nodejs.org installieren (LTS), danach neues Fenster.' }
 $Claude = Find-Tool 'claude' @("$env:USERPROFILE\.local\bin\claude.exe", "$env:APPDATA\npm\claude.cmd")
-if (-not $Claude) { Fail 'Claude Code nicht gefunden – in PowerShell: irm https://claude.ai/install.ps1 | iex' }
+if (-not $Claude) { Fail 'Claude Code nicht gefunden - in PowerShell: irm https://claude.ai/install.ps1 | iex' }
 Say ("Node.js: {0}  |  Claude Code: {1}" -f $Node, $Claude)
 
 # Tunnel-Art aus tools\tunnel.txt: "tailscale" (Funnel, feste Adresse), "cloudflare" (Schnelltunnel,
@@ -68,13 +68,13 @@ $TunnelKind = ''
 $TunnelExe = ''
 $TailscaleExe = Find-Tool 'tailscale' @("$env:ProgramFiles\Tailscale\tailscale.exe", "${env:ProgramFiles(x86)}\Tailscale\tailscale.exe")
 if ($TunnelSetting -eq 'tailscale' -or (-not $TunnelSetting -and $TailscaleExe)) {
-  if (-not $TailscaleExe) { Fail 'tools\tunnel.txt verlangt Tailscale, aber tailscale.exe fehlt – von tailscale.com installieren und anmelden.' }
+  if (-not $TailscaleExe) { Fail 'tools\tunnel.txt verlangt Tailscale, aber tailscale.exe fehlt - von tailscale.com installieren und anmelden.' }
   $TunnelKind = 'tailscale'
   $TunnelExe = $TailscaleExe
 } elseif ($TunnelSetting -and $TunnelSetting -ne 'cloudflare' -and $TunnelSetting -ne 'cloudflared') {
   $TunnelDomain = $TunnelSetting
   $TunnelExe = Find-Tool 'ngrok' @((Join-Path $ToolsDir 'ngrok.exe'))
-  if (-not $TunnelExe) { Fail 'tools\tunnel.txt nennt eine ngrok-Domain, aber ngrok fehlt – winget install ngrok.ngrok, dann ngrok config add-authtoken <dein Token>.' }
+  if (-not $TunnelExe) { Fail 'tools\tunnel.txt nennt eine ngrok-Domain, aber ngrok fehlt - winget install ngrok.ngrok, dann ngrok config add-authtoken <dein Token>.' }
   $TunnelKind = 'ngrok'
 } else {
   $TunnelExe = Find-Tool 'cloudflared' @((Join-Path $ToolsDir 'cloudflared.exe'))
@@ -88,7 +88,7 @@ if ($TunnelKind -eq 'tailscale') {
     $ts = (& $TailscaleExe status --json 2>$null | Out-String | ConvertFrom-Json)
     if ($ts -and $ts.BackendState -eq 'Running') { $tsOk = $true; Say ("Tailscale angemeldet als {0}" -f $ts.Self.DNSName.TrimEnd('.')) }
   } catch { }
-  if (-not $tsOk) { Fail 'Tailscale läuft nicht oder ist nicht angemeldet – Tailscale-Symbol in der Taskleiste → anmelden, dann Skript neu starten.' }
+  if (-not $tsOk) { Fail 'Tailscale läuft nicht oder ist nicht angemeldet - Tailscale-Symbol in der Taskleiste -> anmelden, dann Skript neu starten.' }
 }
 
 # ------------------------------------------------------------- 1) Claude-Code-Anmeldung ----
@@ -101,13 +101,13 @@ function Get-ClaudeAuth {
 }
 $auth = Get-ClaudeAuth
 if (-not $auth -or -not $auth.loggedIn) {
-  Say 'Claude Code ist nicht angemeldet – Browserfenster öffnet sich, bitte mit dem claude.ai-Konto anmelden …' 'Yellow'
+  Say 'Claude Code ist nicht angemeldet - Browserfenster öffnet sich, bitte mit dem claude.ai-Konto anmelden ...' 'Yellow'
   & $Claude auth login
   $auth = Get-ClaudeAuth
-  if (-not $auth -or -not $auth.loggedIn) { Fail 'Anmeldung fehlgeschlagen. Bitte „claude auth login“ von Hand ausführen.' }
+  if (-not $auth -or -not $auth.loggedIn) { Fail 'Anmeldung fehlgeschlagen. Bitte "claude auth login" von Hand ausführen.' }
 }
 if ($auth.authMethod -ne 'claude.ai') {
-  Fail ("Claude Code ist mit '{0}' angemeldet, nicht mit dem claude.ai-Abo – ANTHROPIC_API_KEY entfernen und „claude auth login“ ausführen." -f $auth.authMethod)
+  Fail ("Claude Code ist mit '{0}' angemeldet, nicht mit dem claude.ai-Abo - ANTHROPIC_API_KEY entfernen und 'claude auth login' ausführen." -f $auth.authMethod)
 }
 Say ("Anmeldung ok: {0} ({1})" -f $auth.email, $auth.subscriptionType) 'Green'
 
@@ -121,7 +121,7 @@ public static extern uint SetThreadExecutionState(uint esFlags);
   [OsdpHelper.Power]::SetThreadExecutionState([uint32]0x80000001) | Out-Null
   Say 'Ruhezustand ist blockiert, solange dieses Fenster offen ist.'
 } catch {
-  Say 'Konnte den Ruhezustand nicht blockieren – bitte in den Energieoptionen „Energie sparen: Nie“ einstellen.' 'Yellow'
+  Say 'Konnte den Ruhezustand nicht blockieren - bitte in den Energieoptionen "Energie sparen: Nie" einstellen.' 'Yellow'
 }
 
 # ------------------------------------------------------------------------- 3) Brücke ----
@@ -141,12 +141,12 @@ function Get-BridgeStatus {
 Start-Bridge
 $deadline = (Get-Date).AddSeconds(30)
 while (-not (Test-Path $TokenFile) -and (Get-Date) -lt $deadline) { Start-Sleep -Milliseconds 300 }
-if (-not (Test-Path $TokenFile)) { Fail ("Brücke hat keinen Token angelegt – siehe {0}" -f $BridgeErr) }
+if (-not (Test-Path $TokenFile)) { Fail ("Brücke hat keinen Token angelegt - siehe {0}" -f $BridgeErr) }
 $Token = (Get-Content $TokenFile -Raw).Trim()
 $deadline = (Get-Date).AddSeconds(30)
 $status = $null
 while (-not $status -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 1; $status = Get-BridgeStatus }
-if (-not $status) { Fail ("Brücke antwortet nicht auf Port {0} – siehe {1}" -f $Port, $BridgeErr) }
+if (-not $status) { Fail ("Brücke antwortet nicht auf Port {0} - siehe {1}" -f $Port, $BridgeErr) }
 if ($status.auth -and -not $status.auth.ok) { Say 'Brücke meldet: keine Claude-Code-Anmeldung.' 'Yellow' }
 Say 'Brücke läuft.' 'Green'
 
@@ -161,7 +161,7 @@ function Test-TunnelAlive {
 function Start-Tunnel {
   Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
   if ($TunnelKind -eq 'tailscale') {
-    # Funnel: öffentliche HTTPS-Adresse https://<pc>.<tailnet>.ts.net → localhost:$Port; --bg bleibt
+    # Funnel: öffentliche HTTPS-Adresse https://<pc>.<tailnet>.ts.net -> localhost:$Port; --bg bleibt
     # aktiv, bis es zurückgesetzt wird. Beim ersten Mal muss Funnel im Admin-Panel freigeschaltet werden;
     # tailscale gibt dafür einen Link aus.
     $out = (& $TunnelExe funnel --bg $Port 2>&1 | Out-String)
@@ -217,7 +217,7 @@ function Test-Public {
 }
 function Write-Address {
   $lines = @(
-    'OSDP News Helper – Zugang zur Brücke (Einstellungen → Lokaler Server)',
+    'OSDP News Helper - Zugang zur Brücke (Einstellungen -> Lokaler Server)',
     ("Server-URL : {0}/v1" -f $script:PublicUrl),
     ("API-Key    : {0}" -f $script:Token),
     ("Modellname : {0}" -f $Model),
@@ -243,11 +243,11 @@ while (-not $PublicUrl -and (Get-Date) -lt $deadline) {
   $PublicUrl = Read-TunnelUrl
 }
 if ($TunnelKind -eq 'ngrok' -and -not (Test-TunnelAlive)) {
-  # Ältere ngrok-Version kennt --url nicht → --domain
+  # Ältere ngrok-Version kennt --url nicht -> --domain
   $errText = ''
   if (Test-Path $TunnelErr) { $errText = Get-Content $TunnelErr -Raw }
   if ($errText -match 'unknown flag|url') {
-    Say 'ngrok kennt --url nicht, versuche --domain …' 'Yellow'
+    Say 'ngrok kennt --url nicht, versuche --domain ...' 'Yellow'
     Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
     $script:Tunnel = Start-Process -FilePath $TunnelExe -ArgumentList @('http', "$Port", "--domain=$TunnelDomain", '--log=stdout', '--log-level=info') -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $TunnelOut -RedirectStandardError $TunnelErr
     $deadline = (Get-Date).AddSeconds(40)
@@ -260,7 +260,7 @@ if (-not $PublicUrl) {
   Fail ("Tunnel liefert keine Adresse. Letzte Meldungen:`n{0}" -f $errText)
 }
 if (Test-Public) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfolgreich.' 'Green' }
-else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug fehl – bitte 30 s warten; ich prüfe weiter.' 'Yellow' }
+else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug fehl - bitte 30 s warten; ich prüfe weiter.' 'Yellow' }
 Write-Address
 Show-Banner
 Say 'Alles läuft. Fenster offen lassen. Beenden mit Strg+C.' 'Green'
@@ -274,7 +274,7 @@ try {
     Start-Sleep -Seconds 20
     # Brücke
     if ($Bridge.HasExited) {
-      Say 'Brücke ist beendet – Neustart.' 'Yellow'
+      Say 'Brücke ist beendet - Neustart.' 'Yellow'
       Start-Bridge
       Start-Sleep -Seconds 3
     }
@@ -282,7 +282,7 @@ try {
     if ($st) { $bridgeFails = 0 } else {
       $bridgeFails++
       if ($bridgeFails -ge 3) {
-        Say 'Brücke antwortet nicht – Neustart.' 'Yellow'
+        Say 'Brücke antwortet nicht - Neustart.' 'Yellow'
         try { Stop-Process -Id $Bridge.Id -Force -ErrorAction SilentlyContinue } catch { }
         Start-Bridge
         $bridgeFails = 0
@@ -290,7 +290,7 @@ try {
     }
     # Tunnel
     if (-not (Test-TunnelAlive)) {
-      Say 'Tunnel ist beendet – Neustart.' 'Yellow'
+      Say 'Tunnel ist beendet - Neustart.' 'Yellow'
       Start-Tunnel
       $PublicUrl = ''
       $deadline = (Get-Date).AddSeconds(40)
@@ -301,7 +301,7 @@ try {
     } else {
       $tunnelFails++
       if ($tunnelFails -ge 3) {
-        Say 'Tunnel antwortet nicht – Neustart.' 'Yellow'
+        Say 'Tunnel antwortet nicht - Neustart.' 'Yellow'
         try { if ($Tunnel) { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } } catch { }
         Start-Tunnel
         $tunnelFails = 0
@@ -322,7 +322,7 @@ try {
     }
   }
 } finally {
-  Say 'Beende Brücke und Tunnel …' 'Yellow'
+  Say 'Beende Brücke und Tunnel ...' 'Yellow'
   try { if ($Tunnel -and -not $Tunnel.HasExited) { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } } catch { }
   try { if ($TunnelKind -eq 'tailscale') { & $TunnelExe funnel reset 2>$null | Out-Null } } catch { }
   try { if ($Bridge -and -not $Bridge.HasExited) { Stop-Process -Id $Bridge.Id -Force -ErrorAction SilentlyContinue } } catch { }
