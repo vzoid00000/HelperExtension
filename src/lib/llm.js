@@ -15,6 +15,12 @@ export const BRIDGE_URL = 'http://localhost:4310/v1';
 /** Windows-Starter der Brücke (README). */
 export const BRIDGE_START_HINT = 'tools\\start-claude-bridge.cmd';
 
+/**
+ * Läuft die Brücke hinter einem ngrok-Tunnel, würde ngrok Browser-Anfragen ohne diesen Header eine
+ * HTML-Hinweisseite statt der Antwort liefern. Für andere Server ist der Header bedeutungslos.
+ */
+const TUNNEL_HEADERS = { 'ngrok-skip-browser-warning': '1' };
+
 /** Zeigt die URL auf die Claude-Code-Brücke (localhost, Port 4310)? */
 export const isBridgeUrl = (url) => /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\]):4310(?:[/?#]|$)/i.test(String(url || '').trim());
 
@@ -93,7 +99,7 @@ export function localBase(settings) {
 
 async function localRequest(settings, body) {
   const base = localBase(settings);
-  const headers = { 'content-type': 'application/json' };
+  const headers = { 'content-type': 'application/json', ...TUNNEL_HEADERS };
   if (settings.localLlmApiKey) headers.authorization = `Bearer ${settings.localLlmApiKey}`;
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), (Number(settings.localLlmTimeoutSec) || 600) * 1000);
@@ -184,7 +190,7 @@ async function localJson(settings, system, user, schema, { maxTokens }) {
 /** Verbindungstest für den lokalen Server (Claude-Code-Brücke oder eigenes Modell). */
 export async function testLocalLlm(settings) {
   const base = localBase(settings);
-  const headers = {};
+  const headers = { ...TUNNEL_HEADERS };
   if (settings.localLlmApiKey) headers.authorization = `Bearer ${settings.localLlmApiKey}`;
   const res = await fetch(`${base}/models`, { headers }).catch((e) => {
     throw new Error(`${localUnreachableHint(base)} (${e.message})`);

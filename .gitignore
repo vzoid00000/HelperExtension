@@ -13,3 +13,6 @@ node_modules/
 
 # Zugangs-Token der Bruecke (lokal erzeugt)
 tools/bridge-token.txt
+tools/bridge-address.txt
+tools/tunnel.txt
+tools/logs/

@@ -203,38 +203,44 @@ zu 50 Schlagzeilen je Anfrage). Mit `--model sonnet` reicht das Kontingent deutl
 
 ## Brücke von der Arbeit aus nutzen (Heim-PC bleibt an)
 
-Darf am Arbeits-PC nichts installiert werden, kann die Brücke zu Hause laufen und über einen
-verschlüsselten Tunnel erreichbar sein. Die Extension in der Arbeit spricht dann die Tunnel-Adresse
-an; das Abo-Kontingent wird weiter nur von dir selbst genutzt. Zwei Dinge sind Pflicht: ein
-Zugangs-Token (sonst könnte jeder mit der Adresse dein Kontingent verbrauchen) und HTTPS (der
-Tunnel liefert es). Ein offener Port am Heimrouter ist nicht vorgesehen.
+Darf am Arbeits-PC nichts installiert werden, läuft die Brücke zu Hause und ist über einen
+verschlüsselten Tunnel erreichbar. Die Extension in der Arbeit spricht die Tunnel-Adresse an; das
+Abo-Kontingent nutzt weiter nur du selbst. Pflicht: ein Zugangs-Token (sonst könnte jeder mit der
+Adresse dein Kontingent verbrauchen) und HTTPS (liefert der Tunnel). Ein offener Port am Router ist
+nicht vorgesehen.
 
-Zu Hause, einmalig:
+### Einmalige Einrichtung zu Hause (feste Adresse über ngrok)
 
-```
-winget install Cloudflare.cloudflared     # oder cloudflared.exe von Cloudflare laden und nach tools\ legen
-```
+1. `winget install ngrok.ngrok` in PowerShell, danach alle Terminalfenster schließen.
+2. Kostenloses Konto auf ngrok.com anlegen. Im Dashboard unter „Your Authtoken“ den Token kopieren
+   und in PowerShell eintragen: `ngrok config add-authtoken <Token>`.
+3. Im Dashboard unter „Domains“ eine kostenlose Domain anlegen (Form `name.ngrok-free.app`) und
+   den Namen in die Datei `tools\tunnel.txt` schreiben (eine Zeile, nur die Domain).
+4. Energieoptionen: Ruhezustand/Energie sparen auf „Nie“ (das Skript blockiert ihn zusätzlich,
+   solange es läuft). Bildschirm aus ist in Ordnung; Chrome muss zu Hause nicht laufen.
 
-Zu Hause, jeden Abend bzw. bevor du gehst, zwei Fenster offen lassen:
+Ohne ngrok startet das Skript einen Cloudflare-Schnelltunnel (`winget install
+Cloudflare.cloudflared`), dessen Adresse sich bei jedem Start ändert – dann musst du die neue Adresse
+jedes Mal mitnehmen.
 
-1. `tools\start-claude-bridge-remote.cmd` – Brücke mit Token. Beim ersten Start wird der Token in
-   `tools\bridge-token.txt` erzeugt und im Fenster angezeigt (Datei bleibt lokal, steht in .gitignore).
-2. `tools\start-tunnel.cmd` – zeigt nach ein paar Sekunden eine Adresse wie
-   `https://xxxx-xxxx.trycloudflare.com`. Diese Adresse und den Token notieren (z. B. in die eigene
-   Mail schicken). Die Adresse ändert sich bei jedem Neustart des Tunnels.
+### Jeden Morgen: `tools\start-morning.cmd`
 
-Außerdem: Energieoptionen so stellen, dass der PC nicht in den Ruhezustand geht (Bildschirm aus ist
-in Ordnung); Chrome muss zu Hause nicht laufen.
+Doppelklick. Das Skript prüft Node.js, Claude Code und die Anmeldung (öffnet bei Bedarf den
+Login), startet die Brücke mit Token (`tools\bridge-token.txt`, wird beim ersten Mal erzeugt) und
+den Tunnel, prüft von außen, ob eine Anfrage bis zur Brücke durchkommt, schreibt Adresse und Token
+nach `tools\bridge-address.txt`, zeigt beides groß im Fenster, hält den PC wach und startet Brücke
+oder Tunnel neu, wenn sie ausfallen. Alle fünf Minuten eine Statuszeile (Anfragen, Fehler,
+Nutzungslimit). Fenster offen lassen; Beenden mit Strg+C. Protokolle unter `tools\logs\`.
 
-In der Arbeit, in den Extension-Einstellungen: Anbieter „Lokaler Server“, Server-URL
-`https://xxxx-xxxx.trycloudflare.com/v1`, Modellname `opus`, API-Key = der Token, Übersetzung
-„Lokales Modell“, „Speichern“, „Verbindung testen“. Zu Hause im Brückenfenster erscheint jede
-Anfrage; ohne gültigen Token antwortet die Brücke mit 401 und protokolliert den Versuch.
+### In der Arbeit, einmalig in den Extension-Einstellungen
 
-Ohne Token startet die Brücke nur auf localhost. `--host 0.0.0.0` (eigenes Netz/VPN) verlangt
-ebenfalls einen Token. Blockiert der Firmen-Proxy die Tunnel-Adresse, bleibt nur der API-Key-Weg
-unten. Für eine feste Adresse statt der wechselnden trycloudflare-Adresse braucht es ein
-kostenloses Cloudflare-Konto mit benanntem Tunnel oder ngrok mit fester Domain.
+Anbieter „Lokaler Server“, Server-URL `https://<deine Domain>/v1`, Modellname `opus`, API-Key = der
+Token, Übersetzung „Lokales Modell“, „Speichern“, „Verbindung testen“. Bei fester ngrok-Domain bleibt
+das dauerhaft gültig. Ohne gültigen Token antwortet die Brücke mit 401 und protokolliert den Versuch.
+
+Blockiert der Firmen-Proxy die Tunnel-Adresse, bleibt nur der API-Key-Weg unten. Die Brücke selbst
+startet ohne Token nur auf localhost; `--host 0.0.0.0` (eigenes Netz/VPN) verlangt ebenfalls einen
+Token. Einzelstart ohne Skript: `tools\start-claude-bridge-remote.cmd` plus `tools\start-tunnel.cmd`.
 
 ## Am Arbeits-PC ohne Installation
 
@@ -371,6 +377,7 @@ tools/claude-bridge.mjs            Claude-Code-Brücke (Abo-Kontingent statt API
 tools/start-claude-bridge.cmd      Windows-Starter für die Brücke
 tools/start-claude-bridge-remote.cmd Brücke mit Zugangs-Token (für den Tunnel)
 tools/start-tunnel.cmd             Cloudflare-Tunnel zur Brücke
+tools/start-morning.cmd, morning.ps1  Morgenstart: Brücke + Tunnel starten, prüfen, überwachen
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
 src/background.js                  Service Worker (App-Tab öffnen, Zeitplan)
 src/app/                           App-Seite: app.html, app.js, ui.js, views/ (Lauf, Quellen, Verlauf, Regeln, Einstellungen), ui.css, app.css
