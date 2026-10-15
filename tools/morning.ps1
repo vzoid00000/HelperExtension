@@ -118,7 +118,7 @@ try {
 public static extern uint SetThreadExecutionState(uint esFlags);
 '@
   # ES_CONTINUOUS | ES_SYSTEM_REQUIRED: kein Ruhezustand, solange dieses Skript läuft (Bildschirm darf aus)
-  [OsdpHelper.Power]::SetThreadExecutionState([uint32]0x80000001) | Out-Null
+  [OsdpHelper.Power]::SetThreadExecutionState([uint32]2147483649) | Out-Null   # ES_CONTINUOUS (0x80000000) + ES_SYSTEM_REQUIRED (1)
   Say 'Ruhezustand ist blockiert, solange dieses Fenster offen ist.'
 } catch {
   Say ('Konnte den Ruhezustand nicht blockieren ({0}) - bitte in den Energieoptionen "Energie sparen: Nie" einstellen.' -f $_.Exception.Message) 'Yellow'
@@ -130,6 +130,7 @@ $Token = ''
 function Start-Bridge {
   $args = @('tools\claude-bridge.mjs', '--model', $Model, '--effort', $Effort, '--port', "$Port", '--token-file', "`"$TokenFile`"")
   $script:Bridge = Start-Process -FilePath $Node -ArgumentList $args -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $BridgeOut -RedirectStandardError $BridgeErr
+  $null = $script:Bridge.Handle
   Say ("Brücke gestartet (PID {0}), Protokoll: {1}" -f $script:Bridge.Id, $BridgeOut)
 }
 function Get-BridgeStatus {
@@ -168,6 +169,7 @@ function Start-Tunnel {
     Say ("Starte Tailscale Funnel (Port {0}) ..." -f $Port)
     Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
     $p = Start-Process -FilePath $TunnelExe -ArgumentList @('funnel', '--bg', "$Port") -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $TunnelOut -RedirectStandardError $TunnelErr
+    $null = $p.Handle   # sonst bleibt ExitCode in Windows PowerShell leer
     $finished = $p.WaitForExit(20000)
     if (-not $finished) {
       try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch { }
@@ -180,10 +182,13 @@ function Start-Tunnel {
       Say ("Funnel muss einmal freigeschaltet werden: diesen Link im Browser öffnen und bestätigen, dann das Skript neu starten:`n{0}" -f $Matches[0]) 'Yellow'
       Fail 'Funnel ist noch nicht freigeschaltet.'
     }
+    $started = ($out -match 'Funnel started|Available on the internet')
     if (-not $finished) {
       Say 'Tailscale hat nach 20 s nicht geantwortet. Prüfe in einer PowerShell: tailscale funnel status' 'Yellow'
-    } elseif ($p.ExitCode -ne 0) {
+    } elseif (-not $started -and $null -ne $p.ExitCode -and $p.ExitCode -ne 0) {
       Fail ("Tailscale Funnel konnte nicht gestartet werden (Exit {0}) - siehe Meldung oben." -f $p.ExitCode)
+    } elseif (-not $started) {
+      Say 'Tailscale meldet keinen laufenden Funnel - ich prüfe die Adresse trotzdem von außen.' 'Yellow'
     }
     $script:Tunnel = $null
     Say 'Tailscale Funnel aktiv.'
@@ -195,6 +200,7 @@ function Start-Tunnel {
     $args = @('tunnel', '--url', ("http://localhost:{0}" -f $Port), '--no-autoupdate')
   }
   $script:Tunnel = Start-Process -FilePath $TunnelExe -ArgumentList $args -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $TunnelOut -RedirectStandardError $TunnelErr
+  $null = $script:Tunnel.Handle
   Say ("Tunnel gestartet (PID {0})" -f $script:Tunnel.Id)
 }
 function Read-TunnelUrl {
@@ -339,5 +345,5 @@ try {
   try { if ($Tunnel -and -not $Tunnel.HasExited) { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } } catch { }
   try { if ($TunnelKind -eq 'tailscale') { & $TunnelExe funnel reset 2>$null | Out-Null } } catch { }
   try { if ($Bridge -and -not $Bridge.HasExited) { Stop-Process -Id $Bridge.Id -Force -ErrorAction SilentlyContinue } } catch { }
-  try { [OsdpHelper.Power]::SetThreadExecutionState([uint32]0x80000000) | Out-Null } catch { }
+  try { [OsdpHelper.Power]::SetThreadExecutionState([uint32]2147483648) | Out-Null } catch { }
 }
