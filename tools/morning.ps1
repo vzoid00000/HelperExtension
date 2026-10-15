@@ -230,7 +230,7 @@ function Read-TunnelUrl {
 function Test-Public {
   if (-not $script:PublicUrl) { return $false }
   try {
-    $r = Invoke-RestMethod -Uri ("{0}/v1/models" -f $script:PublicUrl) -Headers @{ Authorization = "Bearer $($script:Token)"; 'ngrok-skip-browser-warning' = '1' } -TimeoutSec 15
+    $r = Invoke-RestMethod -Uri ("{0}/v1/models" -f $script:PublicUrl) -Headers @{ Authorization = "Bearer $($script:Token)"; 'ngrok-skip-browser-warning' = '1' } -TimeoutSec 30
     return ($null -ne $r.data)
   } catch { return $false }
 }
@@ -278,8 +278,9 @@ if (-not $PublicUrl) {
   if (Test-Path $TunnelErr) { $errText = (Get-Content $TunnelErr -Raw) }
   Fail ("Tunnel liefert keine Adresse. Letzte Meldungen:`n{0}" -f $errText)
 }
-if (Test-Public) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfolgreich.' 'Green' }
-else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug fehl - bitte 30 s warten; ich prüfe weiter.' 'Yellow' }
+$publicOk = Test-Public
+if ($publicOk) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfolgreich.' 'Green' }
+else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug noch fehl (beim ersten Start holt Tailscale erst das HTTPS-Zertifikat, das dauert bis zu einer Minute). Ich prüfe alle 20 s weiter und melde mich, sobald es klappt.' 'Yellow' }
 Write-Address
 Show-Banner
 Say 'Alles läuft. Fenster offen lassen. Beenden mit Strg+C.' 'Green'
@@ -316,6 +317,8 @@ try {
       while (-not $PublicUrl -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 2; $PublicUrl = Read-TunnelUrl }
       if ($PublicUrl) { Write-Address; Show-Banner }
     } elseif (Test-Public) {
+      if ($tunnelFails -gt 0 -or -not $publicOk) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfolgreich.' 'Green' }
+      $publicOk = $true
       $tunnelFails = 0
     } else {
       $tunnelFails++
