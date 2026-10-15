@@ -121,7 +121,7 @@ public static extern uint SetThreadExecutionState(uint esFlags);
   [OsdpHelper.Power]::SetThreadExecutionState([uint32]0x80000001) | Out-Null
   Say 'Ruhezustand ist blockiert, solange dieses Fenster offen ist.'
 } catch {
-  Say 'Konnte den Ruhezustand nicht blockieren - bitte in den Energieoptionen "Energie sparen: Nie" einstellen.' 'Yellow'
+  Say ('Konnte den Ruhezustand nicht blockieren ({0}) - bitte in den Energieoptionen "Energie sparen: Nie" einstellen.' -f $_.Exception.Message) 'Yellow'
 }
 
 # ------------------------------------------------------------------------- 3) Brücke ----
@@ -161,16 +161,29 @@ function Test-TunnelAlive {
 function Start-Tunnel {
   Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
   if ($TunnelKind -eq 'tailscale') {
-    # Funnel: öffentliche HTTPS-Adresse https://<pc>.<tailnet>.ts.net -> localhost:$Port; --bg bleibt
-    # aktiv, bis es zurückgesetzt wird. Beim ersten Mal muss Funnel im Admin-Panel freigeschaltet werden;
-    # tailscale gibt dafür einen Link aus.
-    $out = (& $TunnelExe funnel --bg $Port 2>&1 | Out-String)
-    Set-Content -Path $TunnelOut -Value $out -Encoding UTF8
-    if ($LASTEXITCODE -ne 0) {
-      Say 'Tailscale Funnel konnte nicht gestartet werden:' 'Red'
-      Write-Host $out
-      if ($out -match 'https://login\.tailscale\.com\S+') { Say ("Funnel freischalten: diesen Link im Browser öffnen, bestätigen, dann Skript neu starten: {0}" -f $Matches[0]) 'Yellow' }
-      Fail 'Siehe Meldung oben.'
+    # Funnel: öffentliche HTTPS-Adresse https://<pc>.<tailnet>.ts.net -> localhost:$Port. Mit --bg bleibt
+    # die Freigabe im Tailscale-Dienst aktiv, bis sie zurückgesetzt wird. Beim ersten Mal muss Funnel im
+    # Admin-Panel freigeschaltet werden; tailscale gibt dafür einen Link aus. Der Befehl bekommt ein
+    # Zeitlimit, damit das Skript nie still hängen bleibt.
+    Say ("Starte Tailscale Funnel (Port {0}) ..." -f $Port)
+    Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
+    $p = Start-Process -FilePath $TunnelExe -ArgumentList @('funnel', '--bg', "$Port") -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $TunnelOut -RedirectStandardError $TunnelErr
+    $finished = $p.WaitForExit(20000)
+    if (-not $finished) {
+      try { Stop-Process -Id $p.Id -Force -ErrorAction SilentlyContinue } catch { }
+    }
+    Start-Sleep -Milliseconds 300
+    $out = ''
+    foreach ($f in @($TunnelOut, $TunnelErr)) { if (Test-Path $f) { $out += (Get-Content $f -Raw -ErrorAction SilentlyContinue) } }
+    if ($out.Trim()) { Write-Host $out.Trim() -ForegroundColor DarkGray }
+    if ($out -match 'https://login\.tailscale\.com\S+') {
+      Say ("Funnel muss einmal freigeschaltet werden: diesen Link im Browser öffnen und bestätigen, dann das Skript neu starten:`n{0}" -f $Matches[0]) 'Yellow'
+      Fail 'Funnel ist noch nicht freigeschaltet.'
+    }
+    if (-not $finished) {
+      Say 'Tailscale hat nach 20 s nicht geantwortet. Prüfe in einer PowerShell: tailscale funnel status' 'Yellow'
+    } elseif ($p.ExitCode -ne 0) {
+      Fail ("Tailscale Funnel konnte nicht gestartet werden (Exit {0}) - siehe Meldung oben." -f $p.ExitCode)
     }
     $script:Tunnel = $null
     Say 'Tailscale Funnel aktiv.'
