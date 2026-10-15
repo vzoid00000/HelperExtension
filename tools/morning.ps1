@@ -4,11 +4,11 @@
 # Claude-Code-Anmeldung, hält den PC wach, überwacht beide Prozesse und startet sie bei Ausfall neu.
 # Adresse und Token stehen in tools\bridge-address.txt und werden im Fenster angezeigt.
 #
-# Tunnel:
-#   - Steht in tools\tunnel.txt eine ngrok-Domain (z. B. meinname.ngrok-free.app), wird ngrok mit
-#     dieser FESTEN Adresse gestartet (einmalig: winget install ngrok.ngrok, ngrok config add-authtoken …,
-#     im ngrok-Dashboard eine kostenlose Domain anlegen).
-#   - Sonst startet ein Cloudflare-Schnelltunnel (cloudflared), dessen Adresse sich bei jedem Start ändert.
+# Tunnel (tools\tunnel.txt):
+#   - "tailscale": Tailscale Funnel, feste Adresse https://<pc>.<tailnet>.ts.net (empfohlen; nur der
+#     Heim-PC braucht Tailscale). Ohne Datei wird Tailscale genommen, wenn es installiert ist.
+#   - eine ngrok-Domain (z. B. meinname.ngrok-free.app): ngrok mit fester Adresse.
+#   - "cloudflare" oder nichts installiert außer cloudflared: Cloudflare-Schnelltunnel, Adresse wechselt.
 #
 # Aufruf: tools\start-morning.cmd (oder: powershell -ExecutionPolicy Bypass -File tools\morning.ps1)
 
@@ -58,20 +58,38 @@ $Claude = Find-Tool 'claude' @("$env:USERPROFILE\.local\bin\claude.exe", "$env:A
 if (-not $Claude) { Fail 'Claude Code nicht gefunden – in PowerShell: irm https://claude.ai/install.ps1 | iex' }
 Say ("Node.js: {0}  |  Claude Code: {1}" -f $Node, $Claude)
 
+# Tunnel-Art aus tools\tunnel.txt: "tailscale" (Funnel, feste Adresse), "cloudflare" (Schnelltunnel,
+# wechselnde Adresse) oder eine ngrok-Domain (feste Adresse). Ohne Datei: Tailscale, wenn installiert,
+# sonst cloudflared.
+$TunnelSetting = ''
+if (Test-Path $TunnelFile) { $TunnelSetting = (Get-Content $TunnelFile -Raw).Trim().ToLower() }
 $TunnelDomain = ''
-if (Test-Path $TunnelFile) { $TunnelDomain = (Get-Content $TunnelFile -Raw).Trim() }
 $TunnelKind = ''
 $TunnelExe = ''
-if ($TunnelDomain) {
+$TailscaleExe = Find-Tool 'tailscale' @("$env:ProgramFiles\Tailscale\tailscale.exe", "${env:ProgramFiles(x86)}\Tailscale\tailscale.exe")
+if ($TunnelSetting -eq 'tailscale' -or (-not $TunnelSetting -and $TailscaleExe)) {
+  if (-not $TailscaleExe) { Fail 'tools\tunnel.txt verlangt Tailscale, aber tailscale.exe fehlt – von tailscale.com installieren und anmelden.' }
+  $TunnelKind = 'tailscale'
+  $TunnelExe = $TailscaleExe
+} elseif ($TunnelSetting -and $TunnelSetting -ne 'cloudflare' -and $TunnelSetting -ne 'cloudflared') {
+  $TunnelDomain = $TunnelSetting
   $TunnelExe = Find-Tool 'ngrok' @((Join-Path $ToolsDir 'ngrok.exe'))
   if (-not $TunnelExe) { Fail 'tools\tunnel.txt nennt eine ngrok-Domain, aber ngrok fehlt – winget install ngrok.ngrok, dann ngrok config add-authtoken <dein Token>.' }
   $TunnelKind = 'ngrok'
 } else {
   $TunnelExe = Find-Tool 'cloudflared' @((Join-Path $ToolsDir 'cloudflared.exe'))
-  if (-not $TunnelExe) { Fail 'Kein Tunnel-Programm: entweder ngrok (winget install ngrok.ngrok + Domain in tools\tunnel.txt) oder cloudflared (winget install Cloudflare.cloudflared).' }
+  if (-not $TunnelExe) { Fail 'Kein Tunnel-Programm gefunden. Empfohlen: Tailscale (tailscale.com installieren, anmelden, "tailscale" in tools\tunnel.txt). Alternativ cloudflared (winget install Cloudflare.cloudflared).' }
   $TunnelKind = 'cloudflared'
 }
 Say ("Tunnel: {0} ({1})" -f $TunnelKind, $TunnelExe)
+if ($TunnelKind -eq 'tailscale') {
+  $tsOk = $false
+  try {
+    $ts = (& $TailscaleExe status --json 2>$null | Out-String | ConvertFrom-Json)
+    if ($ts -and $ts.BackendState -eq 'Running') { $tsOk = $true; Say ("Tailscale angemeldet als {0}" -f $ts.Self.DNSName.TrimEnd('.')) }
+  } catch { }
+  if (-not $tsOk) { Fail 'Tailscale läuft nicht oder ist nicht angemeldet – Tailscale-Symbol in der Taskleiste → anmelden, dann Skript neu starten.' }
+}
 
 # ------------------------------------------------------------- 1) Claude-Code-Anmeldung ----
 function Get-ClaudeAuth {
@@ -135,8 +153,29 @@ Say 'Brücke läuft.' 'Green'
 # ------------------------------------------------------------------------- 4) Tunnel ----
 $Tunnel = $null
 $PublicUrl = ''
+function Test-TunnelAlive {
+  if ($TunnelKind -eq 'tailscale') { return $true }   # Funnel läuft im Tailscale-Dienst, kein eigener Prozess
+  if (-not $script:Tunnel) { return $false }
+  return (-not $script:Tunnel.HasExited)
+}
 function Start-Tunnel {
   Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
+  if ($TunnelKind -eq 'tailscale') {
+    # Funnel: öffentliche HTTPS-Adresse https://<pc>.<tailnet>.ts.net → localhost:$Port; --bg bleibt
+    # aktiv, bis es zurückgesetzt wird. Beim ersten Mal muss Funnel im Admin-Panel freigeschaltet werden;
+    # tailscale gibt dafür einen Link aus.
+    $out = (& $TunnelExe funnel --bg $Port 2>&1 | Out-String)
+    Set-Content -Path $TunnelOut -Value $out -Encoding UTF8
+    if ($LASTEXITCODE -ne 0) {
+      Say 'Tailscale Funnel konnte nicht gestartet werden:' 'Red'
+      Write-Host $out
+      if ($out -match 'https://login\.tailscale\.com\S+') { Say ("Funnel freischalten: diesen Link im Browser öffnen, bestätigen, dann Skript neu starten: {0}" -f $Matches[0]) 'Yellow' }
+      Fail 'Siehe Meldung oben.'
+    }
+    $script:Tunnel = $null
+    Say 'Tailscale Funnel aktiv.'
+    return
+  }
   if ($TunnelKind -eq 'ngrok') {
     $args = @('http', "$Port", "--url=$TunnelDomain", '--log=stdout', '--log-level=info')
   } else {
@@ -146,6 +185,14 @@ function Start-Tunnel {
   Say ("Tunnel gestartet (PID {0})" -f $script:Tunnel.Id)
 }
 function Read-TunnelUrl {
+  if ($TunnelKind -eq 'tailscale') {
+    try {
+      $ts = (& $TunnelExe status --json 2>$null | Out-String | ConvertFrom-Json)
+      $name = [string]$ts.Self.DNSName
+      if ($name) { return ('https://{0}' -f $name.TrimEnd('.')) }
+    } catch { }
+    return ''
+  }
   if ($TunnelKind -eq 'ngrok') {
     try {
       $t = Invoke-RestMethod -Uri 'http://127.0.0.1:4040/api/tunnels' -TimeoutSec 5
@@ -192,10 +239,10 @@ Start-Tunnel
 $deadline = (Get-Date).AddSeconds(40)
 while (-not $PublicUrl -and (Get-Date) -lt $deadline) {
   Start-Sleep -Seconds 2
-  if ($Tunnel.HasExited) { break }
+  if (-not (Test-TunnelAlive)) { break }
   $PublicUrl = Read-TunnelUrl
 }
-if ($Tunnel.HasExited -and $TunnelKind -eq 'ngrok') {
+if ($TunnelKind -eq 'ngrok' -and -not (Test-TunnelAlive)) {
   # Ältere ngrok-Version kennt --url nicht → --domain
   $errText = ''
   if (Test-Path $TunnelErr) { $errText = Get-Content $TunnelErr -Raw }
@@ -204,7 +251,7 @@ if ($Tunnel.HasExited -and $TunnelKind -eq 'ngrok') {
     Remove-Item $TunnelOut, $TunnelErr -ErrorAction SilentlyContinue
     $script:Tunnel = Start-Process -FilePath $TunnelExe -ArgumentList @('http', "$Port", "--domain=$TunnelDomain", '--log=stdout', '--log-level=info') -WorkingDirectory $Root -NoNewWindow -PassThru -RedirectStandardOutput $TunnelOut -RedirectStandardError $TunnelErr
     $deadline = (Get-Date).AddSeconds(40)
-    while (-not $PublicUrl -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 2; if ($Tunnel.HasExited) { break }; $PublicUrl = Read-TunnelUrl }
+    while (-not $PublicUrl -and (Get-Date) -lt $deadline) { Start-Sleep -Seconds 2; if (-not (Test-TunnelAlive)) { break }; $PublicUrl = Read-TunnelUrl }
   }
 }
 if (-not $PublicUrl) {
@@ -242,7 +289,7 @@ try {
       }
     }
     # Tunnel
-    if ($Tunnel.HasExited) {
+    if (-not (Test-TunnelAlive)) {
       Say 'Tunnel ist beendet – Neustart.' 'Yellow'
       Start-Tunnel
       $PublicUrl = ''
@@ -255,7 +302,7 @@ try {
       $tunnelFails++
       if ($tunnelFails -ge 3) {
         Say 'Tunnel antwortet nicht – Neustart.' 'Yellow'
-        try { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } catch { }
+        try { if ($Tunnel) { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } } catch { }
         Start-Tunnel
         $tunnelFails = 0
         $PublicUrl = ''
@@ -277,6 +324,7 @@ try {
 } finally {
   Say 'Beende Brücke und Tunnel …' 'Yellow'
   try { if ($Tunnel -and -not $Tunnel.HasExited) { Stop-Process -Id $Tunnel.Id -Force -ErrorAction SilentlyContinue } } catch { }
+  try { if ($TunnelKind -eq 'tailscale') { & $TunnelExe funnel reset 2>$null | Out-Null } } catch { }
   try { if ($Bridge -and -not $Bridge.HasExited) { Stop-Process -Id $Bridge.Id -Force -ErrorAction SilentlyContinue } } catch { }
   try { [OsdpHelper.Power]::SetThreadExecutionState([uint32]0x80000000) | Out-Null } catch { }
 }

@@ -209,19 +209,22 @@ Abo-Kontingent nutzt weiter nur du selbst. Pflicht: ein Zugangs-Token (sonst kö
 Adresse dein Kontingent verbrauchen) und HTTPS (liefert der Tunnel). Ein offener Port am Router ist
 nicht vorgesehen.
 
-### Einmalige Einrichtung zu Hause (feste Adresse über ngrok)
+### Einmalige Einrichtung zu Hause (feste Adresse über Tailscale Funnel, empfohlen)
 
-1. `winget install ngrok.ngrok` in PowerShell, danach alle Terminalfenster schließen.
-2. Kostenloses Konto auf ngrok.com anlegen. Im Dashboard unter „Your Authtoken“ den Token kopieren
-   und in PowerShell eintragen: `ngrok config add-authtoken <Token>`.
-3. Im Dashboard unter „Domains“ eine kostenlose Domain anlegen (Form `name.ngrok-free.app`) und
-   den Namen in die Datei `tools\tunnel.txt` schreiben (eine Zeile, nur die Domain).
+1. Tailscale von tailscale.com installieren (Windows-Installer) und über das Symbol in der Taskleiste
+   anmelden (Konto mit Google, Microsoft, Apple oder GitHub; kostenlos). Nur der Heim-PC braucht
+   Tailscale, der Arbeits-PC nicht.
+2. Eine Textdatei `tools\tunnel.txt` mit dem Inhalt `tailscale` anlegen (eine Zeile).
+3. Beim ersten Start von `tools\start-morning.cmd` zeigt Tailscale einen Link, über den „Funnel“ für
+   dein Konto freigeschaltet wird (einmal im Browser bestätigen), danach das Skript erneut starten.
+   Die Adresse lautet dann `https://<pc-name>.<tailnet>.ts.net` und bleibt fest.
 4. Energieoptionen: Ruhezustand/Energie sparen auf „Nie“ (das Skript blockiert ihn zusätzlich,
    solange es läuft). Bildschirm aus ist in Ordnung; Chrome muss zu Hause nicht laufen.
 
-Ohne ngrok startet das Skript einen Cloudflare-Schnelltunnel (`winget install
-Cloudflare.cloudflared`), dessen Adresse sich bei jedem Start ändert – dann musst du die neue Adresse
-jedes Mal mitnehmen.
+Alternativen in `tools\tunnel.txt`: eine ngrok-Domain (`winget install ngrok.ngrok`, `ngrok config
+add-authtoken …`, kostenlose Domain im ngrok-Dashboard) oder `cloudflare` für einen
+Cloudflare-Schnelltunnel (`winget install Cloudflare.cloudflared`), dessen Adresse sich bei jedem
+Start ändert.
 
 ### Jeden Morgen: `tools\start-morning.cmd`
 
