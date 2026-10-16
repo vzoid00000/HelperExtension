@@ -43,7 +43,7 @@ nacheinander aus. Eine Artikel-URL lässt sich auch direkt eingeben, ohne Scan.
 
 **Quellen** – Quellen anlegen, bearbeiten, testen (zeigt die ersten Treffer), ein-/ausschalten,
 löschen, Standardliste wiederherstellen; Import/Export als Text. Wird die letzte Quelle gelöscht,
-gilt wieder die Standardliste (25 Quellen).
+gilt wieder die Standardliste.
 
 **Verlauf** – alle eingetragenen Meldungen dauerhaft mit Zeit, Struktur, WB, Titel, Quelle,
 Zusammenfassung, Tags. Zähler je Zeitraum (heute, Woche, Monat, alle): Einträge, Cyber, KriMiSi,
@@ -307,19 +307,25 @@ nicht, fällt die Extension automatisch auf `json_object` und zuletzt auf Text m
 
 ## Quellen
 
-Standardliste in `src/lib/sources.js` (BleepingComputer, The Record, The Hacker News, SecurityWeek,
-CyberScoop, Dark Reading, Infosecurity, Krebs, The Register; BBC World, Guardian World, Al Jazeera,
-Defense News, Breaking Defense, The War Zone, Military Times, Politico Europe, DW, Kyiv Independent,
-Times of Israel, UN News, NATO; AP News und Reuters per Übersichtsseite). Die Liste wird in der
-Ansicht „Quellen“ gepflegt; eine leere Liste bedeutet Standardquellen. Für den Textimport gilt eine
-Quelle pro Zeile:
+Standardliste in `src/lib/sources.js`. Aktiv sind die Quellen der Redaktion: ABC News (Australien),
+BBC (Top Stories, World), CBC (Top Stories, World), SABC News, RTÉ News, VOA News, Reuters World,
+PBS NewsHour (Headlines, World), The Guardian World, Washington Post World, Arab News, Daily Sabah
+(World, Politics), DHS-Pressemitteilungen; für Cyber: Cybernews, Reuters Technology, The Record und
+der Recorded-Future-Blog. Die früheren Standardquellen (BleepingComputer, The Hacker News, Al Jazeera,
+Defense News, NATO …) bleiben ausgeschaltet in der Liste und lassen sich in der Ansicht „Quellen“
+wieder einschalten.
+
+Seiten ohne Feed (Reuters, VOA, DHS) werden über ihre Übersichtsseite abgesucht; Reuters blockiert
+direkte Abrufe, dort lädt die Extension die Seite in einem Hintergrund-Tab. Die Washington Post
+liefert hinter der Bezahlschranke oft keinen Artikeltext; solche Meldungen landen mit Fehler in der
+Liste. „Testen“ in der Quellen-Ansicht zeigt die ersten Treffer einer Quelle; eine leere Liste
+bedeutet Standardquellen. Für den Textimport gilt eine Quelle pro Zeile:
 
 ```
 Name | URL | cyber|krimisi|both | rss|html | URL-Muster (nur html, optional)
 ```
 
-Fehlerhafte Quellen stehen nach dem Scan mit Fehlermeldung in der Quellen-Status-Tabelle; „Testen“
-in der Quellen-Ansicht zeigt die ersten Treffer einer Quelle.
+Fehlerhafte Quellen stehen nach dem Scan mit Fehlermeldung in der Quellen-Status-Tabelle.
 
 ## OSDP-Integration (Stand)
 

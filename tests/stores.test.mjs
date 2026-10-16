@@ -69,7 +69,7 @@ console.log('\n# Quellen: getSources, Migration');
 {
   const def = getSources({});
   check(def.length === DEFAULT_SOURCES.length && def.every((s) => s.id) && new Set(def.map((s) => s.id)).size === def.length, `leere Einstellungen → ${def.length} Standardquellen mit eindeutigen ids`);
-  check(def[0].id === 'bleepingcomputer' && DEFAULT_SOURCES[0].id === undefined, 'Standardquellen bekommen ids, Original bleibt unverändert');
+  check(def[0].id === 'abc-news-australien' && DEFAULT_SOURCES[0].id === undefined, 'Standardquellen bekommen ids, Original bleibt unverändert');
   check(settingsMod.getSources === getSources, 'settings.js re-exportiert getSources');
   check(settingsMod.DEFAULT_SETTINGS.sources.length === 0 && !('autoSave' in settingsMod.DEFAULT_SETTINGS), 'DEFAULT_SETTINGS: sources [], kein autoSave');
   const fromText = getSources({ sourcesText: 'Meine Quelle | https://mein.org/feed | cyber | rss\n#Aus | https://aus.org/ | krimisi | html | foo' });
@@ -394,7 +394,7 @@ console.log('\n# importAllData: Einstellungs-Whitelist, kein Teil-Import, Verein
   await chrome.storage.local.set({ settings: { minScore: 6 } });
   const repM = await transfer.importAllData({ sources: [{ name: 'Eigene', url: 'https://eigene.org/feed' }, { name: 'BBC Kopie', url: DEFAULT_SOURCES[9].url }] }, { merge: true });
   const stM = (await chrome.storage.local.get('settings')).settings;
-  check(repM.sources.added === 1 && repM.sources.skipped === 1 && stM.sources.length === DEFAULT_SOURCES.length + 1 && stM.sources[0].id === 'bleepingcomputer' && stM.sources.at(-1).id === 'eigene' && stM.minScore === 6, 'merge-Import vereinigt mit den Standardquellen: ' + JSON.stringify(repM.sources));
+  check(repM.sources.added === 1 && repM.sources.skipped === 1 && stM.sources.length === DEFAULT_SOURCES.length + 1 && stM.sources[0].id === 'abc-news-australien' && stM.sources.at(-1).id === 'eigene' && stM.minScore === 6, 'merge-Import vereinigt mit den Standardquellen: ' + JSON.stringify(repM.sources));
   const repM2 = await transfer.importAllData({ sources: [{ name: 'Einzige', url: 'https://einzige.org/feed' }] }, { merge: false });
   check(repM2.sources.total === 1 && (await loadSourceList()).length === 1, 'Import ohne merge ersetzt die Quellen');
 
