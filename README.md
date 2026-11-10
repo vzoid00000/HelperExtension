@@ -316,9 +316,12 @@ Defense News, NATO …) bleiben ausgeschaltet in der Liste und lassen sich in de
 wieder einschalten.
 
 Seiten ohne Feed (Reuters, VOA, DHS) werden über ihre Übersichtsseite abgesucht; Reuters blockiert
-direkte Abrufe, dort lädt die Extension die Seite in einem Hintergrund-Tab. Die Washington Post
-liefert hinter der Bezahlschranke oft keinen Artikeltext; solche Meldungen landen mit Fehler in der
-Liste. „Testen“ in der Quellen-Ansicht zeigt die ersten Treffer einer Quelle; eine leere Liste
+direkte Abrufe, dort lädt die Extension die Seite in einem Hintergrund-Tab. Der Artikel-Extraktor
+liest `<p>`- wie `<div>`-Absätze (Reuters) und kennt die üblichen Artikel-Container; liegt eine
+Seite hinter einer Bot-Prüfung (Cloudflare, z. B. Cybernews), wartet der Hintergrund-Tab bis zu
+15 Sekunden, bis die Prüfung durch ist. Bleibt es bei der Prüfseite oder einer Bezahlschranke
+(Washington Post), sagt die Fehlermeldung in der Liste genau das; den Artikel dann einmal selbst
+im Browser öffnen und die Meldung erneut eintragen bzw. von Hand übernehmen. „Testen“ in der Quellen-Ansicht zeigt die ersten Treffer einer Quelle; eine leere Liste
 bedeutet Standardquellen. Für den Textimport gilt eine Quelle pro Zeile:
 
 ```

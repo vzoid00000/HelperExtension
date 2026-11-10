@@ -768,7 +768,11 @@ async function processItem(it, driver, index, total) {
     // 1) Artikel laden
     setStatus(`Lade Artikel: ${shortText(it.title, 80)}`, 'busy');
     const ex = await loadArticle(it.url);
-    if (!ex || !ex.text || ex.text.length < 200) throw new Error('Artikeltext nicht lesbar (Paywall oder unbekanntes Layout) – Artikel im Browser öffnen und von Hand in OSDP eintragen oder in den Einstellungen „Extract“ aktivieren.');
+    if (!ex || !ex.text || ex.text.length < 200) {
+      if (ex?.blocked === 'challenge') throw new Error('Die Seite zeigt eine Bot-Prüfung (z. B. Cloudflare) statt des Artikels. Den Artikel einmal selbst in einem Tab öffnen, bis er angezeigt wird, dann die Meldung erneut eintragen – danach kennt der Browser die Seite.');
+      if (ex?.blocked === 'paywall') throw new Error('Bezahlschranke: Die Seite liefert den Artikeltext nur für Abonnenten. Artikel im Browser öffnen und von Hand in OSDP eintragen.');
+      throw new Error(`Artikeltext nicht lesbar (${ex?.text ? ex.text.length + ' Zeichen gefunden' : 'kein Text gefunden'}; unbekanntes Layout oder Inhalt wird erst per Skript nachgeladen) – Artikel im Browser öffnen und von Hand in OSDP eintragen oder in den Einstellungen „Extract“ aktivieren.`);
+    }
     if (it.titleFromUrl && ex.title) {
       it.title = ex.title;
       delete it.titleFromUrl;

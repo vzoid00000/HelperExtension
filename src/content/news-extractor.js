@@ -108,10 +108,76 @@
       return '';
     };
 
+    // Absatzartige Elemente: <p>, <li>, <blockquote>, Zwischenüberschriften sowie Text-Blätter aus
+    // <div>/<section> ohne Block-Kinder (Reuters baut Absätze z. B. als <div data-testid="paragraph-N">).
+    const BLOCK_RE = /^(p|div|ul|ol|table|section|article|aside|header|footer|nav|h[1-6]|figure|blockquote|pre|form)$/i;
+    const isTextLeaf = (el) => {
+      if (/^(p|li|blockquote|h[2-4])$/i.test(el.localName)) return true;
+      if (!/^(div|section)$/i.test(el.localName)) return false;
+      for (const c of el.children) if (BLOCK_RE.test(c.localName)) return false;
+      return true;
+    };
+    const isNestedLeaf = (el) => /^(div|section)$/i.test(el.localName) && !!el.closest('p, li, blockquote');
+
+    /** Fließtext-Blöcke eines Containers in Dokumentreihenfolge. */
+    function collectBlocks(root) {
+      const seen = new Set();
+      const out = [];
+      for (const el of root.querySelectorAll('p, h2, h3, h4, blockquote, li, div, section')) {
+        if (!isTextLeaf(el) || isNestedLeaf(el)) continue;
+        if (isBad(el) || !isVisible(el)) continue;
+        const bq = el.closest('blockquote');
+        if (bq && bq !== el && el.localName !== 'blockquote') continue;
+        if (el.localName === 'li') {
+          const list = el.closest('ul, ol');
+          if (list && linkDensity(list) > 0.3) continue;
+        }
+        const t = text(el);
+        if (!t || seen.has(t) || JUNK_TEXT.test(t)) continue;
+        const isHeading = /^h[2-4]$/.test(el.localName);
+        if (!isHeading && t.split(' ').length < 4) continue;
+        if (!isHeading && linkDensity(el) > 0.5) continue;
+        seen.add(t);
+        out.push(t);
+      }
+      return out.join('\n\n');
+    }
+
+    /** Bekannte Artikel-Container (Reuters, Nuxt/WordPress-Seiten, schema.org) – zuerst versuchen. */
+    const KNOWN_CONTAINERS = [
+      '[data-testid="ArticleBody"]', '[data-testid*="article-body" i]', '[data-testid*="articlebody" i]',
+      '[itemprop="articleBody"]', '[class*="article-body" i]', '[class*="article__body" i]',
+      '[class*="article__content" i]', '[class*="article-content" i]', '[class*="articleBody" i]',
+      '[class*="story-body" i]', '[class*="post-content" i]', '[class*="entry-content" i]',
+      '[class*="wysiwyg" i]', 'main article', 'article'
+    ];
+    function extractFromKnownContainers() {
+      let best = '';
+      for (const sel of KNOWN_CONTAINERS) {
+        let roots = [];
+        try {
+          roots = [...doc.querySelectorAll(sel)];
+        } catch {
+          continue;
+        }
+        for (const root of roots) {
+          if (isBad(root)) continue;
+          const t = collectBlocks(root);
+          if (t.length > best.length) best = t;
+        }
+        if (best.length >= 600) return best;
+      }
+      return best.length >= 300 ? best : '';
+    }
+
     /** Readability-ähnliche Heuristik: Container mit dem meisten Fließtext. */
     function extractBodyFromDom() {
+      const known = extractFromKnownContainers();
+      if (known) return known;
+
       const scores = new Map();
-      const paragraphs = [...doc.querySelectorAll('p')].filter((p) => {
+      const paragraphs = [...doc.querySelectorAll('p, li, blockquote, div, section')].filter((p) => {
+        if (!isTextLeaf(p) || isNestedLeaf(p)) return false;
         const t = text(p);
         return t.length >= 25 && !isBad(p) && linkDensity(p) < 0.5 && isVisible(p);
       });
@@ -139,26 +205,18 @@
         }
       }
       if (!best) return '';
+      return collectBlocks(best);
+    }
 
-      const seen = new Set();
-      const out = [];
-      for (const el of best.querySelectorAll('p, h2, h3, h4, blockquote, li')) {
-        if (isBad(el) || !isVisible(el)) continue;
-        const bq = el.closest('blockquote');
-        if (bq && bq !== el && el.localName !== 'blockquote') continue;
-        if (el.localName === 'li') {
-          const list = el.closest('ul, ol');
-          if (list && linkDensity(list) > 0.3) continue;
-        }
-        const t = text(el);
-        if (!t || seen.has(t) || JUNK_TEXT.test(t)) continue;
-        const isHeading = /^h[2-4]$/.test(el.localName);
-        if (!isHeading && t.split(' ').length < 4) continue;
-        if (!isHeading && linkDensity(el) > 0.5) continue;
-        seen.add(t);
-        out.push(t);
-      }
-      return out.join('\n\n');
+    // Bot-Prüfung (Cloudflare & Co.) oder Bezahlschranke statt Artikel? Nur relevant, wenn kaum Text da ist.
+    const CHALLENGE_RE = /just a moment|verifying you are human|verify you are human|checking your browser|enable javascript and cookies|attention required|access denied|are you a robot|unusual traffic|please verify you|performance & security by cloudflare|ray id/i;
+    const PAYWALL_RE = /subscribe to continue|subscription required|sign in to (read|continue)|log in to (read|continue)|this article is (for|reserved for) subscribers|already a subscriber|unlock this article|to continue reading/i;
+    function detectBlocked(bodyLen) {
+      if (bodyLen >= 300) return '';
+      const sample = `${doc.title || ''} ${text(doc.body).slice(0, 3000)}`;
+      if (CHALLENGE_RE.test(sample)) return 'challenge';
+      if (PAYWALL_RE.test(sample)) return 'paywall';
+      return '';
     }
 
     const ld = [];
@@ -218,6 +276,7 @@
     const MAX = 40000;
     const truncated = bodyText.length > MAX;
     if (truncated) bodyText = bodyText.slice(0, MAX);
+    const blocked = detectBlocked(bodyText.length);
 
     const canonical = doc.querySelector('link[rel="canonical"]');
     return {
@@ -232,6 +291,7 @@
       dateModified: collapse(meta('meta[property="article:modified_time"]') || article?.dateModified || ''),
       text: bodyText,
       textSource,
+      blocked,
       truncated,
       extractedAt: new Date().toISOString()
     };

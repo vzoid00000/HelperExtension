@@ -14,6 +14,7 @@ node tests/app.test.mjs              # App-Seite v0.6: Navigation, Einstellungen
 node tests/stores.test.mjs           # Quellen-Verwaltung, Verlauf (Duplikate, Suche), Regeln, Gesamtexport/-import (ohne Browser)
 node tests/prompts.test.mjs          # Kompakter Katalog, Tagging-/Übersetzungs-/Relevanz-Prompts mit Regelwerk (ohne Browser)
 node tests/design.test.mjs           # Seitengerüst src/app/app.html: IDs, Dark Theme, Überläufe, Screenshots (ohne app.js)
+node tests/extractor.test.mjs        # Artikel-Extraktor: <p>- und <div>-Absätze (Reuters), Container (The Record), Bot-Prüfseite, Bezahlschranke
 ```
 
 ## App-Seite (`tests/app.test.mjs`)
