@@ -22,6 +22,10 @@ const out = (result, extra = {}) => {
   process.stdout.write(JSON.stringify({ type: 'result', subtype: 'success', is_error: false, result, session_id: 'fake', total_cost_usd: 0.0123, duration_ms: 42, num_turns: 1, usage: { input_tokens: 100, output_tokens: 20 }, ...extra }));
 };
 
+if (/AUTH_TEST/.test(prompt)) {
+  process.stdout.write(JSON.stringify({ type: 'result', subtype: 'error', is_error: true, result: 'Failed to authenticate: OAuth session expired and could not be refreshed', session_id: 'fake' }));
+  process.exit(1);
+}
 if (/LIMIT_TEST/.test(prompt)) {
   process.stdout.write(JSON.stringify({ type: 'result', subtype: 'error', is_error: true, result: 'Claude AI usage limit reached|1800000000', session_id: 'fake' }));
   process.exit(1);

@@ -165,7 +165,7 @@ prüft beim Start die Anmeldung. In den Extension-Einstellungen „Claude-Code-B
 klicken, speichern, „Verbindung testen“. Das Fenster der Brücke muss offen bleiben, solange die
 Extension arbeitet; jede Anfrage erscheint dort als Zeile.
 Optionen: `--model opus|sonnet|haiku` (Standard `opus` = Opus 5.5), `--effort low|medium|high`
-(Standard `medium`), `--parallel 2`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
+(Standard `medium`), `--parallel 1`, `--port 4310`. Status und Zähler: `http://localhost:4310/__bridge/status`.
 
 Die Brücke startet das unveränderte Claude Code ohne Werkzeuge und ohne Sitzung
 (`--tools "" --disallowedTools "*" --max-turns 1 --safe-mode --no-session-persistence`), übergibt den
@@ -191,6 +191,15 @@ Hinweis zu den Nutzungsbedingungen: Anthropic erlaubt die Anmeldung mit dem eige
 unveränderten Claude Code für den persönlichen Gebrauch; das Kontingent darf nicht für andere
 Personen oder als Dienst weitergegeben werden. Die Brücke ist deshalb nur für den eigenen PC gedacht
 und nimmt nur Verbindungen von `localhost` an.
+
+**Anmeldung abgelaufen:** Meldet Claude Code „OAuth session expired and could not be refreshed“
+(die Brücke antwortet dann mit HTTP 503 und der Extension-Fehler nennt es), ist die Anmeldung am
+Heim-PC abgelaufen. Dort in einem Terminal `claude auth login` ausführen; die Brücke läuft danach
+ohne Neustart weiter, weil jede Anfrage einen frischen Claude-Code-Prozess startet. Das
+Morgenstart-Skript prüft die Anmeldung alle zehn Minuten, warnt rot mit Signalton und schickt alle
+vier Stunden eine Mini-Anfrage, damit das Token frisch bleibt. Die Brücke startet standardmäßig
+nur einen Claude-Code-Prozess gleichzeitig (`--parallel 1`), weil parallele Prozesse sich bei der
+Token-Erneuerung stören können.
 
 **Nutzungslimit:** Meldet Claude Code, dass das Abo-Kontingent erschöpft ist, antwortet die Brücke
 mit HTTP 429 und der Zeit, ab der es weitergeht (soweit Claude Code sie nennt). Der Lauf hält an,

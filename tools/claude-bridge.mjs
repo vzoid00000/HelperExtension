@@ -57,7 +57,10 @@ const PORT = Number(opt('--port', process.env.BRIDGE_PORT || 4310));
 const DEFAULT_MODEL = opt('--model', process.env.BRIDGE_MODEL || 'opus');
 const EFFORT = opt('--effort', process.env.BRIDGE_EFFORT || 'medium');
 const CLAUDE_BIN = resolveClaudeBin(opt('--claude', process.env.CLAUDE_BIN || 'claude'));
-const PARALLEL = Math.max(1, Number(opt('--parallel', process.env.BRIDGE_PARALLEL || 2)));
+// Standard 1: Zwei gleichzeitige claude-Prozesse können sich bei der Erneuerung des OAuth-Tokens
+// gegenseitig stören ("OAuth session expired and could not be refreshed"); die Extension stellt ihre
+// Anfragen ohnehin nacheinander.
+const PARALLEL = Math.max(1, Number(opt('--parallel', process.env.BRIDGE_PARALLEL || 1)));
 const TIMEOUT_MS = Number(opt('--timeout', 600)) * 1000;
 const VERBOSE = args.includes('--verbose');
 // Erreichbarkeit: Standard nur localhost. --host 0.0.0.0 öffnet die Brücke im Netz (dann Token Pflicht).
@@ -120,6 +123,8 @@ function pump() {
 // Meldungen von Claude Code bei erschöpftem Kontingent, z. B.
 //   "You've hit your session limit · resets 3:45pm", "You've hit your weekly limit · resets Mon 12:00am",
 //   "Claude AI usage limit reached|1760356800", "You've hit your monthly spend limit", 429 "rate limit"
+// Abgelaufene/fehlende Anmeldung von Claude Code (nur am Heim-PC behebbar: claude auth login)
+const AUTH_RE = /failed to authenticate|oauth session expired|could not be refreshed|not logged in|please run \/login|run claude auth login|authentication[_ ]error|invalid authentication|token (is )?(expired|invalid|revoked)/i;
 const LIMIT_RE = /hit your .*limit|usage limit|rate limit|limit reached|out of (extra )?usage|too many requests|overloaded|resets? (at|in)\b|quota/i;
 const WEEKDAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -288,6 +293,11 @@ function interpret({ code, out, err }) {
       e.retryAt = retryAt;
       throw e;
     }
+    if (AUTH_RE.test(combined)) {
+      const e = new Error(`Claude Code am Heim-PC ist nicht mehr angemeldet (${combined.split('\n')[0].slice(0, 120)}). Am Heim-PC in einem Terminal „claude auth login“ ausführen – danach läuft die Brücke ohne Neustart weiter.`);
+      e.authError = true;
+      throw e;
+    }
     throw new Error(`Claude Code Fehler (Exit ${code}): ${(errorText || combined || 'keine Ausgabe').slice(0, 500)}`);
   }
   if (!text) throw new Error(`Claude Code lieferte keine Antwort (Exit ${code}). stderr: ${err.slice(0, 300)}`);
@@ -364,6 +374,12 @@ const server = http.createServer((req, res) => {
           usage: result.usage || {}
         });
       } catch (e) {
+        if (e.authError) {
+          stats.authFailed = (stats.authFailed || 0) + 1;
+          stats.lastAuthError = { at: new Date().toISOString(), message: e.message };
+          console.log(`${new Date().toISOString().slice(11, 19)} ANMELDUNG ${e.message}`);
+          return json(res, 503, { error: { message: e.message, type: 'auth' } });
+        }
         if (e.rateLimited) {
           stats.rateLimited++;
           const until = e.retryAt && new Date(e.retryAt) > new Date() ? e.retryAt : new Date(Date.now() + 10 * 60 * 1000).toISOString();

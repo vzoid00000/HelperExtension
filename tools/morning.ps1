@@ -283,12 +283,39 @@ if ($publicOk) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfo
 else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug noch fehl (beim ersten Start holt Tailscale erst das HTTPS-Zertifikat, das dauert bis zu einer Minute). Ich prüfe alle 20 s weiter und melde mich, sobald es klappt.' 'Yellow' }
 Write-Address
 Show-Banner
+$ka0 = Send-Keepalive
+if ($ka0 -like 'FEHLER:*') { Say ("Testanfrage an Claude fehlgeschlagen: {0}" -f $ka0) 'Yellow' } else { Say ("Testanfrage an Claude ok ({0})" -f $ka0.Trim()) 'Green' }
 Say 'Alles läuft. Fenster offen lassen. Beenden mit Strg+C.' 'Green'
 
 # ----------------------------------------------------------------------- 5) Überwachung ----
 $bridgeFails = 0
 $tunnelFails = 0
 $lastReport = Get-Date
+$lastAuthCheck = Get-Date
+$lastKeepalive = Get-Date
+$authWarned = $false
+function Send-Keepalive {
+  # Kleine Anfrage über die Brücke: hält die Claude-Code-Anmeldung (OAuth-Token) frisch und prüft den ganzen Weg
+  try {
+    $body = '{"messages":[{"role":"user","content":"Antworte nur mit dem Wort OK."}],"max_tokens":5}'
+    $r = Invoke-RestMethod -Uri ("http://127.0.0.1:{0}/v1/chat/completions" -f $Port) -Method Post -ContentType 'application/json' -Headers @{ Authorization = "Bearer $($script:Token)" } -Body $body -TimeoutSec 180
+    return [string]$r.choices[0].message.content
+  } catch {
+    return ('FEHLER: ' + $_.Exception.Message)
+  }
+}
+function Show-AuthWarning([string]$Detail) {
+  Write-Host ''
+  Write-Host '#############################################################' -ForegroundColor Red
+  Write-Host '  CLAUDE CODE IST NICHT MEHR ANGEMELDET - Anfragen schlagen fehl.' -ForegroundColor Red
+  Write-Host '  Beheben: in einem neuen Terminal "claude auth login" ausfuehren.' -ForegroundColor Red
+  Write-Host '  Die Bruecke laeuft danach ohne Neustart weiter.' -ForegroundColor Red
+  if ($Detail) { Write-Host ("  {0}" -f $Detail) -ForegroundColor DarkRed }
+  Write-Host '#############################################################' -ForegroundColor Red
+  Write-Host ''
+  try { [console]::Beep(880, 300); [console]::Beep(660, 300) } catch { }
+  try { Add-Content -Path $AddressFile -Value ("WARNUNG {0}: Claude Code abgemeldet - claude auth login ausfuehren" -f (Get-Date -Format 'dd.MM. HH:mm')) } catch { }
+}
 try {
   while ($true) {
     Start-Sleep -Seconds 20
@@ -333,13 +360,39 @@ try {
         if ($PublicUrl) { Write-Address; Show-Banner }
       }
     }
+    # Anmeldung: sofort melden, wenn die Brücke Anmeldefehler zählt; sonst alle 10 Minuten prüfen
+    $authBroken = $false
+    if ($st -and $st.lastAuthError -and $st.lastAuthError.at) {
+      $when = [datetime]::Parse($st.lastAuthError.at)
+      if (((Get-Date).ToUniversalTime() - $when.ToUniversalTime()).TotalMinutes -lt 2) { $authBroken = $true }
+    }
+    if (((Get-Date) - $lastAuthCheck).TotalMinutes -ge 10 -or $authBroken) {
+      $lastAuthCheck = Get-Date
+      $a = Get-ClaudeAuth
+      if (-not $a -or -not $a.loggedIn) { $authBroken = $true }
+      if ($authBroken) {
+        if (-not $authWarned) { Show-AuthWarning ($(if ($st -and $st.lastAuthError) { $st.lastAuthError.message } else { 'claude auth status meldet: nicht angemeldet' })) }
+        $authWarned = $true
+      } elseif ($authWarned) {
+        Say 'Anmeldung wieder in Ordnung.' 'Green'
+        $authWarned = $false
+      }
+    }
+    # Keepalive alle 4 Stunden: hält das OAuth-Token frisch (eine Mini-Anfrage, praktisch kein Kontingent)
+    if (((Get-Date) - $lastKeepalive).TotalHours -ge 4 -and -not $authWarned) {
+      $lastKeepalive = Get-Date
+      $ka = Send-Keepalive
+      if ($ka -like 'FEHLER:*') { Say ("Keepalive fehlgeschlagen: {0}" -f $ka) 'Yellow' } else { Say ("Keepalive ok ({0})" -f $ka.Trim()) }
+    }
     # Kurzbericht alle 5 Minuten
     if (((Get-Date) - $lastReport).TotalMinutes -ge 5) {
       $lastReport = Get-Date
       if ($st) {
         $limit = ''
         if ($st.rateLimitUntil) { $limit = (" | Nutzungslimit bis {0}" -f $st.rateLimitUntil) }
-        Say ("Status: Anfragen {0}, ok {1}, Fehler {2}, Limit {3}{4} | Adresse {5}" -f $st.requests, $st.ok, $st.failed, $st.rateLimited, $limit, $PublicUrl)
+        $authTxt = ''
+        if ($st.authFailed) { $authTxt = (" | Anmeldefehler {0}" -f $st.authFailed) }
+        Say ("Status: Anfragen {0}, ok {1}, Fehler {2}, Limit {3}{4}{5} | Adresse {6}" -f $st.requests, $st.ok, $st.failed, $st.rateLimited, $limit, $authTxt, $PublicUrl)
       }
     }
   }

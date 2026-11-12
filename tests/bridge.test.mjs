@@ -53,6 +53,22 @@ try {
   srv.kill();
 }
 
+// Abgelaufene Anmeldung → 503 mit type 'auth' und Handlungsanweisung
+{
+  const PORTA = PORT + 3;
+  const srvA = spawn('node', [path.join(ROOT, 'tools/claude-bridge.mjs'), '--port', String(PORTA), '--claude', wrapper], { env: { ...process.env, FAKE_CLAUDE_LOG: logFile }, stdio: ['ignore', 'pipe', 'pipe'] });
+  await new Promise((r) => setTimeout(r, 700));
+  try {
+    const a = await fetch(`http://localhost:${PORTA}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'AUTH_TEST' }] }) });
+    const aj = await a.json();
+    check(a.status === 503 && aj.error.type === 'auth' && /claude auth login/.test(aj.error.message), 'Anmeldefehler → 503/auth: ' + aj.error?.message);
+    const st = await fetch(`http://localhost:${PORTA}/__bridge/status`).then((r) => r.json());
+    check(st.authFailed === 1 && st.lastAuthError?.message, 'Status zählt Anmeldefehler');
+  } finally {
+    srvA.kill();
+  }
+}
+
 // Absturz der CLI → 500 (neue Brücke ohne Sperre)
 {
   const PORT2 = PORT + 1;
