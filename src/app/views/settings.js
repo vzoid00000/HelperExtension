@@ -49,7 +49,41 @@ export async function init(c) {
   $('fileImport').addEventListener('change', importData);
   $('btnInspector').addEventListener('click', () => guard(inspectOsdp, $('btnInspector')));
   $('btnExportTags').addEventListener('click', () => guard(exportTags, $('btnExportTags')));
+  $('btnDiagnostics').addEventListener('click', () => exportDiagnostics().catch((e) => toastError('Diagnosebericht', e.message)));
   return { render: () => fill(ctx.settings), onSettingsChanged, fill, readForm };
+}
+
+/**
+ * Diagnosebericht: alles, was man zum Nachvollziehen eines schlechten Laufs braucht, ohne Geheimnisse
+ * (keine API-Keys, kein Zugangs-Token): Version, Einstellungen, Quellen mit Scan-Status, Protokoll,
+ * Meldungen (Status, Fehler, Bewertung, Tags, Chips, Warnungen), Verlauf der letzten 7 Tage, Regeln.
+ */
+async function exportDiagnostics() {
+  const SECRETS = ['anthropicApiKey', 'localLlmApiKey', 'deeplApiKey'];
+  const settings = Object.fromEntries(Object.entries(ctx.settings || {}).map(([k, v]) => [k, SECRETS.includes(k) ? (v ? '(gesetzt)' : '') : v]));
+  const items = Object.values(ctx.state?.items || {}).map((it) => ({
+    status: it.status, error: it.error || '', url: it.url, title: it.title, sourceName: it.sourceName, dateIso: it.dateIso,
+    category: it.category, score: it.score, reason: it.reason, wbChoice: it.wbChoice, wbResult: it.wbResult,
+    titleDe: it.titleDe || '', authorFinal: it.authorFinal, authorUnknown: it.authorUnknown,
+    tags: it.tagSelection?.paths || [], chipsFinal: it.chipsFinal || [], warnings: it.warnings || [], problems: it.problems || []
+  }));
+  const weekAgo = Date.now() - 7 * 86400e3;
+  const history = (ctx.history || []).filter((e) => e.at >= weekAgo).map((e) => ({
+    at: new Date(e.at).toISOString(), structure: e.structure, wb: e.wb, title: e.title, titleDe: e.titleDe, sourceName: e.sourceName,
+    tags: e.tags, chipsFinal: e.chipsFinal, warnings: e.warnings, problems: e.problems, confirmedBy: e.confirmedBy
+  }));
+  const report = {
+    exportedAt: new Date().toISOString(),
+    version: ctx.version || '',
+    settings,
+    sources: (ctx.sources || []).map((s) => ({ name: s.name, url: s.url, category: s.category, type: s.type, enabled: s.enabled !== false, lastScan: ctx.state?.sources?.[s.name] || null })),
+    log: ($('log')?.textContent || '').split('\n').slice(-600).join('\n'),
+    items,
+    history,
+    rules: (ctx.rules || []).map((r) => ({ scope: r.scope, text: r.text, reason: r.reason, active: r.active, hits: r.hits }))
+  };
+  await download(`osdp-helper-diagnose-${toIsoDate(new Date())}.json`, JSON.stringify(report, null, 2), 'application/json');
+  toastOk('Diagnosebericht gespeichert', `${items.length} Meldungen, ${history.length} Verlaufseinträge, ${report.rules.length} Regeln – ohne Keys.`);
 }
 
 function setStatus(msg, kind = '') {
