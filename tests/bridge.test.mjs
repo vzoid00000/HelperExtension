@@ -40,6 +40,24 @@ try {
   const jj = await j.json();
   check(j.status === 200 && /"results"/.test(jj.choices[0].message.content), 'JSON-Antwort: ' + jj.choices?.[0]?.message?.content?.slice(0, 80));
 
+  // Auftrag-und-Abholen: 202 mit Auftragsnummer, Ergebnis per GET /__bridge/jobs/<id>
+  const a1 = await fetch(`${base}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-bridge-async': '1' }, body: JSON.stringify({ model: 'opus', messages: [{ role: 'user', content: 'Async hello' }] }) });
+  const a1j = await a1.json();
+  check(a1.status === 202 && a1j.id && a1j.poll === `/__bridge/jobs/${a1j.id}`, 'Async: 202 mit Auftragsnummer: ' + JSON.stringify(a1j));
+  let done = null;
+  for (let i = 0; i < 30 && !done; i++) {
+    await new Promise((r) => setTimeout(r, 200));
+    const pr = await fetch(`${base}${a1j.poll}`).then((r) => r.json());
+    if (pr.state === 'done') done = pr;
+  }
+  check(done && done.http === 200 && /ÜBERSETZUNG: Async hello/.test(done.body.choices[0].message.content), 'Async: Ergebnis abgeholt: ' + JSON.stringify(done?.body?.choices?.[0]?.message?.content));
+  const gone = await fetch(`${base}${a1j.poll}`);
+  check(gone.status === 404, 'Async: Auftrag nach dem Abholen verworfen (404)');
+  // Über das Client-Modul der Extension (src/lib/llm.js) – pollt selbst
+  const { llmText } = await import('../src/lib/llm.js');
+  const viaClient = await llmText({ llmProvider: 'local', localLlmUrl: base, localLlmModel: 'sonnet', localLlmTimeoutSec: 60 }, 'Du übersetzt.', 'Client hello');
+  check(/\[sonnet\] ÜBERSETZUNG: Client hello/.test(viaClient), 'llm.js holt das Ergebnis über den Auftrag ab: ' + viaClient);
+
   // Nutzungslimit → 429 mit retry_at
   const l = await fetch(`${base}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'LIMIT_TEST please' }] }) });
   const lj = await l.json();
@@ -48,7 +66,7 @@ try {
   const l2 = await fetch(`${base}/v1/chat/completions`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: 'again' }] }) });
   check(l2.status === 429, 'Sperre bleibt bis retry_at aktiv (429 ohne neuen CLI-Aufruf)');
   const status = await fetch(`${base}/__bridge/status`).then((r) => r.json());
-  check(status.ok === 2 && status.rateLimited === 2 && status.rateLimitUntil, 'Status-Zähler: ' + JSON.stringify({ ok: status.ok, rateLimited: status.rateLimited }));
+  check(status.ok === 4 && status.rateLimited === 2 && status.rateLimitUntil && status.jobs === 2, 'Status-Zähler: ' + JSON.stringify({ ok: status.ok, rateLimited: status.rateLimited, jobs: status.jobs }));
 } finally {
   srv.kill();
 }

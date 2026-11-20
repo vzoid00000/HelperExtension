@@ -192,6 +192,13 @@ unveränderten Claude Code für den persönlichen Gebrauch; das Kontingent darf 
 Personen oder als Dienst weitergegeben werden. Die Brücke ist deshalb nur für den eigenen PC gedacht
 und nimmt nur Verbindungen von `localhost` an.
 
+**Lange Anfragen durch den Tunnel:** Tailscale Funnel und ähnliche Tunnel brechen Antworten, die
+länger als etwa eine Minute dauern, mit einer HTML-Fehlerseite (HTTP 504) ab. Die Extension schickt
+Anfragen an die Brücke deshalb als Auftrag (Header `x-bridge-async: 1`): Die Brücke antwortet
+sofort mit einer Auftragsnummer, rechnet im Hintergrund, und die Extension holt das Ergebnis alle
+zwei Sekunden unter `/__bridge/jobs/<id>` ab. Jede einzelne HTTP-Anfrage bleibt damit kurz. Andere
+OpenAI-kompatible Server antworten direkt; der Client kann beides.
+
 **Anmeldung abgelaufen:** Meldet Claude Code „OAuth session expired and could not be refreshed“
 (die Brücke antwortet dann mit HTTP 503 und der Extension-Fehler nennt es), ist die Anmeldung am
 Heim-PC abgelaufen. Dort in einem Terminal `claude auth login` ausführen; die Brücke läuft danach

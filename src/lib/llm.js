@@ -97,30 +97,100 @@ export function localBase(settings) {
   return /\/v\d+$/.test(url) ? url : `${url}/v1`;
 }
 
-async function localRequest(settings, body) {
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+/** Antworttext lesen; liefert eine Antwort nur json() (Attrappen, exotische Server), diesen serialisieren. */
+async function readResponseText(res) {
+  let text = '';
+  try {
+    text = typeof res.text === 'function' ? await res.text() : '';
+  } catch {
+    text = '';
+  }
+  if (!text && typeof res.json === 'function') {
+    try {
+      text = JSON.stringify(await res.json());
+    } catch {
+      /* kein JSON */
+    }
+  }
+  return text || '';
+}
+
+/**
+ * Anfrage an den lokalen Server. Die Claude-Code-Brücke beantwortet sie auf Wunsch (Header
+ * x-bridge-async) sofort mit 202 und einer Auftragsnummer; das Ergebnis wird dann alle zwei Sekunden
+ * abgeholt. So bleibt jede einzelne HTTP-Anfrage kurz – nötig hinter Tunneln (Tailscale Funnel,
+ * Cloudflare), die lange Antworten mit 504 abbrechen. Andere Server (Ollama …) antworten direkt.
+ * @returns {Promise<{status: number, ok: boolean, text: string}>}
+ */
+async function localExchange(settings, body) {
   const base = localBase(settings);
-  const headers = { 'content-type': 'application/json', ...TUNNEL_HEADERS };
+  const headers = { 'content-type': 'application/json', 'x-bridge-async': '1', ...TUNNEL_HEADERS };
   if (settings.localLlmApiKey) headers.authorization = `Bearer ${settings.localLlmApiKey}`;
-  const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), (Number(settings.localLlmTimeoutSec) || 600) * 1000);
+  const timeoutMs = (Number(settings.localLlmTimeoutSec) || 600) * 1000;
+  const deadline = Date.now() + timeoutMs;
+  const fetchWithTimeout = async (url, init, ms) => {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), ms);
+    try {
+      return await fetch(url, { ...init, signal: ctrl.signal });
+    } finally {
+      clearTimeout(timer);
+    }
+  };
   let res;
   try {
-    res = await fetch(`${base}/chat/completions`, {
+    res = await fetchWithTimeout(`${base}/chat/completions`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ model: settings.localLlmModel || undefined, temperature: 0.2, stream: false, ...body }),
-      signal: ctrl.signal
-    });
+      body: JSON.stringify({ model: settings.localLlmModel || undefined, temperature: 0.2, stream: false, ...body })
+    }, timeoutMs);
   } catch (e) {
     if (e?.name === 'AbortError') {
-      throw new Error(`${localServerName(settings)} antwortet nicht (${base}): Zeitlimit von ${Number(settings.localLlmTimeoutSec) || 600} s überschritten – Brücke/Server prüfen oder das Zeitlimit in den Einstellungen erhöhen.`);
+      throw new Error(`${localServerName(settings)} antwortet nicht (${base}): Zeitlimit von ${timeoutMs / 1000} s überschritten – Brücke/Server prüfen oder das Zeitlimit in den Einstellungen erhöhen.`);
     }
     throw new Error(`${localUnreachableHint(base)} (${e.message})`);
-  } finally {
-    clearTimeout(timer);
   }
+  if (res.status !== 202) return { status: res.status, ok: res.ok, text: await readResponseText(res) };
+
+  // Auftrag angenommen → abholen
+  let job;
+  try {
+    job = await res.json();
+  } catch {
+    throw new Error(`${localServerName(settings)} (${base}): ungültige Auftragsantwort (202 ohne JSON)`);
+  }
+  const pollUrl = new URL(job.poll || `/__bridge/jobs/${job.id}`, base).href;
+  const pollMs = Math.max(1000, Number(job.pollMs) || 2000);
+  let failures = 0;
+  while (Date.now() < deadline) {
+    await sleep(pollMs);
+    let pr;
+    try {
+      pr = await fetchWithTimeout(pollUrl, { headers }, 30000);
+    } catch (e) {
+      if (++failures >= 5) throw new Error(`${localUnreachableHint(base)} (Abholen des Ergebnisses: ${e.message})`);
+      continue;
+    }
+    if (pr.status === 404) throw new Error(`${localServerName(settings)} (${base}): Auftrag ${job.id} ist verloren gegangen (Brücke neu gestartet?) – bitte erneut starten.`);
+    if (!pr.ok) {
+      // Tunnel-Fehlerseiten (502/504) beim Abholen: kurz weiterprobieren
+      if (++failures >= 5) return { status: pr.status, ok: false, text: await readResponseText(pr) };
+      continue;
+    }
+    failures = 0;
+    const j = await pr.json().catch(() => null);
+    if (j?.state === 'done') return { status: Number(j.http) || 200, ok: (Number(j.http) || 200) < 400, text: JSON.stringify(j.body ?? {}) };
+  }
+  throw new Error(`${localServerName(settings)} antwortet nicht (${base}): Zeitlimit von ${timeoutMs / 1000} s überschritten – Brücke/Server prüfen oder das Zeitlimit in den Einstellungen erhöhen.`);
+}
+
+async function localRequest(settings, body) {
+  const base = localBase(settings);
+  const res = await localExchange(settings, body);
   if (!res.ok) {
-    const detail = await res.text().catch(() => '');
+    const detail = res.text || '';
     if (res.status === 429) {
       // Vermittler/Server meldet erschöpftes Kontingent (z. B. Claude-Code-Brücke: {"error":{"message":…,"retry_at":…}})
       let message = 'Nutzungslimit erreicht – bitte eine Weile warten und dann erneut starten.';
@@ -134,11 +204,27 @@ async function localRequest(settings, body) {
       }
       throw new RateLimitError(message, { retryAt, provider: 'local' });
     }
-    const err = new Error(`${localServerName(settings)} (${base}): HTTP ${res.status} ${detail.slice(0, 300)}`.trim());
+    let shown = detail.slice(0, 300);
+    try {
+      const j = JSON.parse(detail);
+      shown = j?.error?.message || j?.message || shown;
+    } catch {
+      if (/<html|<!doctype/i.test(detail)) {
+        shown = res.status === 504 || res.status === 502
+          ? 'Der Tunnel erreicht die Brücke nicht (Fehlerseite des Tunnels). Läuft am Heim-PC das Morgenstart-Fenster, und ist der PC wach?'
+          : 'Fehlerseite statt Antwort (HTML) – Tunnel oder Server prüfen.';
+      }
+    }
+    const err = new Error(`${localServerName(settings)} (${base}): HTTP ${res.status} ${shown}`.trim());
     err.status = res.status;
     throw err;
   }
-  const data = await res.json();
+  let data;
+  try {
+    data = JSON.parse(res.text);
+  } catch {
+    throw new Error(`${localServerName(settings)} (${base}): Antwort ist kein JSON`);
+  }
   const msg = data.choices?.[0]?.message;
   const content = typeof msg?.content === 'string' ? msg.content : (msg?.content || []).map((c) => c.text || '').join('');
   return content;

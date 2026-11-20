@@ -10,6 +10,8 @@
 //   GET  /v1/models
 //   POST /v1/chat/completions   { model?, messages: [{role, content}], response_format?, max_tokens? }
 //   GET  /__bridge/status       Diagnose: Konfiguration, Zähler, letzte Fehler
+//   POST …/chat/completions mit Header x-bridge-async: 1 → 202 { id, poll } und GET /__bridge/jobs/<id>
+//        → { state: 'pending' } bzw. { state: 'done', http, body } (kurze Anfragen, tunnelfest)
 //
 // Erreicht das Abo-Kontingent sein Limit, antwortet die Brücke mit HTTP 429 und
 // {"error": {"message": "…", "retry_at": "<ISO-Zeit, falls bekannt>"}}; die Extension hält dann an.
@@ -323,6 +325,67 @@ function buildPrompts(body) {
   return { system: system.trim(), user: user.trim() };
 }
 
+/** Eine Anfrage vollständig ausführen; liefert HTTP-Status und Antwortkörper wie die Direktantwort. */
+async function processChat({ system, user, model }) {
+  const started = Date.now();
+  try {
+    const result = await schedule(() => runClaude({ system, user, model }).then(interpret));
+    stats.ok++;
+    stats.lastUsage = result.usage;
+    if (typeof result.costUsd === 'number') stats.totalCostUsd += result.costUsd;
+    console.log(`${new Date().toISOString().slice(11, 19)} ok   ${model} ${(system.length + user.length).toLocaleString('de-AT')} Zeichen → ${result.text.length} Zeichen in ${((Date.now() - started) / 1000).toFixed(1)}s`);
+    if (VERBOSE) console.log('   ' + result.text.slice(0, 200).replace(/\n/g, ' '));
+    return {
+      status: 200,
+      body: {
+        id: `bridge-${Date.now()}`,
+        object: 'chat.completion',
+        model,
+        choices: [{ index: 0, message: { role: 'assistant', content: result.text }, finish_reason: 'stop' }],
+        usage: result.usage || {}
+      }
+    };
+  } catch (e) {
+    if (e.authError) {
+      stats.authFailed = (stats.authFailed || 0) + 1;
+      stats.lastAuthError = { at: new Date().toISOString(), message: e.message };
+      console.log(`${new Date().toISOString().slice(11, 19)} ANMELDUNG ${e.message}`);
+      return { status: 503, body: { error: { message: e.message, type: 'auth' } } };
+    }
+    if (e.rateLimited) {
+      stats.rateLimited++;
+      const until = e.retryAt && new Date(e.retryAt) > new Date() ? e.retryAt : new Date(Date.now() + 10 * 60 * 1000).toISOString();
+      rateLimitUntil = until;
+      console.log(`${new Date().toISOString().slice(11, 19)} LIMIT ${e.message}`);
+      return { status: 429, body: { error: { message: e.message, retry_at: e.retryAt, type: 'rate_limit' } } };
+    }
+    stats.failed++;
+    stats.lastErrors.unshift({ at: new Date().toISOString(), message: e.message });
+    stats.lastErrors.length = Math.min(stats.lastErrors.length, 10);
+    console.log(`${new Date().toISOString().slice(11, 19)} FEHLER ${e.message}`);
+    return { status: 500, body: { error: { message: e.message } } };
+  }
+}
+
+// ---------------------------------------------------------------- Aufträge --
+// Ergebnisse werden nach dem Abholen bzw. nach 30 Minuten verworfen.
+const jobs = new Map();
+const JOB_TTL_MS = 30 * 60 * 1000;
+function createJob() {
+  const id = `${Date.now().toString(36)}-${crypto.randomBytes(6).toString('base64url')}`;
+  const job = { id, createdAt: Date.now(), state: 'pending', result: null };
+  jobs.set(id, job);
+  for (const [k, j] of jobs) if (Date.now() - j.createdAt > JOB_TTL_MS) jobs.delete(k);
+  return job;
+}
+function finishJob(id, result) {
+  const job = jobs.get(id);
+  if (!job) return;
+  job.state = 'done';
+  job.result = result;
+  job.finishedAt = Date.now();
+}
+
 const server = http.createServer((req, res) => {
   const u = new URL(req.url, `http://localhost:${PORT}`);
   if (req.method === 'OPTIONS') {
@@ -337,8 +400,16 @@ const server = http.createServer((req, res) => {
   if (req.method === 'GET' && /\/models$/.test(u.pathname)) {
     return json(res, 200, { object: 'list', data: ['opus', 'sonnet', 'haiku', DEFAULT_MODEL].filter((v, i, a) => a.indexOf(v) === i).map((id) => ({ id, object: 'model', owned_by: 'claude-code' })) });
   }
+  if (req.method === 'GET' && u.pathname.startsWith('/__bridge/jobs/')) {
+    const id = u.pathname.slice('/__bridge/jobs/'.length);
+    const job = jobs.get(id);
+    if (!job) return json(res, 404, { error: { message: 'Auftrag unbekannt oder abgelaufen (Brücke neu gestartet?)', type: 'job_not_found' } });
+    if (job.state !== 'done') return json(res, 200, { id, state: 'pending', ageMs: Date.now() - job.createdAt, queue: queue.length, running });
+    jobs.delete(id);
+    return json(res, 200, { id, state: 'done', http: job.result.status, body: job.result.body });
+  }
   if (req.method === 'GET' && u.pathname === '/__bridge/status') {
-    return json(res, 200, { ...stats, model: DEFAULT_MODEL, effort: EFFORT, claude: CLAUDE_BIN, parallel: PARALLEL, queue: queue.length, running, rateLimitUntil });
+    return json(res, 200, { ...stats, model: DEFAULT_MODEL, effort: EFFORT, claude: CLAUDE_BIN, parallel: PARALLEL, queue: queue.length, running, rateLimitUntil, openJobs: [...jobs.values()].filter((j) => j.state !== 'done').length });
   }
   if (req.method === 'POST' && /\/chat\/completions$/.test(u.pathname)) {
     let raw = '';
@@ -358,41 +429,16 @@ const server = http.createServer((req, res) => {
       const { system, user } = buildPrompts(body);
       if (!user) return json(res, 400, { error: { message: 'keine Nutzernachricht' } });
       const model = body.model && body.model !== 'default' ? body.model : DEFAULT_MODEL;
-      const started = Date.now();
-      try {
-        const result = await schedule(() => runClaude({ system, user, model }).then(interpret));
-        stats.ok++;
-        stats.lastUsage = result.usage;
-        if (typeof result.costUsd === 'number') stats.totalCostUsd += result.costUsd;
-        console.log(`${new Date().toISOString().slice(11, 19)} ok   ${model} ${(system.length + user.length).toLocaleString('de-AT')} Zeichen → ${result.text.length} Zeichen in ${((Date.now() - started) / 1000).toFixed(1)}s`);
-        if (VERBOSE) console.log('   ' + result.text.slice(0, 200).replace(/\n/g, ' '));
-        return json(res, 200, {
-          id: `bridge-${Date.now()}`,
-          object: 'chat.completion',
-          model,
-          choices: [{ index: 0, message: { role: 'assistant', content: result.text }, finish_reason: 'stop' }],
-          usage: result.usage || {}
-        });
-      } catch (e) {
-        if (e.authError) {
-          stats.authFailed = (stats.authFailed || 0) + 1;
-          stats.lastAuthError = { at: new Date().toISOString(), message: e.message };
-          console.log(`${new Date().toISOString().slice(11, 19)} ANMELDUNG ${e.message}`);
-          return json(res, 503, { error: { message: e.message, type: 'auth' } });
-        }
-        if (e.rateLimited) {
-          stats.rateLimited++;
-          const until = e.retryAt && new Date(e.retryAt) > new Date() ? e.retryAt : new Date(Date.now() + 10 * 60 * 1000).toISOString();
-          rateLimitUntil = until;
-          console.log(`${new Date().toISOString().slice(11, 19)} LIMIT ${e.message}`);
-          return json(res, 429, { error: { message: e.message, retry_at: e.retryAt, type: 'rate_limit' } });
-        }
-        stats.failed++;
-        stats.lastErrors.unshift({ at: new Date().toISOString(), message: e.message });
-        stats.lastErrors.length = Math.min(stats.lastErrors.length, 10);
-        console.log(`${new Date().toISOString().slice(11, 19)} FEHLER ${e.message}`);
-        return json(res, 500, { error: { message: e.message } });
+      // Auftrag-und-Abholen (x-bridge-async: 1): sofort 202 mit Auftragsnummer, Ergebnis per GET /__bridge/jobs/<id>.
+      // Nötig hinter Tunneln (Tailscale Funnel, Cloudflare), die lange Antworten mit 504 abbrechen.
+      if (/^(1|true|yes)$/i.test(String(req.headers['x-bridge-async'] || '')) || u.searchParams.get('async') === '1') {
+        const job = createJob();
+        stats.jobs = (stats.jobs || 0) + 1;
+        processChat({ system, user, model }).then((r) => finishJob(job.id, r));
+        return json(res, 202, { id: job.id, state: 'pending', poll: `/__bridge/jobs/${job.id}`, pollMs: 2000 });
       }
+      const r = await processChat({ system, user, model });
+      return json(res, r.status, r.body);
     });
     return;
   }
