@@ -283,17 +283,6 @@ if ($publicOk) { Say 'Tunnel erreichbar: Anfrage von außen bis zur Brücke erfo
 else { Say 'Tunnel steht, aber die Prüfanfrage von außen schlug noch fehl (beim ersten Start holt Tailscale erst das HTTPS-Zertifikat, das dauert bis zu einer Minute). Ich prüfe alle 20 s weiter und melde mich, sobald es klappt.' 'Yellow' }
 Write-Address
 Show-Banner
-$ka0 = Send-Keepalive
-if ($ka0 -like 'FEHLER:*') { Say ("Testanfrage an Claude fehlgeschlagen: {0}" -f $ka0) 'Yellow' } else { Say ("Testanfrage an Claude ok ({0})" -f $ka0.Trim()) 'Green' }
-Say 'Alles läuft. Fenster offen lassen. Beenden mit Strg+C.' 'Green'
-
-# ----------------------------------------------------------------------- 5) Überwachung ----
-$bridgeFails = 0
-$tunnelFails = 0
-$lastReport = Get-Date
-$lastAuthCheck = Get-Date
-$lastKeepalive = Get-Date
-$authWarned = $false
 function Send-Keepalive {
   # Kleine Anfrage über die Brücke: hält die Claude-Code-Anmeldung (OAuth-Token) frisch und prüft den ganzen Weg
   try {
@@ -316,6 +305,18 @@ function Show-AuthWarning([string]$Detail) {
   try { [console]::Beep(880, 300); [console]::Beep(660, 300) } catch { }
   try { Add-Content -Path $AddressFile -Value ("WARNUNG {0}: Claude Code abgemeldet - claude auth login ausfuehren" -f (Get-Date -Format 'dd.MM. HH:mm')) } catch { }
 }
+
+$ka0 = Send-Keepalive
+if ($ka0 -like 'FEHLER:*') { Say ("Testanfrage an Claude fehlgeschlagen: {0}" -f $ka0) 'Yellow' } else { Say ("Testanfrage an Claude ok ({0})" -f $ka0.Trim()) 'Green' }
+Say 'Alles läuft. Fenster offen lassen. Beenden mit Strg+C.' 'Green'
+
+# ----------------------------------------------------------------------- 5) Überwachung ----
+$bridgeFails = 0
+$tunnelFails = 0
+$lastReport = Get-Date
+$lastAuthCheck = Get-Date
+$lastKeepalive = Get-Date
+$authWarned = $false
 try {
   while ($true) {
     Start-Sleep -Seconds 20
