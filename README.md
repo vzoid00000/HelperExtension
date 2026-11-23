@@ -7,7 +7,13 @@ bis du es geprüft und selbst auf „Save“ geklickt hast.
 
 ## Was die Extension macht
 
-Eine einzige App-Seite (Klick auf das Extension-Symbol) mit fünf Ansichten:
+Die Oberfläche läuft als **Panel direkt in der OSDP-Seite**: Auf `osdp.zentdok.at` erscheint am
+rechten Rand der Reiter „OSDP Helper“ (auch Klick auf das Extension-Symbol oder Alt+H). Das Panel
+schiebt die OSDP-Seite zusammen, lässt sich in der Breite ziehen und merkt sich Zustand und Breite.
+Alles passiert im selben Tab: Das Formular wird neben dem Panel befüllt, Save klickst du in OSDP,
+und statt die Seite neu zu laden leert die Extension das Formular über den Editor-Store (dieselbe
+Aktion, die OSDP nach einem Save auslöst). „Als Tab“ öffnet dieselbe App als eigene Seite, etwa für
+den Verlauf auf großem Bildschirm. Fünf Ansichten:
 
 **Lauf** – der Arbeitsablauf:
 
@@ -110,7 +116,7 @@ eine Kreditkarte zur Verifizierung). Über die Claude-Code-Brücke kostet die Ü
 
 1. Repository klonen oder ZIP entpacken
 2. Chrome: `chrome://extensions` → **Entwicklermodus** → **„Entpackte Erweiterung laden“** → Projektordner
-3. Extension-Symbol anklicken → Ansicht „Einstellungen“:
+3. OSDP öffnen, rechts den Reiter „OSDP Helper“ anklicken (oder das Extension-Symbol) → Ansicht „Einstellungen“:
    - Sprachmodell wählen: **Claude-Code-Brücke** („Claude-Code-Brücke voreinstellen“, siehe unten),
      **Claude API** (API-Key von console.anthropic.com; „Sparmodus“ wählt das günstige Haiku 5.5)
      oder **eigener Server**
@@ -425,6 +431,7 @@ src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
 src/lib/dates.js, author.js        Datumsregel, Autor-Normalisierung
 src/content/news-extractor.js      Artikel auslesen
 src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Leiste, Save-Erkennung, Export)
+src/content/osdp-panel.js          Panel (iframe der App) in der OSDP-Seite, Reiter, Breite, Umschalten
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors
 site-dump/                         HAR-Export (geschwärzt) und DOM-Dumps
 ```

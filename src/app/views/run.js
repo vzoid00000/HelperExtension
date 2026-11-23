@@ -666,6 +666,7 @@ async function processSelected(area = currentArea()) {
 
   const driver = new OsdpDriver(ctx.settings, (m) => log(m));
   currentDriver = driver;
+  if (ctx.embedded) await pinHostTab(driver);
   await driver.ensureTab();
   if (!(await confirmForeignForm(driver))) {
     currentDriver = null;
@@ -694,6 +695,31 @@ async function processSelected(area = currentArea()) {
   const rest = todo.length - saved;
   log(`Eintragen beendet: ${saved} von ${todo.length} gespeichert${aborted ? ' (abgebrochen)' : ''}.`, saved === todo.length ? 'ok' : 'warn');
   if (!aborted) toast({ title: 'Eintragen beendet', desc: `${plural(saved, 'Meldung', 'Meldungen')} gespeichert${rest ? `, ${rest} nicht` : ''}.`, kind: saved ? 'success' : 'warn' });
+}
+
+/**
+ * Panel-Modus: Der Driver arbeitet im Tab, der das Panel enthält – nie in einem anderen OSDP-Tab,
+ * nie mit Neuladen. Tab-ID über chrome.tabs.getCurrent (Extension-iframe) oder den Service Worker.
+ */
+async function pinHostTab(driver) {
+  let tabId = null;
+  try {
+    const t = await chrome.tabs.getCurrent();
+    tabId = t?.id ?? null;
+  } catch {
+    tabId = null;
+  }
+  if (tabId == null) {
+    try {
+      const r = await chrome.runtime.sendMessage({ type: 'osdp-helper-whoami' });
+      tabId = r?.tabId ?? null;
+    } catch {
+      tabId = null;
+    }
+  }
+  if (tabId == null) throw new Error('Panel-Modus: der eigene OSDP-Tab ließ sich nicht ermitteln – bitte die App über „Als Tab“ öffnen und dort starten.');
+  driver.pin(tabId);
+  log('Panel-Modus: Formular wird im eigenen OSDP-Tab befüllt, die Seite wird nicht neu geladen.');
 }
 
 /**

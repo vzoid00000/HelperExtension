@@ -154,6 +154,35 @@ export function textToHtml(textValue) {
 
 const leafName = (path) => path.split(' → ').slice(-1)[0].trim().toLowerCase();
 
+/**
+ * MAIN-World: OSDP-Formular über den NgRx-Store leeren – dieselbe Aktion, die OSDP nach einem
+ * erfolgreichen Save auslöst („[Editor Component] Reset Form“: Quelle, Titel, alle Editor-Inhalte,
+ * Tags). Ersetzt das Neuladen der Seite (im Panel-Modus zwingend, sonst stirbt das Panel mit).
+ */
+function ngResetForm() {
+  try {
+    const ng = window.ng;
+    if (!ng || typeof ng.getComponent !== 'function') return { ok: false, error: 'window.ng nicht verfügbar (Produktions-Build?)' };
+    const el = document.querySelector('app-editor') || document.querySelector('app-news-editor');
+    if (!el) return { ok: false, error: 'Editor-Komponente (app-editor) nicht gefunden' };
+    const cmp = ng.getComponent(el);
+    if (!cmp) return { ok: false, error: 'Komponente nicht lesbar' };
+    let store = null;
+    for (const k of Object.keys(cmp)) {
+      const v = cmp[k];
+      if (v && typeof v.dispatch === 'function' && typeof v.select === 'function') {
+        store = v;
+        break;
+      }
+    }
+    if (!store) return { ok: false, error: 'NgRx-Store in der Editor-Komponente nicht gefunden' };
+    store.dispatch({ type: '[Editor Component] Reset Form' });
+    return { ok: true, via: 'store' };
+  } catch (e) {
+    return { ok: false, error: String(e?.message || e) };
+  }
+}
+
 // ----------------------------------------------------------------------- Driver --
 
 export class OsdpDriver {
@@ -169,6 +198,16 @@ export class OsdpDriver {
     this.formDirty = false;
     // letzter Füllstand ({ url, sourceValue, chips }) als Vorgabe für waitForReview und formState().ours
     this.lastFill = null;
+    // Panel-Modus: fest an den umgebenden Tab gebunden, kein Tabwechsel, kein Neuladen der Seite
+    this.pinned = false;
+    this.noReload = false;
+  }
+
+  /** Driver fest an einen Tab binden (Panel im OSDP-Tab): nie suchen, nie neu öffnen, nie neu laden. */
+  pin(tabId) {
+    this.tabId = tabId;
+    this.pinned = true;
+    this.noReload = true;
   }
 
   /** Ist der zuletzt benutzte OSDP-Tab noch offen und zeigt er noch OSDP? Öffnet nie einen neuen Tab. */
@@ -190,6 +229,15 @@ export class OsdpDriver {
    * fremde Seite gescriptet und weggenavigiert.
    */
   async ensureTab({ create = true } = {}) {
+    if (this.pinned) {
+      try {
+        const t = await chrome.tabs.get(this.tabId);
+        if (t && !t.discarded) return this.tabId;
+      } catch {
+        /* geschlossen */
+      }
+      throw new Error('Der OSDP-Tab mit dem Panel ist nicht mehr erreichbar.');
+    }
     if (this.tabId) {
       let keep = false;
       try {
@@ -260,6 +308,9 @@ export class OsdpDriver {
   /** App laden, dann per Hash zum Editor navigieren (umgeht den Berechtigungs-Race beim Deep-Link). */
   async openEditor({ reload }) {
     const tabId = await this.ensureTab();
+    if (reload && this.noReload) {
+      throw new Error('Das OSDP-Formular ließ sich nicht leeren, und im Panel-Modus wird die Seite nicht neu geladen. Bitte die OSDP-Seite einmal selbst neu laden (F5), das Panel öffnen und den Lauf erneut starten.');
+    }
     if (reload) {
       // Nur bei http(s)-Mustern auf /#/news umlenken; andere Muster (z. B. file:///* in Tests) nur neu laden.
       if (/^https?:\/\//i.test((this.settings.osdpUrlPattern || '').trim() || OSDP_BASE)) {
@@ -296,14 +347,59 @@ export class OsdpDriver {
    * Leeres Formular sicherstellen: vorhandenen leeren Editor weiterverwenden, sonst neu laden.
    * Nach „Überspringen“ stehen noch Inhalte im Formular (formDirty) → immer neu laden.
    */
+  /**
+   * Formular über den Editor-Store leeren (wie OSDP nach einem Save) – ohne Neuladen.
+   * @returns {{ ok: boolean, via?: string, error?: string }}
+   */
+  async resetForm() {
+    const r = await this.main(ngResetForm, []).catch((e) => ({ ok: false, error: e.message }));
+    if (!r?.ok) return { ok: false, error: r?.error || 'unbekannt' };
+    await sleep(700);
+    const p = await this.probe();
+    const clean = !!p?.hasEditor && !p.sourceValue && !p.titleValue && !(p.chips || []).length;
+    if (clean) {
+      this.formDirty = false;
+      this.lastFill = null;
+    }
+    return clean ? { ok: true, via: r.via || 'store' } : { ok: false, error: 'Formular nach dem Reset nicht leer' };
+  }
+
+  /**
+   * Leeres Formular sicherstellen: leeren Editor weiterverwenden; sonst zuerst über den Editor-Store
+   * leeren (kein Neuladen), erst wenn das scheitert die Seite neu laden (nicht im Panel-Modus).
+   */
   async freshEditor() {
-    const p = this.formDirty ? null : await this.probe();
-    const clean = p?.hasEditor && p.groups.length >= 2 && !p.sourceValue && !p.titleValue && !(p.chips || []).length;
-    if (clean) return p;
+    const isClean = (p) => !!p?.hasEditor && (p.groups || []).length >= 2 && !p.sourceValue && !p.titleValue && !(p.chips || []).length;
+    let p = await this.probe();
+    if (isClean(p)) {
+      this.formDirty = false;
+      return p;
+    }
+    if (!p?.hasEditor && !p?.loginForm) {
+      // Editor nicht offen (z. B. Liste): per Hash hin navigieren, ohne Neuladen
+      try {
+        p = await this.openEditor({ reload: false });
+      } catch {
+        p = await this.probe();
+      }
+      if (isClean(p)) {
+        this.formDirty = false;
+        return p;
+      }
+    }
+    if (p?.hasEditor) {
+      const r = await this.resetForm();
+      if (r.ok) {
+        this.log('OSDP-Formular über den Editor geleert (ohne Neuladen).');
+        return this.probe();
+      }
+      this.log(`Formular-Reset über den Editor nicht möglich (${r.error}) – lade neu.`);
+    }
     return this.openEditor({ reload: true });
   }
 
   async focusTab() {
+    if (this.pinned) return; // Panel läuft im OSDP-Tab selbst
     const tabId = await this.ensureTab();
     await chrome.tabs.update(tabId, { active: true });
   }

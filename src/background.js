@@ -26,7 +26,39 @@ chrome.runtime.onStartup.addListener(async () => {
   await scheduleAutoRun((stored.settings || {}).autoRunTime);
 });
 
-chrome.action.onClicked.addListener(() => openApp());
+/** URL-Muster (z. B. https://osdp.zentdok.at/*) → RegExp. */
+function patternToRegex(pattern) {
+  const p = String(pattern || '').trim() || 'https://osdp.zentdok.at/*';
+  return new RegExp('^' + p.split('*').map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*'));
+}
+
+// Klick auf das Extension-Symbol: im OSDP-Tab das Panel umschalten, sonst die App als Tab öffnen.
+chrome.action.onClicked.addListener(async (tab) => {
+  try {
+    const stored = await chrome.storage.local.get('settings');
+    const pattern = stored.settings?.osdpUrlPattern || DEFAULT_SETTINGS.osdpUrlPattern;
+    if (tab?.id && tab.url && patternToRegex(pattern).test(tab.url)) {
+      await chrome.tabs.sendMessage(tab.id, { type: 'osdp-helper-panel', action: 'toggle' });
+      return;
+    }
+  } catch {
+    /* kein Panel in diesem Tab (Seite noch nicht geladen) → App als Tab */
+  }
+  openApp();
+});
+
+// Nachrichten aus Panel/App: eigenen Tab erfragen (eingebetteter Modus), App als Tab öffnen
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (!msg) return;
+  if (msg.type === 'osdp-helper-whoami') {
+    sendResponse({ tabId: sender.tab?.id ?? null, frameId: sender.frameId ?? null, url: sender.tab?.url || '' });
+    return;
+  }
+  if (msg.type === 'osdp-helper-open-app') {
+    openApp().then(() => sendResponse({ ok: true })).catch(() => sendResponse({ ok: false }));
+    return true;
+  }
+});
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area === 'local' && changes.settings) {

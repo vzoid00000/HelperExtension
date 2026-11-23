@@ -186,6 +186,10 @@ async function init() {
     toast({ title: 'Nur als Extension lauffähig', desc: 'Diese Seite braucht die Chrome-Erweiterung (chrome://extensions → Entpackte Erweiterung laden).', kind: 'warn', timeoutMs: 60000 });
     return;
   }
+  // Panel-Modus (iframe in der OSDP-Seite, src/content/osdp-panel.js): kompaktes Layout, Driver an
+  // den umgebenden Tab gebunden, kein Tabwechsel, kein Neuladen der Seite.
+  ctx.embedded = new URLSearchParams(location.search).get('embedded') === '1';
+  if (ctx.embedded) document.body.classList.add('embedded');
   try {
     ctx.version = chrome.runtime.getManifest?.().version || '';
   } catch {
@@ -234,7 +238,7 @@ async function init() {
   // ?autorun=1 (Zeitplan ohne offenen App-Tab): Parameter sofort aus der URL entfernen, damit ein
   // Neuladen (F5, Sitzungswiederherstellung) keinen weiteren Scan samt Relevanzprüfung auslöst
   const autorun = new URLSearchParams(location.search).get('autorun') === '1';
-  if (location.search) window.history.replaceState(null, '', location.pathname + location.hash);
+  if (location.search) window.history.replaceState(null, '', location.pathname + (ctx.embedded ? '?embedded=1' : '') + location.hash);
   if (autorun) startAutorunIfIdle();
 }
 
