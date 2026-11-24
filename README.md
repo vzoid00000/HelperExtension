@@ -73,6 +73,26 @@ Eine Meldung, deren URL oder Titel schon im Verlauf steht, wird beim Scan als �
 markiert und nicht automatisch ausgewählt; sie lässt sich trotzdem anhaken. Dieselbe Nachricht mit
 anderem Titel aus einer zweiten Quelle gilt als neue Meldung.
 
+## Aufgeräumter News-Editor (nur in deinem Browser)
+
+Seit v0.9 räumt die Extension die OSDP-Seite `#/newsEditor` lokal auf – der Server und die
+Oberfläche der Kolleginnen und Kollegen bleiben unverändert, es ist reines Umbauen der Seite im
+eigenen Chrome (Einstellungen → „OSDP-Oberfläche“, beide Schalter standardmäßig an):
+
+| Was | Wie |
+|---|---|
+| Dunkles Design als Standard | Beim Laden wird OSDPs eigener Schalter (Mond-Symbol) einmal betätigt, darüber liegt ein ruhiges Farbschema (Zinc/Blau, keine Schatten, 1-px-Rahmen). Mit dem Symbol oben rechts jederzeit auf hell umschaltbar – die Extension schaltet nicht zurück. |
+| Weg: Subtitle, Summary, Place … | Subtitle-Felder in allen drei Reitern, Reiter „Summary“ und der Button „Summary“, in den Metadaten Place, Latitude, Longitude, Translation Service und Files sind ausgeblendet. Es bleiben **Date, Author, Language Source**. |
+| Metadaten + Tags auf einer Seite | Die rechte Reitergruppe behält ihre Inhalte (`preserveContent` über die Angular-Komponente), der Reiter „Tags“ wird einmal aktiviert, dann zeigt CSS beide Teile untereinander: Metadaten, **Gewählte Tags** (die Chip-Liste wandert aus der Native-Karte hierher), **Tag-Baum** mit der OSDP-Suche „Search Terms“. Kein Umschalten mehr. |
+| Reines Textfeld | Die CKEditor-Werkzeugleiste ist weg; das Schema erlaubt nur noch Absätze aus Text. Eingefügtes (Zwischenablage, Extract, Übersetzung) mit Überschriften, Fett/Kursiv, Links, Bildern, Tabellen, Listen oder Zitaten wird zu normalen Absätzen; Strg+B & Co. bleiben wirkungslos. |
+| Tag-Baum | Kompakter, Farben der Plattformen als schmaler Balken statt Vollfläche, Chips in dezenter Tag-Farbe. |
+
+Technik: `src/content/osdp-restyle.js` (isolierte Welt: CSS, Ausblenden, Ein-Seiten-Modus,
+Dark-Schalter, Einstellungen) und `src/content/osdp-restyle-main.js` (MAIN-Welt: CKEditor-Schema und
+Befehle, `preserveContent`). Die Formularfelder bleiben dieselben, der Filler arbeitet unverändert
+(ausgeblendete Reiter lassen sich weiterhin programmatisch wählen). Nach dem Ausschalten den
+OSDP-Tab neu laden, damit der Editor wieder formatieren darf.
+
 ## Tagging nach Handbuch
 
 Grundlage ist `docs/OSDP_Tagging_Handbuch.md`; der Katalog mit allen 673 Tags liegt als
@@ -374,8 +394,8 @@ Offen bleibt der Test gegen den echten Server (Login, echte Antwortzeiten).
 
 Siehe `tests/README.md`. Ohne Browser: `node tests/catalog.test.mjs`, `stores.test.mjs`,
 `prompts.test.mjs`, `har-tools.test.mjs`, `bridge.test.mjs`. Mit Playwright: `app.test.mjs`,
-`design.test.mjs`, `review.test.mjs`, `extension-v2.test.mjs`, `extension-v3.test.mjs` und
-`node tests/e2e-mock.mjs` gegen den Nachbau.
+`design.test.mjs`, `review.test.mjs`, `extension-v2.test.mjs`, `extension-v3.test.mjs`,
+`panel.test.mjs`, `restyle.test.mjs` und `node tests/e2e-mock.mjs` gegen den Nachbau.
 
 ## Lokale Entwicklung mit Nachbau der OSDP-Oberfläche
 
@@ -432,6 +452,8 @@ src/lib/dates.js, author.js        Datumsregel, Autor-Normalisierung
 src/content/news-extractor.js      Artikel auslesen
 src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Leiste, Save-Erkennung, Export)
 src/content/osdp-panel.js          Panel (iframe der App) in der OSDP-Seite, Reiter, Breite, Umschalten
+src/content/osdp-restyle.js        Aufgeräumter News-Editor: CSS, Ausblenden, Metadaten+Tags auf einer Seite, Dark-Schalter
+src/content/osdp-restyle-main.js   dazu in der MAIN-Welt: CKEditor nur Text (Schema, Befehle), preserveContent der Reiter
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors
 site-dump/                         HAR-Export (geschwärzt) und DOM-Dumps
 ```

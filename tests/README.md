@@ -16,7 +16,22 @@ node tests/prompts.test.mjs          # Kompakter Katalog, Tagging-/Übersetzungs
 node tests/design.test.mjs           # Seitengerüst src/app/app.html: IDs, Dark Theme, Überläufe, Screenshots (ohne app.js)
 node tests/panel.test.mjs            # Panel in der OSDP-Seite gegen den Nachbau: iframe, eingebetteter Modus, Reset über den Store
 node tests/extractor.test.mjs        # Artikel-Extraktor: <p>- und <div>-Absätze (Reuters), Container (The Record), Bot-Prüfseite, Bezahlschranke
+node tests/restyle.test.mjs          # Aufgeräumter News-Editor gegen den Nachbau: Dark-Schalter, Ausblenden, Metadaten+Tags auf einer Seite, CKEditor nur Text, Driver füllt weiterhin
 ```
+
+## Aufgeräumter News-Editor (`tests/restyle.test.mjs`)
+
+Lädt die Extension gegen den Nachbau (Port 4300, wird bei Bedarf gestartet) und öffnet den Editor.
+Geprüft werden: `body.dark-theme` nach dem automatischen Klick auf OSDPs Mond-Symbol (Hintergrund
+`rgb(9, 9, 11)`), Button und Reiter „Summary“, Subtitle, Place/Koordinaten/Translation Service/Files
+unsichtbar, `preserveContent` an der rechten Reitergruppe (`data-osdp-helper-preserved="1"`) und der
+Ein-Seiten-Modus (Date, Author, Language Source, Tag-Suche und Tag-Baum gleichzeitig sichtbar, Leiste
+Metadata/Tags weg), CKEditor-Werkzeugleiste weg und Befehle abgeschaltet, `setData` mit Überschrift,
+Fett, Link, Liste, Zitat, Tabelle → nur `<p>`, ein echtes `paste`-Ereignis mit HTML → nur `<p>`.
+Danach füllt der echte `OsdpDriver` (precheckDuplicate + fillArticle ohne Save) das umgebaute Formular
+ohne Probleme, die Chips stehen neben dem Baum, manuelles Umschalten auf hell bleibt bestehen, und das
+Ausschalten der Einstellung stellt Subtitle, „Summary“ und die Reiterleiste sofort wieder her.
+`RESTYLE_SHOTS=<ordner>` legt Screenshots (dunkel/hell) ab.
 
 ## App-Seite (`tests/app.test.mjs`)
 

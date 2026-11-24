@@ -11,7 +11,7 @@ import { toIsoDate } from '../../lib/dates.js';
 import { $, toastOk, toastWarn, toastError, setStatusEl, download, readFileAsText, stamp, plural } from '../ui.js';
 
 const TEXT_FIELDS = ['llmProvider', 'anthropicApiKey', 'anthropicModel', 'localLlmUrl', 'localLlmModel', 'localLlmApiKey', 'localLlmTimeoutSec', 'translator', 'deeplApiKey', 'minScore', 'maxItemsPerRun', 'autoRunTime', 'osdpDateFormat', 'authorUnknownText', 'osdpUrlPattern'];
-const BOOL_FIELDS = ['autoTags', 'fillEnglishTab', 'useSiteExtract'];
+const BOOL_FIELDS = ['autoTags', 'fillEnglishTab', 'useSiteExtract', 'osdpRestyle', 'osdpRestyleDark'];
 
 let ctx = null;
 let dirty = false;

@@ -37,6 +37,8 @@ export const DEFAULT_SETTINGS = {
   fillEnglishTab: true,         // Reiter „English Translated“ mit dem Original befüllen
   useSiteExtract: false,        // OSDP-eigenen „Extract“-Button für den Quelltext nutzen
   autoTags: true,               // Tags per Modell nach dem Tagging-Handbuch vergeben
+  osdpRestyle: true,            // OSDP-Oberfläche lokal aufräumen (src/content/osdp-restyle.js)
+  osdpRestyleDark: true,        // dunkles Design in OSDP beim Laden einschalten
 
   // Automatik
   sources: [],                  // Quellen-Objekte (leer = Standardquellen aus lib/sources.js)
