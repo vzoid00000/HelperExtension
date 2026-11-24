@@ -1,18 +1,18 @@
 // Service Worker der Extension.
-// Aufgaben: App-Seite beim Klick auf das Icon öffnen (oder den offenen Tab fokussieren),
-// Defaults anlegen, optionalen Zeitplan (Mo–Fr zu fester Uhrzeit) für Scan + Relevanzprüfung.
+// Aufgaben: Klick auf das Icon → Helper-Dock im OSDP-Tab ein-/ausklappen (ohne OSDP-Tab: OSDP
+// öffnen), Defaults anlegen, optionaler Zeitplan (Mo–Fr zu fester Uhrzeit) für Scan + Relevanzprüfung.
 //
-// Zeitplan: Ein offener App-Tab wird NICHT neu geladen (ein laufender Durchlauf bliebe sonst
-// mitsamt Freigabe-Leiste im OSDP-Tab liegen), sondern bekommt per chrome.tabs.sendMessage die
-// Nachricht { type: 'osdp-helper-autorun' }; die App startet dann Scan + Relevanzprüfung, sofern
-// kein Lauf aktiv ist. Nur ohne App-Tab wird src/app/app.html?autorun=1 geöffnet.
+// Die App läuft nur noch im Dock (iframe in der OSDP-Seite, src/content/osdp-dock.js); es gibt keinen
+// eigenen App-Tab mehr. Zeitplan: Ein offener OSDP-Tab bekommt per chrome.tabs.sendMessage die
+// Aktion 'autorun' (das Dock reicht sie an die App weiter, kein Neuladen). Ohne OSDP-Tab wird OSDP
+// geöffnet und die Aktion so lange erneut geschickt, bis das Dock sie annimmt (es hebt sie auf, bis
+// die App bereit ist). Ein laufender Durchlauf wird vom Autorun nicht unterbrochen (prüft die App).
 
 import { DEFAULT_SETTINGS } from './lib/settings.js';
 
 const ALARM = 'osdp-autorun';
-const APP_PATH = 'src/app/app.html';
 export const AUTORUN_MESSAGE = 'osdp-helper-autorun';
-const AUTORUN_QUERY = '?autorun=1';
+const DOCK_MESSAGE = 'osdp-helper-panel';
 
 chrome.runtime.onInstalled.addListener(async () => {
   const stored = await chrome.storage.local.get('settings');
@@ -27,36 +27,63 @@ chrome.runtime.onStartup.addListener(async () => {
 });
 
 /** URL-Muster (z. B. https://osdp.zentdok.at/*) → RegExp. */
-function patternToRegex(pattern) {
-  const p = String(pattern || '').trim() || 'https://osdp.zentdok.at/*';
+export function patternToRegex(pattern) {
+  const p = String(pattern || '').trim() || DEFAULT_SETTINGS.osdpUrlPattern;
   return new RegExp('^' + p.split('*').map((s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('.*'));
 }
 
-// Klick auf das Extension-Symbol: im OSDP-Tab das Panel umschalten, sonst die App als Tab öffnen.
+/** Basis-Adresse aus dem URL-Muster (Teil vor dem ersten '*'), z. B. https://osdp.zentdok.at/ */
+export function osdpBaseUrl(pattern) {
+  const p = String(pattern || '').trim() || DEFAULT_SETTINGS.osdpUrlPattern;
+  const base = p.split('*')[0];
+  return /^https?:\/\/[^/]+/.test(base) ? base : DEFAULT_SETTINGS.osdpUrlPattern.split('*')[0];
+}
+
+async function osdpPattern() {
+  const stored = await chrome.storage.local.get('settings');
+  return stored.settings?.osdpUrlPattern || DEFAULT_SETTINGS.osdpUrlPattern;
+}
+
+async function findOsdpTabs(pattern) {
+  const re = patternToRegex(pattern);
+  const tabs = await chrome.tabs.query({});
+  return tabs.filter((t) => t.url && re.test(t.url));
+}
+
+async function focusTab(tab) {
+  await chrome.tabs.update(tab.id, { active: true }).catch(() => {});
+  if (tab.windowId != null) await chrome.windows.update(tab.windowId, { focused: true }).catch(() => {});
+}
+
+// Klick auf das Extension-Symbol: im OSDP-Tab das Dock umschalten; sonst einen OSDP-Tab fokussieren
+// (und das Dock öffnen) oder OSDP neu öffnen.
 chrome.action.onClicked.addListener(async (tab) => {
-  try {
-    const stored = await chrome.storage.local.get('settings');
-    const pattern = stored.settings?.osdpUrlPattern || DEFAULT_SETTINGS.osdpUrlPattern;
-    if (tab?.id && tab.url && patternToRegex(pattern).test(tab.url)) {
-      await chrome.tabs.sendMessage(tab.id, { type: 'osdp-helper-panel', action: 'toggle' });
+  const pattern = await osdpPattern();
+  const re = patternToRegex(pattern);
+  if (tab?.id && tab.url && re.test(tab.url)) {
+    try {
+      await chrome.tabs.sendMessage(tab.id, { type: DOCK_MESSAGE, action: 'toggle' });
       return;
+    } catch {
+      /* Seite lädt noch – unten neu laden */
     }
-  } catch {
-    /* kein Panel in diesem Tab (Seite noch nicht geladen) → App als Tab */
+    await chrome.tabs.reload(tab.id).catch(() => {});
+    return;
   }
-  openApp();
+  const [existing] = await findOsdpTabs(pattern);
+  if (existing) {
+    await focusTab(existing);
+    await chrome.tabs.sendMessage(existing.id, { type: DOCK_MESSAGE, action: 'open' }).catch(() => {});
+    return;
+  }
+  await chrome.tabs.create({ url: osdpBaseUrl(pattern) + '#/news', active: true });
 });
 
-// Nachrichten aus Panel/App: eigenen Tab erfragen (eingebetteter Modus), App als Tab öffnen
+// Nachrichten aus dem Dock/der App: eigenen Tab erfragen (eingebetteter Modus)
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg) return;
   if (msg.type === 'osdp-helper-whoami') {
     sendResponse({ tabId: sender.tab?.id ?? null, frameId: sender.frameId ?? null, url: sender.tab?.url || '' });
-    return;
-  }
-  if (msg.type === 'osdp-helper-open-app') {
-    openApp().then(() => sendResponse({ ok: true })).catch(() => sendResponse({ ok: false }));
-    return true;
   }
 });
 
@@ -77,54 +104,40 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   await scheduleAutoRun((stored.settings || {}).autoRunTime);
 });
 
-function appUrl() {
-  return chrome.runtime.getURL(APP_PATH);
-}
-
-async function findAppTab() {
-  const tabs = await chrome.tabs.query({ url: `${appUrl()}*` });
-  return tabs[0] || null;
-}
-
-async function focusTab(tab) {
-  await chrome.tabs.update(tab.id, { active: true }).catch(() => {});
-  if (tab.windowId != null) await chrome.windows.update(tab.windowId, { focused: true }).catch(() => {});
-}
-
-/** App-Tab öffnen; existiert schon einer, diesen fokussieren (ohne Neuladen). */
-export async function openApp() {
-  const tab = await findAppTab();
-  if (tab) {
-    await focusTab(tab);
-    return tab;
+/** 'autorun' an das Dock im Tab schicken; solange die Seite noch lädt (kein Empfänger), bis zu 90 s wiederholen. */
+async function deliverAutorun(tabId, { attempts = 90, intervalMs = 1000 } = {}) {
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const r = await chrome.tabs.sendMessage(tabId, { type: DOCK_MESSAGE, action: 'autorun' });
+      if (r?.ok) return true;
+    } catch {
+      /* Content-Script noch nicht da */
+    }
+    await new Promise((res) => setTimeout(res, intervalMs));
   }
-  return chrome.tabs.create({ url: appUrl(), active: true });
+  console.warn('Zeitplan: OSDP-Tab hat die Autorun-Nachricht nicht angenommen');
+  return false;
 }
 
 /**
- * Zeitplan-Start: offenen App-Tab benachrichtigen (kein Neuladen); ohne App-Tab die Seite mit
- * ?autorun=1 öffnen. Ein aus dem Speicher entladener Tab (discarded) hat keinen Empfänger und wird
- * mit der Query neu geladen – dort läuft nichts, das verloren gehen könnte.
- * @returns {{ tab: chrome.tabs.Tab, via: 'message'|'open'|'reload' }}
+ * Zeitplan-Start: offenen OSDP-Tab benachrichtigen (das Dock reicht 'autorun' an die App weiter, kein
+ * Neuladen); ohne OSDP-Tab OSDP öffnen (ein aus dem Speicher entladener Tab wird neu geladen) und die
+ * Nachricht zustellen, sobald das Dock antwortet.
+ * @returns {{ tab: chrome.tabs.Tab, via: 'message'|'open'|'reload', delivered: boolean }}
  */
 export async function triggerAutorun() {
-  const tab = await findAppTab();
+  const pattern = await osdpPattern();
+  const [tab] = await findOsdpTabs(pattern);
   if (!tab) {
-    const created = await chrome.tabs.create({ url: appUrl() + AUTORUN_QUERY, active: true });
-    return { tab: created, via: 'open' };
+    const created = await chrome.tabs.create({ url: osdpBaseUrl(pattern) + '#/news', active: true });
+    return { tab: created, via: 'open', delivered: await deliverAutorun(created.id) };
   }
   if (tab.discarded) {
-    await chrome.tabs.update(tab.id, { url: appUrl() + AUTORUN_QUERY, active: true });
-    return { tab, via: 'reload' };
+    await chrome.tabs.update(tab.id, { url: osdpBaseUrl(pattern) + '#/news', active: true });
+    return { tab, via: 'reload', delivered: await deliverAutorun(tab.id) };
   }
   await focusTab(tab);
-  try {
-    await chrome.tabs.sendMessage(tab.id, { type: AUTORUN_MESSAGE });
-  } catch (e) {
-    // Kein Empfänger (Seite lädt gerade oder ist nicht die App): nicht neu laden, nur melden
-    console.warn('Zeitplan: App-Tab hat die Autorun-Nachricht nicht angenommen', e?.message || e);
-  }
-  return { tab, via: 'message' };
+  return { tab, via: 'message', delivered: await deliverAutorun(tab.id, { attempts: 30 }) };
 }
 
 /** Nächster Werktag (Mo–Fr) zur angegebenen Uhrzeit "HH:MM", lokale Zeit. */

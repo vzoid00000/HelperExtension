@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OSDP News Helper",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Scannt News-Quellen, prüft Relevanz und Datum, übersetzt EN→DE, vergibt Tags nach Handbuch und füllt den OSDP News-Editor – gespeichert wird erst nach deiner Freigabe.",
   "permissions": [
     "scripting",
@@ -18,9 +18,8 @@
     "type": "module"
   },
   "action": {
-    "default_title": "OSDP News Helper öffnen"
+    "default_title": "OSDP News Helper ein-/ausklappen (Alt+H)"
   },
-  "options_page": "src/app/app.html",
   "minimum_chrome_version": "116",
   "content_scripts": [
     {
@@ -53,7 +52,7 @@
         "http://127.0.0.1/*"
       ],
       "js": [
-        "src/content/osdp-panel.js"
+        "src/content/osdp-dock.js"
       ],
       "run_at": "document_idle"
     }

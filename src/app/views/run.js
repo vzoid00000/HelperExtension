@@ -717,9 +717,9 @@ async function pinHostTab(driver) {
       tabId = null;
     }
   }
-  if (tabId == null) throw new Error('Panel-Modus: der eigene OSDP-Tab ließ sich nicht ermitteln – bitte die App über „Als Tab“ öffnen und dort starten.');
+  if (tabId == null) throw new Error('Der eigene OSDP-Tab ließ sich nicht ermitteln – bitte die OSDP-Seite neu laden und erneut starten.');
   driver.pin(tabId);
-  log('Panel-Modus: Formular wird im eigenen OSDP-Tab befüllt, die Seite wird nicht neu geladen.');
+  log('Formular wird in diesem OSDP-Tab befüllt, die Seite wird nicht neu geladen.');
 }
 
 /**

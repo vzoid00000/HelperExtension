@@ -82,10 +82,17 @@ export const ctx = {
     renderAll();
   },
 
-  /** Statuszeile unten in der Navigation. kind: '' (ok) | busy | warn | off */
+  /** Statuszeile unten in der Navigation; im Dock zusätzlich an die Kopfzeile der OSDP-Seite. kind: '' (ok) | busy | warn | off */
   setAppStatus(text, kind = '') {
     $('appStatus').textContent = text || 'Bereit';
     $('appStatusDot').className = `status-dot${kind ? ' status-dot-' + kind : ''}`;
+    if (ctx.embedded && window.parent !== window) {
+      try {
+        window.parent.postMessage({ type: 'osdp-helper-status', text: text || 'Bereit', kind: kind === 'off' ? '' : kind }, '*');
+      } catch {
+        /* kein Empfänger */
+      }
+    }
   },
 
   showView,
@@ -170,11 +177,19 @@ function startAutorunIfIdle() {
 }
 
 function bindMessages() {
-  if (!chrome.runtime?.onMessage) return;
-  chrome.runtime.onMessage.addListener((msg) => {
-    if (!msg || msg.type !== AUTORUN_MESSAGE) return;
-    startAutorunIfIdle();
-  });
+  if (chrome.runtime?.onMessage) {
+    chrome.runtime.onMessage.addListener((msg) => {
+      if (!msg || msg.type !== AUTORUN_MESSAGE) return;
+      startAutorunIfIdle();
+    });
+  }
+  // Dock (src/content/osdp-dock.js) reicht den Zeitplan-Start per postMessage an genau dieses iframe weiter
+  if (ctx.embedded && window.parent !== window) {
+    window.addEventListener('message', (e) => {
+      if (e.source !== window.parent) return;
+      if (e.data && e.data.type === AUTORUN_MESSAGE) startAutorunIfIdle();
+    });
+  }
 }
 
 // ---------------------------------------------------------------- Init ----
@@ -186,7 +201,7 @@ async function init() {
     toast({ title: 'Nur als Extension lauffähig', desc: 'Diese Seite braucht die Chrome-Erweiterung (chrome://extensions → Entpackte Erweiterung laden).', kind: 'warn', timeoutMs: 60000 });
     return;
   }
-  // Panel-Modus (iframe in der OSDP-Seite, src/content/osdp-panel.js): kompaktes Layout, Driver an
+  // Dock-Modus (iframe in der OSDP-Seite, src/content/osdp-dock.js): kompaktes Layout, Driver an
   // den umgebenden Tab gebunden, kein Tabwechsel, kein Neuladen der Seite.
   ctx.embedded = new URLSearchParams(location.search).get('embedded') === '1';
   if (ctx.embedded) document.body.classList.add('embedded');

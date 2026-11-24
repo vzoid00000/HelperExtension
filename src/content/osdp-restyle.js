@@ -41,14 +41,14 @@ html.${ROOT} { --oh-bg: #09090b; --oh-surface: #111113; --oh-surface-2: #18181b;
 
 /* ---- Ausblenden und Layout (hell wie dunkel) ---- */
 html.${ROOT} [${HIDE}] { display: none !important; }
-html.${ROOT} app-editor form > div.tw-flex { display: flex !important; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px;
-  position: sticky; top: 0; z-index: 20; }
+html.${ROOT} app-editor form > div.tw-flex { display: flex !important; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 16px; }
+html.${ROOT} app-news-editor app-editor form > div.tw-flex { position: sticky; top: 0; z-index: 20; }
 html.${ROOT} app-editor form > div.tw-flex > button { width: auto !important; min-width: 108px; }
-html.${ROOT} app-editor form > div.tw-grid { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(360px, 420px) !important;
+html.${ROOT} app-news-editor app-editor form > div.tw-grid { display: grid !important; grid-template-columns: minmax(0, 1fr) minmax(360px, 420px) !important;
   gap: 16px; align-items: start; padding: 0 16px 32px; }
-html.${ROOT} app-editor form > div.tw-grid > div.tw-col-span-2 { grid-column: auto !important; min-width: 0; }
+html.${ROOT} app-news-editor app-editor form > div.tw-grid > div.tw-col-span-2 { grid-column: auto !important; min-width: 0; }
 @media (max-width: 1100px) {
-  html.${ROOT} app-editor form > div.tw-grid { grid-template-columns: minmax(0, 1fr) !important; }
+  html.${ROOT} app-news-editor app-editor form > div.tw-grid { grid-template-columns: minmax(0, 1fr) !important; }
 }
 html.${ROOT} app-editor .tw-min-h-\\[400px\\] { min-height: 0 !important; }
 html.${ROOT} app-editor mat-card-content > div > p { margin: 10px 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em;
@@ -156,7 +156,7 @@ html.${ROOT} body.dark-theme .mat-mdc-raised-button.mat-accent:not(:disabled):ho
 html.${ROOT} body.dark-theme .mat-mdc-raised-button.mat-warn:not(:disabled) { background: #7f1d1d !important; border-color: #991b1b; color: #fecaca !important; }
 html.${ROOT} body.dark-theme .mat-mdc-raised-button:disabled { background: #121214 !important; color: #52525b !important; border: 1px solid var(--oh-border); }
 html.${ROOT} body.dark-theme .mat-mdc-button:not(:disabled), html.${ROOT} body.dark-theme .mat-mdc-icon-button:not(:disabled) { color: var(--oh-text); }
-html.${ROOT} body.dark-theme app-editor form > div.tw-flex { background: var(--oh-bg); border-bottom: 1px solid var(--oh-border); }
+html.${ROOT} body.dark-theme app-news-editor app-editor form > div.tw-flex { background: var(--oh-bg); border-bottom: 1px solid var(--oh-border); }
 html.${ROOT} body.dark-theme app-editor .ck.ck-editor__main > .ck-editor__editable { background: #0d0d0f !important; color: var(--oh-text) !important; border: 1px solid var(--oh-border) !important; }
 html.${ROOT} body.dark-theme app-editor .ck.ck-editor__editable.ck-focused { border-color: var(--oh-accent) !important; }
 html.${ROOT} body.dark-theme app-editor .ck.ck-editor__editable .ck-placeholder::before { color: var(--oh-dim); }
@@ -344,11 +344,14 @@ html.${ROOT} body.dark-theme ::-webkit-scrollbar-thumb:hover { background: #5252
   function scan() {
     if (!state.on) return;
     ensureDark();
-    const editor = document.querySelector('app-editor');
-    if (!editor) return;
-    hideClutter(editor);
-    onePage(editor);
-    colorize(editor);
+    // Alle Editoren aufräumen (auch der Detail-Editor in der Schublade der News-Liste); der
+    // Ein-Seiten-Modus gilt nur für den Editor der Route #/newsEditor (app-news-editor)
+    for (const editor of document.querySelectorAll('app-editor')) {
+      hideClutter(editor);
+      colorize(editor);
+    }
+    const routeEditor = document.querySelector('app-news-editor app-editor');
+    if (routeEditor) onePage(routeEditor);
   }
 
   let timer = 0;

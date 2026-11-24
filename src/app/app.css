@@ -334,3 +334,10 @@ body.embedded .history-search { width: 100%; }
 body.embedded #btnReviewFocus { display: none; }
 body.embedded .card-content, body.embedded .card-header { padding-left: 12px; padding-right: 12px; }
 body.embedded .table th, body.embedded .table td { padding-left: 8px; padding-right: 8px; font-size: 12.5px; }
+/* Dock über die volle Seitenbreite: ab 900 px wieder zweispaltig */
+@media (min-width: 900px) {
+  body.embedded .grid-2, body.embedded .settings-cols, body.embedded .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  body.embedded .form-grid .span-2 { grid-column: span 2; }
+  body.embedded .review-grid { grid-template-columns: minmax(0, 1fr) 280px; }
+  body.embedded .stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+}
