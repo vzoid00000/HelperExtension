@@ -62,8 +62,10 @@ if (!(await serverUp())) {
 }
 check(await serverUp(), `Nachbau-Server erreichbar: ${BASE}`);
 if (!(await serverUp())) { console.log(srvOut); srv?.kill(); process.exit(1); }
-const logStart = (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).length;
-const mockLog = async () => (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).slice(logStart);
+// Der Nachbau hält nur die letzten 500 Einträge – deshalb nach Zeitstempel filtern statt nach Position
+// (bei einem schon länger laufenden Server ist das Protokoll voll und würde sonst nie neue Einträge liefern)
+const logStartAt = ((await fetch(`${BASE}/__mock/log`).then((r) => r.json())).at(-1)?.at) ?? 0;
+const mockLog = async () => (await fetch(`${BASE}/__mock/log`).then((r) => r.json())).filter((l) => l.at > logStartAt);
 
 const catalog = JSON.parse(fs.readFileSync(`${EXT}/src/config/osdp-tags.json`, 'utf8'));
 const uidByPath = new Map();
