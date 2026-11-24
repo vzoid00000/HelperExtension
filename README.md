@@ -7,15 +7,18 @@ bis du es geprüft und selbst auf „Save“ geklickt hast.
 
 ## Was die Extension macht
 
-Die Oberfläche sitzt **direkt in der OSDP-Seite**: Im News-Editor (`#/newsEditor`) erscheint unter
-der OSDP-Kopfleiste und über dem Formular der Bereich „OSDP Helper“ – kein eigener Tab, kein
-Seitenpanel, kein Reiter am Rand. Die Kopfzeile zeigt den Status, „Einklappen“ (auch Alt+H oder Klick
-auf das Extension-Symbol) lässt nur die Kopfzeile stehen, die Höhe lässt sich an der Unterkante
-ziehen; beides wird gemerkt. Auf anderen OSDP-Seiten ist der Bereich ausgeblendet, läuft aber
-weiter (ein Durchlauf überlebt die Navigation innerhalb von OSDP). Alles passiert im selben Tab:
-Das Formular wird darunter befüllt, Save klickst du in OSDP, und statt die Seite neu zu laden leert
-die Extension das Formular über den Editor-Store (dieselbe Aktion, die OSDP nach einem Save
-auslöst). Fünf Ansichten:
+Die Oberfläche sitzt **in OSDPs eigener Reiterleiste**: Im News-Editor (`#/newsEditor`) stehen neben
+„Native | English Translated | German Translated“ die Reiter **Lauf | Quellen | Verlauf | Regeln |
+Einstellungen** – kein eigener Tab, kein Seitenpanel, nichts über dem Formular. Ein Klick zeigt die
+Ansicht an der Stelle des Formulars (das darunter unverändert bleibt), ein Klick auf einen
+OSDP-Reiter bringt das Formular zurück (auch Alt+H oder das Extension-Symbol wechseln zwischen „Lauf“
+und Formular). Der Reiter „Lauf“ trägt einen Status-Punkt (blau = läuft, gelb = Hinweis). Die Höhe
+des Bereichs lässt sich an der Unterkante ziehen; Ansicht und Höhe werden gemerkt. Das Farbschema
+folgt OSDP (dunkel/hell). Technisch läuft die App als iframe am Seitenende und wird über den
+Reiterkörper gelegt; sie überlebt die Navigation innerhalb von OSDP, ein Durchlauf läuft weiter. Alles
+passiert im selben Tab: Das Formular wird befüllt, Save klickst du in OSDP, und statt die Seite neu
+zu laden leert die Extension das Formular über den Editor-Store (dieselbe Aktion, die OSDP nach einem
+Save auslöst). Fünf Ansichten:
 
 **Lauf** – der Arbeitsablauf:
 
@@ -138,7 +141,7 @@ eine Kreditkarte zur Verifizierung). Über die Claude-Code-Brücke kostet die Ü
 
 1. Repository klonen oder ZIP entpacken
 2. Chrome: `chrome://extensions` → **Entwicklermodus** → **„Entpackte Erweiterung laden“** → Projektordner
-3. OSDP öffnen, `#/newsEditor` aufrufen – unter der Kopfleiste erscheint der Bereich „OSDP Helper“ → Ansicht „Einstellungen“:
+3. OSDP öffnen, `#/newsEditor` aufrufen → Reiter „Einstellungen“ (neben „German Translated“):
    - Sprachmodell wählen: **Claude-Code-Brücke** („Claude-Code-Brücke voreinstellen“, siehe unten),
      **Claude API** (API-Key von console.anthropic.com; „Sparmodus“ wählt das günstige Haiku 5.5)
      oder **eigener Server**
@@ -162,7 +165,7 @@ Nach Code-Änderungen in `chrome://extensions` auf „Aktualisieren“ (↻) kli
 ### Zeitplan
 
 Uhrzeit in den Einstellungen (z. B. 07:55). Mo–Fr bekommt der offene OSDP-Tab den Auftrag (ohne
-OSDP-Tab wird OSDP geöffnet, der Bereich „OSDP Helper“ klappt auf) und der Helper führt Scan und
+OSDP-Tab wird OSDP geöffnet, der Reiter „Lauf“ erscheint) und der Helper führt Scan und
 Relevanzprüfung für den zuletzt gewählten Bereich aus, damit die Liste fertig ist, wenn du anfängst.
 Eingetragen wird nur, wenn du den Lauf startest. Chrome muss laufen und in OSDP eingeloggt sein.
 
@@ -397,7 +400,7 @@ Offen bleibt der Test gegen den echten Server (Login, echte Antwortzeiten).
 Siehe `tests/README.md`. Ohne Browser: `node tests/catalog.test.mjs`, `stores.test.mjs`,
 `prompts.test.mjs`, `har-tools.test.mjs`, `bridge.test.mjs`. Mit Playwright: `app.test.mjs`,
 `design.test.mjs`, `review.test.mjs`, `extension-v2.test.mjs`, `extension-v3.test.mjs`,
-`dock.test.mjs`, `restyle.test.mjs` und `node tests/e2e-mock.mjs` gegen den Nachbau.
+`tabs.test.mjs`, `restyle.test.mjs` und `node tests/e2e-mock.mjs` gegen den Nachbau.
 
 ## Lokale Entwicklung mit Nachbau der OSDP-Oberfläche
 
@@ -435,7 +438,7 @@ tools/start-claude-bridge-remote.cmd Brücke mit Zugangs-Token (für den Tunnel)
 tools/start-tunnel.cmd             Cloudflare-Tunnel zur Brücke
 tools/start-morning.cmd, morning.ps1  Morgenstart: Brücke + Tunnel starten, prüfen, überwachen
 src/config/osdp-tags.json          Tag-Katalog (673 Tags, Pfade, Tooltip-Ausschnitte)
-src/background.js                  Service Worker (Icon-Klick → Dock umschalten, Zeitplan an den OSDP-Tab)
+src/background.js                  Service Worker (Icon-Klick → Reiter „Lauf“/Formular, Zeitplan an den OSDP-Tab)
 src/app/                           App-Seite: app.html, app.js, ui.js, views/ (Lauf, Quellen, Verlauf, Regeln, Einstellungen), ui.css, app.css
 src/lib/llm.js                     Modell-Anbindung (Claude / lokal)
 src/lib/claude.js                  Claude Messages API (raw HTTP)
@@ -453,7 +456,7 @@ src/lib/tabloader.js               Seiten in Hintergrund-Tabs laden
 src/lib/dates.js, author.js        Datumsregel, Autor-Normalisierung
 src/content/news-extractor.js      Artikel auslesen
 src/content/osdp-filler.js         DOM-Schritte im OSDP-Editor (Felder, Tag-Baum, Leiste, Save-Erkennung, Export)
-src/content/osdp-dock.js           Dock (iframe der App) unter der OSDP-Kopfleiste: Status, Ein-/Ausklappen, Höhe, Zeitplan-Start
+src/content/osdp-tabs.js           Reiter Lauf | Quellen | Verlauf | Regeln | Einstellungen in OSDPs Reiterleiste, iframe der App darunter, Status-Punkt, Zeitplan-Start
 src/content/osdp-restyle.js        Aufgeräumter News-Editor: CSS, Ausblenden, Metadaten+Tags auf einer Seite, Dark-Schalter
 src/content/osdp-restyle-main.js   dazu in der MAIN-Welt: CKEditor nur Text (Schema, Befehle), preserveContent der Reiter
 src/content/osdp-inspector.js      Struktur-Dump des OSDP-Editors

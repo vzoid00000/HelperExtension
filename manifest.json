@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "OSDP News Helper",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Scannt News-Quellen, prüft Relevanz und Datum, übersetzt EN→DE, vergibt Tags nach Handbuch und füllt den OSDP News-Editor – gespeichert wird erst nach deiner Freigabe.",
   "permissions": [
     "scripting",
@@ -52,7 +52,7 @@
         "http://127.0.0.1/*"
       ],
       "js": [
-        "src/content/osdp-dock.js"
+        "src/content/osdp-tabs.js"
       ],
       "run_at": "document_idle"
     }

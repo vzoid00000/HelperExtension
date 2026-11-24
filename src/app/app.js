@@ -82,7 +82,7 @@ export const ctx = {
     renderAll();
   },
 
-  /** Statuszeile unten in der Navigation; im Dock zusätzlich an die Kopfzeile der OSDP-Seite. kind: '' (ok) | busy | warn | off */
+  /** Statuszeile unten in der Navigation; eingebettet zusätzlich als Status-Punkt im OSDP-Reiter „Lauf“. kind: '' (ok) | busy | warn | off */
   setAppStatus(text, kind = '') {
     $('appStatus').textContent = text || 'Bereit';
     $('appStatusDot').className = `status-dot${kind ? ' status-dot-' + kind : ''}`;
@@ -123,6 +123,14 @@ function showView(name) {
   window.scrollTo(0, 0);
   const api = ctx.views[view];
   if (api && typeof api.onShow === 'function') api.onShow();
+  // Eingebettet (Reiter in OSDP): dem Reiter-Script sagen, welche Ansicht gerade gezeigt wird
+  if (ctx.embedded && window.parent !== window) {
+    try {
+      window.parent.postMessage({ type: 'osdp-helper-navigate', view }, '*');
+    } catch {
+      /* kein Empfänger */
+    }
+  }
 }
 
 function bindNavigation() {
@@ -183,11 +191,16 @@ function bindMessages() {
       startAutorunIfIdle();
     });
   }
-  // Dock (src/content/osdp-dock.js) reicht den Zeitplan-Start per postMessage an genau dieses iframe weiter
+  // Reiter in OSDP (src/content/osdp-tabs.js): Zeitplan-Start, Ansichtswechsel und Farbschema per postMessage
   if (ctx.embedded && window.parent !== window) {
     window.addEventListener('message', (e) => {
       if (e.source !== window.parent) return;
-      if (e.data && e.data.type === AUTORUN_MESSAGE) startAutorunIfIdle();
+      const d = e.data;
+      if (!d || typeof d !== 'object') return;
+      if (d.type === AUTORUN_MESSAGE) startAutorunIfIdle();
+      else if (d.type === 'osdp-helper-show' && VIEWS.includes(d.view)) {
+        if (d.view !== ctx.currentView) showView(d.view);
+      } else if (d.type === 'osdp-helper-theme') document.body.classList.toggle('theme-light', d.dark === false);
     });
   }
 }
@@ -201,8 +214,8 @@ async function init() {
     toast({ title: 'Nur als Extension lauffähig', desc: 'Diese Seite braucht die Chrome-Erweiterung (chrome://extensions → Entpackte Erweiterung laden).', kind: 'warn', timeoutMs: 60000 });
     return;
   }
-  // Dock-Modus (iframe in der OSDP-Seite, src/content/osdp-dock.js): kompaktes Layout, Driver an
-  // den umgebenden Tab gebunden, kein Tabwechsel, kein Neuladen der Seite.
+  // Eingebettet (iframe hinter den Reitern der OSDP-Seite, src/content/osdp-tabs.js): ohne eigene
+  // Navigation, Driver an den umgebenden Tab gebunden, kein Tabwechsel, kein Neuladen der Seite.
   ctx.embedded = new URLSearchParams(location.search).get('embedded') === '1';
   if (ctx.embedded) document.body.classList.add('embedded');
   try {

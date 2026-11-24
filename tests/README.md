@@ -14,7 +14,7 @@ node tests/app.test.mjs              # App-Seite v0.6: Navigation, Einstellungen
 node tests/stores.test.mjs           # Quellen-Verwaltung, Verlauf (Duplikate, Suche), Regeln, Gesamtexport/-import (ohne Browser)
 node tests/prompts.test.mjs          # Kompakter Katalog, Tagging-/Übersetzungs-/Relevanz-Prompts mit Regelwerk (ohne Browser)
 node tests/design.test.mjs           # Seitengerüst src/app/app.html: IDs, Dark Theme, Überläufe, Screenshots (ohne app.js)
-node tests/dock.test.mjs             # Dock in der OSDP-Seite gegen den Nachbau: Platz unter der Kopfleiste, iframe überlebt Navigation, Status, Ein-/Ausklappen, Reset über den Store, Zeitplan-Start
+node tests/tabs.test.mjs             # Helper als Reiter im OSDP-Editor gegen den Nachbau: Reiterleiste, Ansicht über dem Reiterkörper, zurück zum Formular, Alt+H, Driver, Navigation, Farbschema, Zeitplan-Start
 node tests/extractor.test.mjs        # Artikel-Extraktor: <p>- und <div>-Absätze (Reuters), Container (The Record), Bot-Prüfseite, Bezahlschranke
 node tests/restyle.test.mjs          # Aufgeräumter News-Editor gegen den Nachbau: Dark-Schalter, Ausblenden, Metadaten+Tags auf einer Seite, CKEditor nur Text, Driver füllt weiterhin
 ```

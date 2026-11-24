@@ -1,12 +1,13 @@
 // Service Worker der Extension.
-// Aufgaben: Klick auf das Icon → Helper-Dock im OSDP-Tab ein-/ausklappen (ohne OSDP-Tab: OSDP
-// öffnen), Defaults anlegen, optionaler Zeitplan (Mo–Fr zu fester Uhrzeit) für Scan + Relevanzprüfung.
+// Aufgaben: Klick auf das Icon → im OSDP-Editor den Reiter „Lauf“ bzw. das Formular zeigen (ohne
+// OSDP-Tab: OSDP öffnen), Defaults anlegen, optionaler Zeitplan (Mo–Fr zu fester Uhrzeit) für Scan +
+// Relevanzprüfung.
 //
-// Die App läuft nur noch im Dock (iframe in der OSDP-Seite, src/content/osdp-dock.js); es gibt keinen
-// eigenen App-Tab mehr. Zeitplan: Ein offener OSDP-Tab bekommt per chrome.tabs.sendMessage die
-// Aktion 'autorun' (das Dock reicht sie an die App weiter, kein Neuladen). Ohne OSDP-Tab wird OSDP
-// geöffnet und die Aktion so lange erneut geschickt, bis das Dock sie annimmt (es hebt sie auf, bis
-// die App bereit ist). Ein laufender Durchlauf wird vom Autorun nicht unterbrochen (prüft die App).
+// Die App läuft nur noch hinter den Reitern der OSDP-Seite (iframe, src/content/osdp-tabs.js); es gibt
+// keinen eigenen App-Tab mehr. Zeitplan: Ein offener OSDP-Tab bekommt per chrome.tabs.sendMessage die
+// Aktion 'autorun' (das Reiter-Script reicht sie an die App weiter, kein Neuladen). Ohne OSDP-Tab wird
+// OSDP geöffnet und die Aktion so lange erneut geschickt, bis das Script sie annimmt (es hebt sie auf,
+// bis die App bereit ist). Ein laufender Durchlauf wird vom Autorun nicht unterbrochen (prüft die App).
 
 import { DEFAULT_SETTINGS } from './lib/settings.js';
 
@@ -55,8 +56,8 @@ async function focusTab(tab) {
   if (tab.windowId != null) await chrome.windows.update(tab.windowId, { focused: true }).catch(() => {});
 }
 
-// Klick auf das Extension-Symbol: im OSDP-Tab das Dock umschalten; sonst einen OSDP-Tab fokussieren
-// (und das Dock öffnen) oder OSDP neu öffnen.
+// Klick auf das Extension-Symbol: im OSDP-Tab zwischen „Lauf“ und Formular wechseln; sonst einen
+// OSDP-Tab fokussieren (und „Lauf“ zeigen) oder OSDP neu öffnen.
 chrome.action.onClicked.addListener(async (tab) => {
   const pattern = await osdpPattern();
   const re = patternToRegex(pattern);
@@ -79,7 +80,7 @@ chrome.action.onClicked.addListener(async (tab) => {
   await chrome.tabs.create({ url: osdpBaseUrl(pattern) + '#/news', active: true });
 });
 
-// Nachrichten aus dem Dock/der App: eigenen Tab erfragen (eingebetteter Modus)
+// Nachrichten aus der App: eigenen Tab erfragen (eingebetteter Modus)
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (!msg) return;
   if (msg.type === 'osdp-helper-whoami') {
@@ -104,7 +105,7 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
   await scheduleAutoRun((stored.settings || {}).autoRunTime);
 });
 
-/** 'autorun' an das Dock im Tab schicken; solange die Seite noch lädt (kein Empfänger), bis zu 90 s wiederholen. */
+/** 'autorun' an das Reiter-Script im Tab schicken; solange die Seite noch lädt (kein Empfänger), bis zu 90 s wiederholen. */
 async function deliverAutorun(tabId, { attempts = 90, intervalMs = 1000 } = {}) {
   for (let i = 0; i < attempts; i++) {
     try {
@@ -120,9 +121,9 @@ async function deliverAutorun(tabId, { attempts = 90, intervalMs = 1000 } = {}) 
 }
 
 /**
- * Zeitplan-Start: offenen OSDP-Tab benachrichtigen (das Dock reicht 'autorun' an die App weiter, kein
+ * Zeitplan-Start: offenen OSDP-Tab benachrichtigen (das Reiter-Script reicht 'autorun' an die App weiter, kein
  * Neuladen); ohne OSDP-Tab OSDP öffnen (ein aus dem Speicher entladener Tab wird neu geladen) und die
- * Nachricht zustellen, sobald das Dock antwortet.
+ * Nachricht zustellen, sobald das Reiter-Script antwortet.
  * @returns {{ tab: chrome.tabs.Tab, via: 'message'|'open'|'reload', delivered: boolean }}
  */
 export async function triggerAutorun() {
