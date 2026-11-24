@@ -191,8 +191,20 @@ function bindMessages() {
       startAutorunIfIdle();
     });
   }
-  // Reiter in OSDP (src/content/osdp-tabs.js): Zeitplan-Start, Ansichtswechsel und Farbschema per postMessage
+  // Reiter in OSDP (src/content/osdp-tabs.js): Zeitplan-Start, Ansichtswechsel und Farbschema per postMessage;
+  // die eigene Inhaltshöhe wird gemeldet, damit der Bereich in OSDP mitwächst (kein innerer Scrollbalken)
   if (ctx.embedded && window.parent !== window) {
+    const sendSize = () => {
+      try {
+        // Höhe des Inhalts, nicht des Fensters (sonst könnte der Bereich nie wieder schrumpfen)
+        const app = document.querySelector('.app');
+        window.parent.postMessage({ type: 'osdp-helper-size', height: app ? app.scrollHeight : document.documentElement.scrollHeight }, '*');
+      } catch {
+        /* kein Empfänger */
+      }
+    };
+    if (typeof ResizeObserver === 'function') new ResizeObserver(sendSize).observe(document.body);
+    window.addEventListener('load', sendSize);
     window.addEventListener('message', (e) => {
       if (e.source !== window.parent) return;
       const d = e.data;

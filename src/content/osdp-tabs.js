@@ -29,7 +29,8 @@
   const MIN_H = 360;
   const MAX_H = 2400;
   const DEFAULT_H = 760;
-  const state = { view: null, height: DEFAULT_H, appReady: false, pendingAutorun: false, status: { text: '', kind: '' } };
+  // height folgt der Inhaltshöhe der App (osdp-helper-size), bis der Nutzer selbst zieht (manualHeight)
+  const state = { view: null, height: DEFAULT_H, manualHeight: false, appReady: false, pendingAutorun: false, status: { text: '', kind: '' } };
   let host = null;
   let frame = null;
   let handle = null;
@@ -86,6 +87,7 @@
       const stop = () => {
         if (!dragging) return;
         dragging = false;
+        state.manualHeight = true;
         handle.classList.remove('active');
         frame.style.pointerEvents = '';
         persist();
@@ -262,7 +264,7 @@
 
   function persist() {
     try {
-      chrome.storage.local.set({ tabs: { view: state.view, height: state.height } });
+      chrome.storage.local.set({ tabs: { view: state.view, height: state.manualHeight ? state.height : null } });
     } catch {
       /* Extension neu geladen */
     }
@@ -295,6 +297,15 @@
         if (state.pendingAutorun) {
           state.pendingAutorun = false;
           toApp({ type: 'osdp-helper-autorun' });
+        }
+      }
+    } else if (d.type === 'osdp-helper-size' && Number.isFinite(d.height)) {
+      // Inhaltshöhe der App: Bereich mitwachsen lassen (kein innerer Scrollbalken), solange nicht von Hand gezogen
+      if (!state.manualHeight) {
+        const h = Math.max(MIN_H, Math.min(MAX_H, Math.ceil(d.height) + 4));
+        if (h !== state.height) {
+          state.height = h;
+          place();
         }
       }
     } else if (d.type === 'osdp-helper-navigate' && typeof d.view === 'string') {
@@ -370,7 +381,10 @@
 
   chrome.storage.local.get('tabs').then((stored) => {
     const t = stored?.tabs || {};
-    if (Number.isFinite(t.height)) state.height = Math.max(MIN_H, Math.min(MAX_H, t.height));
+    if (Number.isFinite(t.height)) {
+      state.height = Math.max(MIN_H, Math.min(MAX_H, t.height));
+      state.manualHeight = true;
+    }
     if (typeof t.view === 'string' && VIEWS.some(([v]) => v === t.view)) state.view = t.view;
     start();
   }).catch(start);
